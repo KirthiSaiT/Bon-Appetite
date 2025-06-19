@@ -1,4 +1,3 @@
-
 import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -220,6 +219,37 @@ const Recipes = () => {
           </Button>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-16 px-4 bg-gray-800 text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-4">Bon Appetit</h2>
+            <p className="text-gray-300 max-w-2xl mx-auto">
+              Visitors will want to know who is on the other side of the page. Use this space to write about your business.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Open Hours</h3>
+              <p className="text-gray-300">Fully Online</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Location</h3>
+              <p className="text-gray-300">
+                8-1-284/OU/461, OU Colony,<br />
+                Shaikpet, Hyderabad,<br />
+                Telangana 500008
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Reservation</h3>
+              <p className="text-gray-300">Not applicable</p>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

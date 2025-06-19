@@ -1,39 +1,73 @@
-
-import Navigation from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { useState } from "react";
+import Navigation from "@/components/Navigation";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+
   const contactInfo = [
     {
       icon: Phone,
       title: "Phone",
-      details: ["+1 (555) 123-4567", "+1 (555) 765-4321"],
+      details: ["+91 9876543210"],
       description: "Call us for quick orders and inquiries"
     },
     {
       icon: Mail,
       title: "Email",
-      details: ["info@bonappetitcafe.com", "orders@bonappetitcafe.com"],
+      details: ["kirthisai251@gmail.com"],
       description: "Send us your questions anytime"
     },
     {
       icon: MapPin,
-      title: "Service Area",
-      details: ["Downtown District", "Suburb Areas within 15km"],
-      description: "We deliver to these locations"
+      title: "Location",
+      details: ["8-1-284/OU/461, OU Colony", "Shaikpet, Hyderabad", "Telangana 500008"],
+      description: "Our main kitchen location"
     },
     {
       icon: Clock,
       title: "Operating Hours",
-      details: ["Mon-Sun: 10:00 AM - 11:00 PM", "Last orders: 10:30 PM"],
-      description: "We're here when you need us"
+      details: ["Mon-Sun: 10:00 AM - 11:00 PM"],
+      description: "We're here to serve you"
     }
   ];
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Just log the form data for now - no actual sending
+    console.log("Contact Form Data:", formData);
+    alert("Thank you for your message! We'll get back to you soon.");
+    
+    // Reset form
+    setFormData({
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
+      subject: '',
+      message: ''
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -59,45 +93,90 @@ const Contact = () => {
                   Fill out the form below and we'll get back to you within 24 hours
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">First Name</Label>
-                    <Input id="firstName" placeholder="Enter your first name" />
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="firstName">First Name</Label>
+                      <Input 
+                        id="firstName" 
+                        name="firstName" 
+                        placeholder="Enter your first name" 
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        required 
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="lastName">Last Name</Label>
+                      <Input 
+                        id="lastName" 
+                        name="lastName" 
+                        placeholder="Enter your last name" 
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        required 
+                      />
+                    </div>
                   </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="lastName">Last Name</Label>
-                    <Input id="lastName" placeholder="Enter your last name" />
+                    <Label htmlFor="email">Email</Label>
+                    <Input 
+                      id="email" 
+                      name="email" 
+                      type="email" 
+                      placeholder="Enter your email address" 
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required 
+                    />
                   </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="phone">Phone Number</Label>
+                    <Input 
+                      id="phone" 
+                      name="phone" 
+                      type="tel" 
+                      placeholder="Enter your phone number" 
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Subject</Label>
+                    <Input 
+                      id="subject" 
+                      name="subject" 
+                      placeholder="What's this about?" 
+                      value={formData.subject}
+                      onChange={handleInputChange}
+                      required 
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="message">Message</Label>
+                    <Textarea 
+                      id="message" 
+                      name="message"
+                      placeholder="Tell us more about your inquiry..."
+                      className="min-h-32"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      required
+                    />
+                  </div>
+                  
+                  <Button 
+                    onClick={handleSubmit}
+                    className="w-full bg-orange-600 hover:bg-orange-700 py-3"
+                  >
+                    Send Message
+                  </Button>
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="Enter your email address" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" type="tel" placeholder="Enter your phone number" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Subject</Label>
-                  <Input id="subject" placeholder="What's this about?" />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="message">Message</Label>
-                  <Textarea 
-                    id="message" 
-                    placeholder="Tell us more about your inquiry..."
-                    className="min-h-32"
-                  />
-                </div>
-                
-                <Button className="w-full bg-orange-600 hover:bg-orange-700 py-3">
-                  Send Message
-                </Button>
               </CardContent>
             </Card>
           </div>
@@ -126,74 +205,71 @@ const Contact = () => {
                 </CardContent>
               </Card>
             ))}
-
-            {/* Quick Order Card */}
-            <Card className="bg-orange-600 text-white">
-              <CardContent className="p-6 text-center">
-                <h3 className="text-xl font-bold mb-2">Need to Order Quickly?</h3>
-                <p className="mb-4">Call our hotline for instant ordering</p>
-                <Button variant="secondary" className="bg-white text-orange-600 hover:bg-gray-100">
-                  Call Now: (555) 123-4567
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </div>
 
-        {/* FAQ Section */}
+        {/* Map Section */}
         <div className="mt-16">
-          <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">Frequently Asked Questions</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">What are your delivery areas?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  We currently deliver to the downtown district and surrounding suburban areas within a 15km radius. 
-                  Enter your address during checkout to confirm delivery availability.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">How long does delivery take?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Most orders are delivered within 30-45 minutes. During peak hours (lunch and dinner), 
-                  delivery may take up to 60 minutes.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Do you cater to dietary restrictions?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Yes! We offer vegetarian, vegan, gluten-free, and other dietary options. 
-                  Please specify your requirements when placing your order.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Can I schedule orders in advance?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600">
-                  Absolutely! You can place orders up to 7 days in advance. Perfect for events, 
-                  meetings, or when you want to ensure your favorite meal is ready when you need it.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl">Find Us</CardTitle>
+              <CardDescription>
+                Visit our kitchen location or contact us for delivery
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-[400px] rounded-lg overflow-hidden">
+                <iframe
+                  title="Bon Appetit Location"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3807.2397337089713!2d78.43399631487946!3d17.39876588807051!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcb97b0f9f839b1%3A0x3c3b3e7c3b2b2b2b!2sOU%20Colony%2C%20Shaikpet%2C%20Hyderabad%2C%20Telangana%20500008!5e0!3m2!1sen!2sin!4v1629789456789!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-16 px-4 bg-gray-800 text-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-4">Bon Appetit</h2>
+            <p className="text-gray-300 max-w-2xl mx-auto">
+              Experience the finest culinary delights delivered right to your doorstep.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Open Hours</h3>
+              <p className="text-gray-300">Mon-Sun: 10:00 AM - 11:00 PM</p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Location</h3>
+              <p className="text-gray-300">
+                8-1-284/OU/461, OU Colony,<br />
+                Shaikpet, Hyderabad,<br />
+                Telangana 500008
+              </p>
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Contact</h3>
+              <p className="text-gray-300">kirthisai251@gmail.com</p>
+              <p className="text-gray-300">+91 9876543210</p>
+            </div>
+          </div>
+          
+          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
+            <p className="text-gray-400">© 2024 Bon Appetit. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

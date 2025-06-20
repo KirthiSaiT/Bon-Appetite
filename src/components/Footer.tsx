@@ -52,6 +52,12 @@ const blinkitLogo = (
   </svg>
 );
 
+const meeshoLogo = (
+  <svg width="130" height="40" viewBox="0 0 130 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <text x="10" y="26" fontSize="24" fontWeight="bold" fill="#FF3399" textAnchor="start" fontFamily="Arial">Meesho</text>
+  </svg>
+);
+
 const socialIcons = [
   { name: "Instagram", href: "#", svg: <svg width="32" height="32" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M22 10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h8zm-4 2.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.5-.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1z" stroke="#fff" strokeWidth="2"/></svg> },
   { name: "Facebook", href: "#", svg: <svg width="32" height="32" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M20 11h-2a2 2 0 0 0-2 2v2h-2v3h2v7h3v-7h2.1l.4-3H19v-1a.5.5 0 0 1 .5-.5H20v-3z" stroke="#fff" strokeWidth="2"/></svg> },
@@ -72,8 +78,9 @@ const Footer = () => (
           <div className="flex items-center justify-center">{blinkitLogo}</div>
         </div>
         {/* Second row with Flipkart centered */}
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-8">
           <div className="flex items-center justify-center">{flipkartLogo}</div>
+          <div className="flex items-center justify-center">{meeshoLogo}</div>
         </div>
       </div>
     </div>

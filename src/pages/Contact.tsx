@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
+import emailjs from 'emailjs-com';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -54,18 +55,38 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Just log the form data for now - no actual sending
-    console.log("Contact Form Data:", formData);
-    alert("Thank you for your message! We'll get back to you soon.");
-    
-    // Reset form
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
+    // EmailJS integration
+    const serviceID = 'service_iidgpwt';
+    const templateID = 'template_t8q2xer';
+    const publicKey = '9fYnPHQba_9MoSr7x';
+
+    emailjs.send(
+      serviceID,
+      templateID,
+      {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message
+      },
+      publicKey
+    )
+    .then((response) => {
+      alert("Thank you for your message! We'll get back to you soon.");
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+    })
+    .catch((err) => {
+      alert("Sorry, there was an error sending your message. Please try again later.");
+      console.error('EmailJS error:', err);
     });
   };
 

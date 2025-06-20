@@ -1,12 +1,106 @@
 import Navigation from "@/components/Navigation";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, X, ShoppingCart, User, Mail, Phone, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
+import { SimpleFooter } from "@/components/Footer";
 
 const Products = () => {
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<{category: string, item: string, description: string} | null>(null);
+  const [showThankYou, setShowThankYou] = useState(false);
+  const [orderForm, setOrderForm] = useState({
+    quantity: 1,
+    email: '',
+    phone: '',
+    name: '',
+    specialInstructions: ''
+  });
+  const [cateringForm, setCateringForm] = useState({
+    name: '',
+    eventDate: '',
+    eventTime: '',
+    serviceType: 'Delivery',
+    people: '',
+    query: '',
+    phone: ''
+  });
+  const [showCateringModal, setShowCateringModal] = useState(false);
 
   const toggleCategory = (category: string) => {
     setExpandedCategory(expandedCategory === category ? null : category);
+  };
+
+  const handleOrderClick = (categoryTitle: string, subcategory: {name: string, description: string}) => {
+    setSelectedItem({
+      category: categoryTitle,
+      item: subcategory.name,
+      description: subcategory.description
+    });
+    setShowOrderModal(true);
+    setOrderForm({
+      quantity: 1,
+      email: '',
+      phone: '',
+      name: '',
+      specialInstructions: ''
+    });
+  };
+
+  const handleFormChange = (field: string, value: string | number) => {
+    setOrderForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSubmitOrder = () => {
+    if (!orderForm.name || !orderForm.email || !orderForm.phone) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    
+    setShowOrderModal(false);
+    setShowThankYou(true);
+    setTimeout(() => setShowThankYou(false), 4000);
+  };
+
+  const closeModal = () => {
+    setShowOrderModal(false);
+    setSelectedItem(null);
+  };
+
+  const handleCateringClick = () => {
+    setShowCateringModal(true);
+    setCateringForm({
+      name: '',
+      eventDate: '',
+      eventTime: '',
+      serviceType: 'Delivery',
+      people: '',
+      query: '',
+      phone: ''
+    });
+  };
+
+  const handleCateringFormChange = (field: string, value: string) => {
+    setCateringForm(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleSubmitCatering = () => {
+    if (!cateringForm.name || !cateringForm.eventDate || !cateringForm.eventTime || !cateringForm.serviceType || !cateringForm.people || !cateringForm.phone) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    setShowCateringModal(false);
+    setShowThankYou(true);
+    setTimeout(() => setShowThankYou(false), 4000);
+  };
+
+  const closeCateringModal = () => {
+    setShowCateringModal(false);
   };
 
   const categories = [
@@ -98,18 +192,36 @@ const Products = () => {
                 {/* Subcategories */}
                 {expandedCategory === category.id && (
                   <div className="px-6 pb-6">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 ml-20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-0 md:ml-20">
                       {category.subcategories.map((subcategory, index) => (
-                        <div key={index} className="text-center">
-                          <div className="w-16 h-16 rounded-full bg-orange-100 mx-auto mb-2 flex items-center justify-center">
-                            <img 
-                              src={category.image} 
-                              alt={subcategory.name}
-                              className="w-12 h-12 object-cover rounded-full"
-                            />
+                        <div key={index} className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">
+                          <div className="text-center mb-4">
+                            <div className="w-16 h-16 rounded-full bg-orange-100 mx-auto mb-3 flex items-center justify-center">
+                              <img 
+                                src={category.image} 
+                                alt={subcategory.name}
+                                className="w-12 h-12 object-cover rounded-full"
+                              />
+                            </div>
+                            <h4 className="text-lg font-semibold text-gray-800 mb-2">{subcategory.name}</h4>
+                            <p className="text-sm text-gray-600 mb-4">{subcategory.description}</p>
                           </div>
-                          <h4 className="text-sm font-medium text-gray-800 mb-1">{subcategory.name}</h4>
-                          <p className="text-xs text-gray-500">{subcategory.description}</p>
+                          {category.title === 'Our Services' && subcategory.name === 'Catering' ? (
+                            <button
+                              className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                              onClick={handleCateringClick}
+                            >
+                              Book
+                            </button>
+                          ) : (
+                            <button
+                              className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                              onClick={() => handleOrderClick(category.title, subcategory)}
+                            >
+                              <ShoppingCart className="w-4 h-4" />
+                              Order Now
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
@@ -120,6 +232,240 @@ const Products = () => {
           </div>
         </div>
       </section>
+
+      {/* Order Modal */}
+      {showOrderModal && selectedItem && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-800">Order Details</h3>
+                <button 
+                  onClick={closeModal}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  title="Close order modal"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              <div className="bg-orange-50 rounded-lg p-4 mb-6">
+                <h4 className="font-semibold text-orange-800 mb-1">{selectedItem.item}</h4>
+                <p className="text-sm text-orange-700">{selectedItem.category}</p>
+                <p className="text-xs text-orange-600 mt-1">{selectedItem.description}</p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <User className="w-4 h-4 inline mr-1" />
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                    placeholder="Enter your full name"
+                    value={orderForm.name}
+                    onChange={(e) => handleFormChange('name', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Mail className="w-4 h-4 inline mr-1" />
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                    placeholder="Enter your email"
+                    value={orderForm.email}
+                    onChange={(e) => handleFormChange('email', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <Phone className="w-4 h-4 inline mr-1" />
+                    Phone Number *
+                  </label>
+                  <input
+                    type="tel"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                    placeholder="Enter your phone number"
+                    value={orderForm.phone}
+                    onChange={(e) => handleFormChange('phone', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Special Instructions (Optional)
+                  </label>
+                  <textarea
+                    rows={3}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none"
+                    placeholder="Any special requests or dietary requirements..."
+                    value={orderForm.specialInstructions}
+                    onChange={(e) => handleFormChange('specialInstructions', e.target.value)}
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={closeModal}
+                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSubmitOrder}
+                    className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition-colors"
+                  >
+                    Place Order
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Catering Modal */}
+      {showCateringModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-800">Catering Booking</h3>
+                <button 
+                  onClick={closeCateringModal}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  title="Close catering modal"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Name *</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                  placeholder="Enter your name"
+                  title="Name"
+                  value={cateringForm.name}
+                  onChange={e => handleCateringFormChange('name', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+                <input
+                  type="tel"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                  placeholder="Enter your phone number"
+                  title="Phone Number"
+                  value={cateringForm.phone}
+                  onChange={e => handleCateringFormChange('phone', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Event Date *</label>
+                <input
+                  type="date"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                  title="Event Date"
+                  value={cateringForm.eventDate}
+                  onChange={e => handleCateringFormChange('eventDate', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Time (IST) *</label>
+                <input
+                  type="time"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                  title="Event Time"
+                  value={cateringForm.eventTime}
+                  onChange={e => handleCateringFormChange('eventTime', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Service Type *</label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                  value={cateringForm.serviceType}
+                  onChange={e => handleCateringFormChange('serviceType', e.target.value)}
+                  title="Service Type"
+                  aria-label="Service Type"
+                >
+                  <option value="Delivery">Delivery</option>
+                  <option value="Service(with waiters)">Service (with waiters)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">No of People *</label>
+                <input
+                  type="number"
+                  min="1"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
+                  placeholder="Enter number of people"
+                  value={cateringForm.people}
+                  onChange={e => handleCateringFormChange('people', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Query - Please mention menu you're looking for.</label>
+                <textarea
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none"
+                  placeholder="Describe your menu or any special requests..."
+                  value={cateringForm.query}
+                  onChange={e => handleCateringFormChange('query', e.target.value)}
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={closeCateringModal}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitCatering}
+                  className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition-colors"
+                >
+                  Book
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Thank You Message */}
+      {showThankYou && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <ShoppingCart className="w-8 h-8 text-green-600" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-800 mb-2">Order Placed!</h3>
+            <p className="text-gray-600 mb-4">
+              Thank you for purchasing with Bon Appétit! We'll contact you soon with order confirmation.
+            </p>
+            <div className="text-sm text-gray-500">
+              This message will close automatically...
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Order CTA Section */}
       <section className="py-16 px-4 bg-white">
@@ -132,43 +478,14 @@ const Products = () => {
             href="/contact" 
             className="inline-block bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
           >
-            Order Now
+            Contact Us
           </a>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-16 px-4 bg-gray-800 text-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Bon Appetit</h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              Visitors will want to know who is on the other side of the page. Use this space to write about your business.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Open Hours</h3>
-              <p className="text-gray-300">Fully Online</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Location</h3>
-              <p className="text-gray-300">
-                8-1-284/OU/461, OU Colony,<br />
-                Shaikpet, Hyderabad,<br />
-                Telangana 500008
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Reservation</h3>
-              <p className="text-gray-300">Not applicable</p>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <SimpleFooter />
     </div>
   );
 };
 
-export default Products; 
+export default Products;

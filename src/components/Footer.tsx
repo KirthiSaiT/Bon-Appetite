@@ -59,9 +59,9 @@ const meeshoLogo = (
 );
 
 const socialIcons = [
-  { name: "Instagram", href: "#", svg: <svg width="32" height="32" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M22 10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h8zm-4 2.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.5-.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1z" stroke="#fff" strokeWidth="2"/></svg> },
-  { name: "Facebook", href: "#", svg: <svg width="32" height="32" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M20 11h-2a2 2 0 0 0-2 2v2h-2v3h2v7h3v-7h2.1l.4-3H19v-1a.5.5 0 0 1 .5-.5H20v-3z" stroke="#fff" strokeWidth="2"/></svg> },
-  { name: "YouTube", href: "#", svg: <svg width="32" height="32" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M22 16.5l-8 4.5v-9l8 4.5z" fill="#fff"/></svg> },
+  { name: "Instagram", href: "#", svg: <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M22 10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h8zm-4 2.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.5-.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1z" stroke="#fff" strokeWidth="2"/></svg> },
+  { name: "Facebook", href: "#", svg: <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M20 11h-2a2 2 0 0 0-2 2v2h-2v3h2v7h3v-7h2.1l.4-3H19v-1a.5.5 0 0 1 .5-.5H20v-3z" stroke="#fff" strokeWidth="2"/></svg> },
+  { name: "YouTube", href: "#", svg: <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M22 16.5l-8 4.5v-9l8 4.5z" fill="#fff"/></svg> },
 ];
 
 const Footer = () => (
@@ -91,7 +91,13 @@ const Footer = () => (
         {/* Brand */}
         <div className="flex-1 flex flex-col items-center md:items-start mb-8 md:mb-0">
           <span className="text-white text-4xl font-bold mb-2" style={{ fontFamily: 'cursive' }}>Bon Appetite</span>
-          <span className="text-white tracking-widest font-mono text-xs">THE SUPER BEAN PROTEIN</span>
+          <div className="mt-4 text-center md:text-left">
+            <p className="text-white text-sm leading-relaxed">
+              Authentic, handmade pasta (uncooked) &nbsp;|&nbsp; Where every bite tells a story &nbsp;|&nbsp; Taste the Italian tradition &nbsp;|<br/>
+              Delivering Pasta India-wide<br/>
+              <span className="font-bold">Order&nbsp;on&nbsp;9390105767</span>
+            </p>
+          </div>
         </div>
         {/* Policies & Explore */}
         <div className="flex-1 flex flex-row justify-center gap-20">
@@ -124,4 +130,52 @@ const Footer = () => (
   </footer>
 );
 
+// SimpleFooter: Only Info Row, no logos
+const SimpleFooter = () => (
+  <footer className="mt-16">
+    <div className="w-full bg-[#7BA16D] py-12 px-4">
+      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-start gap-10">
+        {/* Brand */}
+        <div className="flex-1 flex flex-col items-center md:items-start mb-8 md:mb-0">
+          <span className="text-white text-4xl font-bold mb-2" style={{ fontFamily: 'cursive' }}>Bon Appetite</span>
+          <div className="mt-4 text-center md:text-left">
+            <p className="text-white text-sm leading-relaxed">
+              Authentic, handmade pasta (uncooked) &nbsp;|&nbsp; Where every bite tells a story &nbsp;|&nbsp; Taste the Italian tradition &nbsp;|<br/>
+              Delivering Pasta India-wide<br/>
+              <span className="font-bold">Order&nbsp;on&nbsp;9390105767</span>
+            </p>
+          </div>
+        </div>
+        {/* Policies & Explore */}
+        <div className="flex-1 flex flex-row justify-center gap-20">
+          <div>
+            <div className="text-white text-lg font-semibold mb-4 tracking-widest">POLICIES</div>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-white font-bold hover:underline">Return Policy</a></li>
+              <li><a href="#" className="text-white font-bold hover:underline">Privacy Policy</a></li>
+              <li><a href="#" className="text-white font-bold hover:underline">Sitemap</a></li>
+            </ul>
+          </div>
+          <div>
+            <div className="text-white text-lg font-semibold mb-4 tracking-widest">EXPLORE</div>
+            <ul className="space-y-2">
+              <li><a href="#" className="text-white font-bold hover:underline">FAQ</a></li>
+              <li><a href="#" className="text-white font-bold hover:underline">Blogs</a></li>
+              <li><a href="#" className="text-white font-bold hover:underline">About Us</a></li>
+              <li><a href="#" className="text-white font-bold hover:underline">Terms & Conditions</a></li>
+            </ul>
+          </div>
+        </div>
+        {/* Social Icons */}
+        <div className="flex-1 flex flex-row justify-center md:justify-end items-center gap-4 mt-8 md:mt-0">
+          {socialIcons.map((icon, i) => (
+            <a key={i} href={icon.href} aria-label={icon.name} className="hover:opacity-80">{icon.svg}</a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </footer>
+);
+
+export { Footer, SimpleFooter };
 export default Footer;

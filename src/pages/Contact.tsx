@@ -7,6 +7,7 @@ import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import emailjs from 'emailjs-com';
+import { SimpleFooter } from "@/components/Footer";
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -256,41 +257,7 @@ const Contact = () => {
         </div>
       </div>
 
-      {/* Footer */}
-      <footer className="py-16 px-4 bg-gray-800 text-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Bon Appetit</h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">
-              Experience the finest culinary delights delivered right to your doorstep.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8 text-center">
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Open Hours</h3>
-              <p className="text-gray-300">Mon-Sun: 10:00 AM - 11:00 PM</p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Location</h3>
-              <p className="text-gray-300">
-                8-1-284/OU/461, OU Colony,<br />
-                Shaikpet, Hyderabad,<br />
-                Telangana 500008
-              </p>
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Contact</h3>
-              <p className="text-gray-300">kirthisai251@gmail.com</p>
-              <p className="text-gray-300">+91 9876543210</p>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-700 mt-8 pt-8 text-center">
-            <p className="text-gray-400">© 2024 Bon Appetit. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <SimpleFooter />
     </div>
   );
 };

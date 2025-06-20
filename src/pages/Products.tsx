@@ -25,6 +25,7 @@ const Products = () => {
     phone: ''
   });
   const [showCateringModal, setShowCateringModal] = useState(false);
+  const [showWorkshopModal, setShowWorkshopModal] = useState(false);
 
   const toggleCategory = (category: string) => {
     setExpandedCategory(expandedCategory === category ? null : category);
@@ -206,6 +207,16 @@ const Products = () => {
                             <h4 className="text-lg font-semibold text-gray-800 mb-2">{subcategory.name}</h4>
                             <p className="text-sm text-gray-600 mb-4">{subcategory.description}</p>
                           </div>
+                          {category.title === 'Our Services' && subcategory.name === 'Pasta Workshop' ? (
+                            <>
+                              <button
+                                className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-center"
+                                onClick={() => setShowWorkshopModal(true)}
+                              >
+                                Book
+                              </button>
+                            </>
+                          ) : null}
                           {category.title === 'Our Services' && subcategory.name === 'Catering' ? (
                             <button
                               className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
@@ -213,7 +224,8 @@ const Products = () => {
                             >
                               Book
                             </button>
-                          ) : (
+                          ) : null}
+                          {!(category.title === 'Our Services' && (subcategory.name === 'Pasta Workshop' || subcategory.name === 'Catering')) ? (
                             <button
                               className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                               onClick={() => handleOrderClick(category.title, subcategory)}
@@ -221,7 +233,7 @@ const Products = () => {
                               <ShoppingCart className="w-4 h-4" />
                               Order Now
                             </button>
-                          )}
+                          ) : null}
                         </div>
                       ))}
                     </div>
@@ -444,6 +456,48 @@ const Products = () => {
                   Book
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Pasta Workshop Modal */}
+      {showWorkshopModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-800">Pasta Workshop Details</h3>
+                <button 
+                  onClick={() => setShowWorkshopModal(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  title="Close workshop modal"
+                >
+                  <X className="w-5 h-5 text-gray-500" />
+                </button>
+              </div>
+            </div>
+            <div className="p-6">
+              <ul className="text-left text-sm text-gray-700 mb-4 list-disc pl-5">
+                <li>✅ Learn 2 Pastas from scratch - Fettucine & Farfalle serving for 4 people</li>
+                <li>✅ No need of any fancy equipments</li>
+                <li>✅ Additional Italian sauce making</li>
+                <li>✅ Tricks to make your pasta silky smooth</li>
+                <li>✅ Simple ingredients and kitchen equipment needed</li>
+                <li>✅ Interactive Q &A</li>
+                <li>📍 Attend from anywhere</li>
+                <li><span className="font-bold text-orange-700">Early bird offer at only INR 599</span></li>
+                <li><span className="font-bold text-red-600">Limited slots available. Every month 4th Saturday</span></li>
+              </ul>
+              <div className="mb-2 text-xs text-red-700 font-semibold text-center">Payment is non-refundable</div>
+              <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLSe_JQSN3NhIvXnQsRILcw3SOUGzbheP7px0wDNPBt5gGQnyww/viewform?usp=header"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full block bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-center"
+              >
+                Continue Booking
+              </a>
             </div>
           </div>
         </div>

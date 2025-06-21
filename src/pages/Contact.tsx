@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import emailjs from 'emailjs-com';
+import emailjs from '@emailjs/browser';
 import { SimpleFooter } from "@/components/Footer";
 
 const Contact = () => {
@@ -56,25 +56,29 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // EmailJS integration
-    const serviceID = 'service_iidgpwt';
-    const templateID = 'template_t8q2xer';
-    const publicKey = '9fYnPHQba_9MoSr7x';
-
+    
     emailjs.send(
-      serviceID,
-      templateID,
+      'service_0ngsn9l', 
+      'template_rdzt2i6',
       {
-        first_name: formData.firstName,
-        last_name: formData.lastName,
-        email: formData.email,
-        phone: formData.phone,
+        from_name: `${formData.firstName} ${formData.lastName}`,
+        to_name: "Bon Appetite",
         subject: formData.subject,
-        message: formData.message
+        message: `
+          You have a new contact message!
+          From: ${formData.firstName} ${formData.lastName}
+          Email: ${formData.email}
+          Phone: ${formData.phone}
+          ---
+          Message:
+          ${formData.message}
+        `,
+        user_email: formData.email
       },
-      publicKey
+      'lBQ8UpD7SH9b45AVq'
     )
     .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
       alert("Thank you for your message! We'll get back to you soon.");
       setFormData({
         firstName: '',
@@ -86,8 +90,8 @@ const Contact = () => {
       });
     })
     .catch((err) => {
+      console.error('FAILED...', err);
       alert("Sorry, there was an error sending your message. Please try again later.");
-      console.error('EmailJS error:', err);
     });
   };
 
@@ -193,6 +197,7 @@ const Contact = () => {
                   </div>
                   
                   <Button 
+                    type="submit"
                     onClick={handleSubmit}
                     className="w-full bg-orange-600 hover:bg-orange-700 py-3"
                   >

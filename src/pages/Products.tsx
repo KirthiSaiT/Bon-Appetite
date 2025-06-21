@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import { ChevronDown, ChevronUp, X, ShoppingCart, User, Mail, Phone, Calendar, Clock } from "lucide-react";
 import { useState } from "react";
+import emailjs from '@emailjs/browser';
 import { SimpleFooter } from "@/components/Footer";
 
 const Products = () => {
@@ -60,9 +61,34 @@ const Products = () => {
       return;
     }
     
-    setShowOrderModal(false);
-    setShowThankYou(true);
-    setTimeout(() => setShowThankYou(false), 4000);
+    const templateParams = {
+      from_name: orderForm.name,
+      to_name: "Bon Appetite",
+      message: `
+        You have a new order!
+        Product: ${selectedItem?.category} - ${selectedItem?.item}
+        Quantity: ${orderForm.quantity}
+        Description: ${selectedItem?.description}
+        Special Instructions: ${orderForm.specialInstructions}
+        ---
+        Contact Details:
+        Name: ${orderForm.name}
+        Email: ${orderForm.email}
+        Phone: ${orderForm.phone}
+      `,
+      user_email: orderForm.email
+    };
+
+    emailjs.send('service_0ngsn9l', 'template_rdzt2i6', templateParams, 'lBQ8UpD7SH9b45AVq')
+      .then((response) => {
+         console.log('SUCCESS!', response.status, response.text);
+         setShowOrderModal(false);
+         setShowThankYou(true);
+         setTimeout(() => setShowThankYou(false), 4000);
+      }, (err) => {
+         console.log('FAILED...', err);
+         alert('Failed to send order. Please try again.');
+      });
   };
 
   const closeModal = () => {
@@ -484,7 +510,7 @@ const Products = () => {
                 <li>✅ Additional Italian sauce making</li>
                 <li>✅ Tricks to make your pasta silky smooth</li>
                 <li>✅ Simple ingredients and kitchen equipment needed</li>
-                <li>✅ Interactive Q &A</li>
+                <li>✅ Interactive Q & A</li>
                 <li>📍 Attend from anywhere</li>
                 <li><span className="font-bold text-orange-700">Early bird offer at only INR 599</span></li>
                 <li><span className="font-bold text-red-600">Limited slots available. Every month 4th Saturday</span></li>

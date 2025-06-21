@@ -22,9 +22,7 @@ const Navigation = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-orange-600 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-lg">B</span>
-            </div>
+            <img src="/lovable-uploads/BAC-Logo-E-Vertical (2).png" alt="Bon Appetit Cafe Logo" className="h-14 w-auto" />
             <span className="text-xl font-bold text-gray-800">Bon Appetit Cafe</span>
           </Link>
 

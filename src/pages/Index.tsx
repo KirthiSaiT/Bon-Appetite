@@ -17,12 +17,14 @@ const Index = () => {
             Welcome to <span className="text-orange-600">Bon Appetit Cafe</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Your premier cloud kitchen delivering fresh, delicious meals right to your doorstep. 
-            Experience culinary excellence with every bite.
+            Your premier cloud kitchen for artisanal, uncooked pasta. 
+            Experience culinary excellence with every bite you create.
           </p>
-          <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 text-lg">
-            Order Now
-          </Button>
+          <Link to="/products">
+            <Button size="lg" className="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 text-lg">
+              Order Now
+            </Button>
+          </Link>
         </div>
       </section>
 
@@ -31,19 +33,19 @@ const Index = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <Clock className="w-12 h-12 text-orange-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Quick Delivery</h3>
-              <p className="text-gray-600">Fresh meals delivered in 30 minutes or less</p>
-            </div>
-            <div className="text-center">
               <Utensils className="w-12 h-12 text-orange-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Fresh Ingredients</h3>
-              <p className="text-gray-600">Only the finest, locally sourced ingredients</p>
+              <h3 className="text-xl font-semibold mb-2">Artisanal Pasta</h3>
+              <p className="text-gray-600">Handcrafted daily with traditional Italian techniques</p>
             </div>
             <div className="text-center">
               <Users className="w-12 h-12 text-orange-600 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Expert Chefs</h3>
-              <p className="text-gray-600">Crafted by experienced culinary professionals</p>
+              <h3 className="text-xl font-semibold mb-2">Premium Ingredients</h3>
+              <p className="text-gray-600">Made with the finest semolina and '00' flour for perfect texture</p>
+            </div>
+            <div className="text-center">
+              <Clock className="w-12 h-12 text-orange-600 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Ready to Cook</h3>
+              <p className="text-gray-600">Gourmet pasta meals at home, ready in minutes</p>
             </div>
           </div>
         </div>

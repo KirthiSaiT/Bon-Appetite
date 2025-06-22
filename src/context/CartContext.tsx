@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 // Define the shape of a single cart item
@@ -30,8 +30,25 @@ interface CartProviderProps {
 
 // Create the provider component
 export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
+    try {
+      const localData = localStorage.getItem('bonAppetitCart');
+      return localData ? JSON.parse(localData) : [];
+    } catch (error) {
+      console.error("Could not parse cart data from localStorage", error);
+      return [];
+    }
+  });
+
   const { toast } = useToast();
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('bonAppetitCart', JSON.stringify(cartItems));
+    } catch (error) {
+      console.error("Could not save cart data to localStorage", error);
+    }
+  }, [cartItems]);
 
   const addToCart = (itemToAdd: Omit<CartItem, 'quantity'>) => {
     setCartItems(prevItems => {
@@ -72,6 +89,10 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
 
   const clearCart = () => {
     setCartItems([]);
+    toast({
+      title: "Cart cleared",
+      description: "Your shopping cart has been emptied.",
+    });
   };
 
   const cartCount = cartItems.reduce((count, item) => count + item.quantity, 0);

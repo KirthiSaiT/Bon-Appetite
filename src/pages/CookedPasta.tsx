@@ -1,107 +1,53 @@
 import Navigation from "@/components/Navigation";
-import { ChevronLeft, ShoppingCart, X, User, Mail, Phone } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import emailjs from '@emailjs/browser';
 import { SimpleFooter } from "@/components/Footer";
+import { useCart } from "@/context/CartContext";
 
 const CookedPasta = () => {
   const navigate = useNavigate();
-  const [showOrderModal, setShowOrderModal] = useState(false);
-  const [selectedPasta, setSelectedPasta] = useState<{name: string, description: string, price: string, image: string} | null>(null);
-  const [showThankYou, setShowThankYou] = useState(false);
-  const [orderForm, setOrderForm] = useState({
-    quantity: 1,
-    email: '',
-    phone: '',
-    name: '',
-    specialInstructions: ''
-  });
+  const { addToCart } = useCart();
 
-  const handleOrderClick = (pasta: {name: string, description: string, price: string, image: string}) => {
-    setSelectedPasta(pasta);
-    setShowOrderModal(true);
-    setOrderForm({
-      quantity: 1,
-      email: '',
-      phone: '',
-      name: '',
-      specialInstructions: ''
-    });
-  };
-
-  const handleFormChange = (field: string, value: string | number) => {
-    setOrderForm(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleSubmitOrder = () => {
-    if (!orderForm.name || !orderForm.email || !orderForm.phone) {
-      alert('Please fill in all required fields');
-      return;
-    }
-    
-    const templateParams = {
-      from_name: orderForm.name,
-      to_name: "Bon Appetite",
-      message: `
-        You have a new cooked pasta order!
-        Product: ${selectedPasta?.name}
-        Price: ${selectedPasta?.price}
-        Quantity: ${orderForm.quantity}
-        Description: ${selectedPasta?.description}
-        Special Instructions: ${orderForm.specialInstructions}
-        ---
-        Contact Details:
-        Name: ${orderForm.name}
-        Email: ${orderForm.email}
-        Phone: ${orderForm.phone}
-      `,
-      user_email: orderForm.email
-    };
-
-    emailjs.send('service_0ngsn9l', 'template_rdzt2i6', templateParams, 'lBQ8UpD7SH9b45AVq')
-      .then((response) => {
-         console.log('SUCCESS!', response.status, response.text);
-         setShowOrderModal(false);
-         setShowThankYou(true);
-         setTimeout(() => setShowThankYou(false), 4000);
-      }, (err) => {
-         console.log('FAILED...', err);
-         alert('Failed to send order. Please try again.');
-      });
-  };
-
-  const closeModal = () => {
-    setShowOrderModal(false);
-    setSelectedPasta(null);
+  const parsePrice = (priceString: string) => {
+    const numericPart = priceString.match(/[\d.]+/);
+    return numericPart ? parseFloat(numericPart[0]) : 0;
   };
 
   const cookedPasta = [
     {
+      id: "cp001",
       name: "Penne all'Arrabbiata",
       description: "A spicy tomato-based pasta dish that's simple yet full of flavor.",
       price: "₹380",
-      image: "/lovable-uploads/cooked pasta.jpg",
+      image: "/lovable-uploads-optimized/cooked pasta.jpg",
       features: ["Spicy", "Vegetarian", "Classic"]
     },
     {
+      id: "cp002",
       name: "Spaghetti Carbonara",
       description: "A creamy pasta dish with eggs, cheese, and bacon.",
       price: "₹420",
-      image: "/lovable-uploads/cooked pasta.jpg",
+      image: "/lovable-uploads-optimized/cooked pasta.jpg",
       features: ["Creamy", "Rich", "Comforting"]
     },
     {
+      id: "cp003",
       name: "Fettuccine Alfredo",
       description: "A classic pasta dish with a rich and creamy Alfredo sauce.",
       price: "₹400",
-      image: "/lovable-uploads/cooked pasta.jpg",
+      image: "/lovable-uploads-optimized/cooked pasta.jpg",
       features: ["Creamy", "Indulgent", "Classic"]
     },
   ];
+
+  const handleAddToCart = (pasta: typeof cookedPasta[0]) => {
+    addToCart({
+      id: pasta.id,
+      name: pasta.name,
+      price: parsePrice(pasta.price),
+      image: pasta.image,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -131,8 +77,8 @@ const CookedPasta = () => {
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {cookedPasta.map((pasta, index) => (
-              <div key={index} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+            {cookedPasta.map((pasta) => (
+              <div key={pasta.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
                 <div className="h-48 bg-orange-100 flex items-center justify-center">
                   <img 
                     src={pasta.image} 
@@ -141,9 +87,9 @@ const CookedPasta = () => {
                   />
                 </div>
                 
-                <div className="p-6">
+                <div className="p-6 flex-grow flex flex-col">
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{pasta.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed">{pasta.description}</p>
+                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{pasta.description}</p>
                   
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-2">
@@ -158,16 +104,16 @@ const CookedPasta = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-lg font-bold text-orange-600">{pasta.price}</span>
+                  <div className="flex items-center justify-between mb-4 mt-auto">
+                    <span className="text-lg font-bold text-orange-600">{`₹${parsePrice(pasta.price)}`}</span>
                   </div>
                   
                   <button
-                    onClick={() => handleOrderClick(pasta)}
+                    onClick={() => handleAddToCart(pasta)}
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                   >
                     <ShoppingCart className="w-4 h-4" />
-                    Order Now
+                    Add to Cart
                   </button>
                 </div>
               </div>
@@ -175,123 +121,7 @@ const CookedPasta = () => {
           </div>
         </div>
       </section>
-
-      {showOrderModal && selectedPasta && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-800">Order Cooked Pasta</h3>
-                <button 
-                  onClick={closeModal}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                  title="Close modal"
-                >
-                  <X className="w-5 h-5 text-gray-500" />
-                </button>
-              </div>
-            </div>
-            
-            <div className="p-6">
-              <div className="bg-orange-50 rounded-lg p-4 mb-6">
-                <h4 className="font-semibold text-orange-800 mb-1">{selectedPasta.name}</h4>
-                <p className="text-sm text-orange-700">{selectedPasta.price}</p>
-                <p className="text-xs text-orange-600 mt-1">{selectedPasta.description}</p>
-              </div>
-
-              <div className="space-y-4">
-                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <User className="w-4 h-4 inline mr-1" />
-                    Full Name *
-                  </label>
-                  <input
-                    type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                    value={orderForm.name}
-                    onChange={(e) => handleFormChange('name', e.target.value)}
-                    placeholder="Enter your full name"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Mail className="w-4 h-4 inline mr-1" />
-                    Email Address *
-                  </label>
-                  <input
-                    type="email"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                    value={orderForm.email}
-                    onChange={(e) => handleFormChange('email', e.target.value)}
-                    placeholder="Enter your email"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Phone className="w-4 h-4 inline mr-1" />
-                    Phone Number *
-                  </label>
-                  <input
-                    type="tel"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                    value={orderForm.phone}
-                    onChange={(e) => handleFormChange('phone', e.target.value)}
-                    placeholder="Enter your phone number"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                    value={orderForm.quantity}
-                    onChange={(e) => handleFormChange('quantity', parseInt(e.target.value) || 1)}
-                    placeholder="Enter quantity"
-                  />
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSubmitOrder}
-                    className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition-colors"
-                  >
-                    Place Order
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showThankYou && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-8 max-w-md w-full text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ShoppingCart className="w-8 h-8 text-green-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Order Placed!</h3>
-            <p className="text-gray-600 mb-4">
-              Thank you for your cooked pasta order! We'll contact you soon.
-            </p>
-          </div>
-        </div>
-      )}
-
+      
       <SimpleFooter />
     </div>
   );

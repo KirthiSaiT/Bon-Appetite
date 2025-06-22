@@ -53,13 +53,12 @@ const Index = () => {
 
       {/* Pasta Feature Section */}
       <section className="py-12 flex justify-center items-center">
-  <img 
-    src="/lovable-uploads/1.png" 
-    alt="Bon Appetit Pasta Feature" 
-    className="rounded-3xl shadow-2xl w-full max-w-3xl h-auto object-contain" 
-  />
-</section>
-
+        <img 
+          src="/lovable-uploads-optimized/1.png" 
+          alt="Bon Appetit Pasta Feature" 
+          className="rounded-3xl shadow-2xl w-full max-w-3xl h-auto object-contain" 
+        />
+      </section>
 
       {/* Products Preview Section */}
       <section className="py-16 px-4 bg-gray-50">

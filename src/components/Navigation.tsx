@@ -21,11 +21,13 @@ const Navigation = () => {
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <img src="/lovable-uploads/BAC-Logo-E-Vertical (2).png" alt="Bon Appetit Cafe Logo" className="h-14 w-auto" />
-            <span className="text-xl font-bold text-gray-800">Bon Appetit Cafe</span>
-          </Link>
+          <div className="flex-shrink-0">
+            {/* Logo */}
+            <Link to="/" className="flex items-center space-x-2">
+              <img src="/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png" alt="Bon Appetit Cafe Logo" className="h-14 w-auto" />
+              <span className="text-xl font-bold text-gray-800">Bon Appetit Cafe</span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">

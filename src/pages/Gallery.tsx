@@ -14,7 +14,7 @@ const Gallery = () => {
     {
       id: 1,
       title: "Our Professional Kitchen",
-      image: "/lovable-uploads/bonapp.png",
+      image: "/lovable-uploads-optimized/bonapp.png",
       category: "Kitchen Space",
       description: "State-of-the-art commercial kitchen where all the magic happens. Equipped with modern appliances and designed for efficiency.",
       location: "Main Kitchen",
@@ -25,7 +25,7 @@ const Gallery = () => {
     {
       id: 2,
       title: "Fresh Ingredients Collection",
-      image: "/lovable-uploads/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
+      image: "/lovable-uploads-optimized/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
       category: "Ingredients",
       description: "We source the finest ingredients daily from local markets and trusted suppliers to ensure quality in every bite.",
       location: "Storage Area",
@@ -36,7 +36,7 @@ const Gallery = () => {
     {
       id: 3,
       title: "Signature Dish Creation",
-      image: "/lovable-uploads/bonapp.png",
+      image: "/lovable-uploads-optimized/bonapp.png",
       category: "Cooking Process",
       description: "Behind the scenes of creating our most popular dishes. Watch our chefs pour their heart into every preparation.",
       location: "Cooking Station",
@@ -47,7 +47,7 @@ const Gallery = () => {
     {
       id: 4,
       title: "Team in Action",
-      image: "/lovable-uploads/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
+      image: "/lovable-uploads-optimized/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
       category: "Our Team",
       description: "Meet our dedicated team of chefs and kitchen staff who work tirelessly to bring you exceptional food.",
       location: "Kitchen Floor",
@@ -58,7 +58,7 @@ const Gallery = () => {
     {
       id: 5,
       title: "Award-Winning Presentation",
-      image: "/lovable-uploads/bonapp.png",
+      image: "/lovable-uploads-optimized/bonapp.png",
       category: "Achievements",
       description: "Our commitment to excellence has earned us recognition and awards from food critics and customers alike.",
       location: "Awards Corner",
@@ -69,7 +69,7 @@ const Gallery = () => {
     {
       id: 6,
       title: "Special Event Catering",
-      image: "/lovable-uploads/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
+      image: "/lovable-uploads-optimized/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
       category: "Events",
       description: "Memorable moments from catering special events, bringing joy to celebrations across the city.",
       location: "Event Venue",
@@ -80,7 +80,7 @@ const Gallery = () => {
     {
       id: 7,
       title: "Customer Favorites Wall",
-      image: "/lovable-uploads/bonapp.png",
+      image: "/lovable-uploads-optimized/bonapp.png",
       category: "Customer Love",
       description: "A collection of our most loved dishes as chosen by our loyal customers. These are the dishes that made us who we are.",
       location: "Display Area",
@@ -91,7 +91,7 @@ const Gallery = () => {
     {
       id: 8,
       title: "Innovation Lab",
-      image: "/lovable-uploads/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
+      image: "/lovable-uploads-optimized/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
       category: "Innovation",
       description: "Our experimental kitchen where we develop new recipes and test innovative cooking techniques.",
       location: "R&D Kitchen",
@@ -102,7 +102,7 @@ const Gallery = () => {
     {
       id: 9,
       title: "Packaging & Delivery Setup",
-      image: "/lovable-uploads/bonapp.png",
+      image: "/lovable-uploads-optimized/bonapp.png",
       category: "Operations",
       description: "Our systematic packaging and delivery preparation area ensuring your food reaches you fresh and hot.",
       location: "Packaging Station",
@@ -113,7 +113,7 @@ const Gallery = () => {
     {
       id: 10,
       title: "Community Engagement",
-      image: "/lovable-uploads/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
+      image: "/lovable-uploads-optimized/b2b50198-3ee8-4357-b982-4b2765b951c7.png",
       category: "Community",
       description: "Giving back to the community through food donations and local partnerships.",
       location: "Community Center",

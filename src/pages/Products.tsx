@@ -3,8 +3,10 @@ import { ChevronDown, ChevronUp, X, ShoppingCart, User, Mail, Phone, Calendar, C
 import { useState } from "react";
 import emailjs from '@emailjs/browser';
 import { SimpleFooter } from "@/components/Footer";
+import { useNavigate } from "react-router-dom";
 
 const Products = () => {
+  const navigate = useNavigate();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<{category: string, item: string, description: string} | null>(null);
@@ -254,10 +256,30 @@ const Products = () => {
                           {!(category.title === 'Our Services' && (subcategory.name === 'Pasta Workshop' || subcategory.name === 'Catering')) ? (
                             <button
                               className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                              onClick={() => handleOrderClick(category.title, subcategory)}
+                              onClick={() => {
+                                if (subcategory.name === "Dry Pasta") {
+                                  navigate('/dry-pasta');
+                                } else if (subcategory.name === "Fresh Pasta") {
+                                  navigate('/fresh-pasta');
+                                } else if (subcategory.name === "Seasonal Sauces") {
+                                  navigate('/seasonal-sauces');
+                                } else if (subcategory.name === "Gourmet Sandwiches") {
+                                  navigate('/gourmet-sandwiches');
+                                } else if (subcategory.name === "Fresh Salad Bowls") {
+                                  navigate('/fresh-salad-bowls');
+                                } else if (subcategory.name === "Hot Curry Meals") {
+                                  navigate('/hot-curry-meals');
+                                } else if (subcategory.name === "Dessert Platters") {
+                                  navigate('/dessert-platters');
+                                } else if (subcategory.name === "Cooked Pasta") {
+                                  navigate('/cooked-pasta');
+                                } else {
+                                  handleOrderClick(category.title, subcategory);
+                                }
+                              }}
                             >
                               <ShoppingCart className="w-4 h-4" />
-                              Order Now
+                              {subcategory.name === "Dry Pasta" || subcategory.name === "Fresh Pasta" || subcategory.name === "Seasonal Sauces" || subcategory.name === "Gourmet Sandwiches" || subcategory.name === "Fresh Salad Bowls" || subcategory.name === "Hot Curry Meals" || subcategory.name === "Dessert Platters" || subcategory.name === "Cooked Pasta" ? "View Products" : "Order Now"}
                             </button>
                           ) : null}
                         </div>

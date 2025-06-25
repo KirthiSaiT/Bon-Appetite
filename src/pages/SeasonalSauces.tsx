@@ -84,6 +84,7 @@ const SeasonalSauces = () => {
                     src={sauce.image} 
                     alt={sauce.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
                 

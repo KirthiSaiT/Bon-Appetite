@@ -84,6 +84,7 @@ const GourmetSandwiches = () => {
                     src={sandwich.image} 
                     alt={sandwich.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
                 

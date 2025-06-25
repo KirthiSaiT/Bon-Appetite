@@ -132,6 +132,7 @@ const DryPasta = () => {
                     src={pasta.image} 
                     alt={pasta.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
                 

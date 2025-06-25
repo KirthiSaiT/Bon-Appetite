@@ -1,12 +1,54 @@
 import Navigation from "@/components/Navigation";
 import { ChevronDown, ChevronUp, X, ShoppingCart, User, Mail, Phone, Calendar, Clock } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import emailjs from '@emailjs/browser';
 import { SimpleFooter } from "@/components/Footer";
-import { useNavigate } from "react-router-dom";
+import CategoryItem from "@/components/CategoryItem";
+
+const categories = [
+  {
+    id: "ready-to-cook",
+    title: "Ready to Cook",
+    subtitle: "Fresh ingredients, pre-prepared",
+    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
+    subcategories: [
+      { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/lovable-uploads-optimized/drypasta.jpg" },
+      { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/fresh pasta.jpg" },
+      { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/lovable-uploads-optimized/seasonal sauces.jpg" }
+    ]
+  },
+  {
+    id: "ready-to-eat",
+    title: "Ready to Eat",
+    subtitle: "Delicious meals, instantly served",
+    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
+    subcategories: [
+      { name: "Gourmet Sandwiches", description: "Freshly made daily", image: "/lovable-uploads-optimized/gourmet sandwich.jpg" },
+      { name: "Fresh Salad Bowls", description: "Crisp & healthy options", image: "/lovable-uploads-optimized/fresh salad.jpg" },
+      { name: "Hot Curry Meals", description: "Authentic flavors", image: "/lovable-uploads-optimized/hot curry.jpg" },
+      { name: "Dessert Platters", description: "Sweet treats", image: "/lovable-uploads-optimized/dessert platter.jpg" },
+      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/cooked pasta.jpg" }
+    ]
+  },
+  {
+    id: "services",
+    title: "Our Services",
+    subtitle: "Professional catering & workshops",
+    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
+    subcategories: [
+      { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/lovable-uploads-optimized/catering (1).jpg" },
+      { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/lovable-uploads-optimized/pasta workshop.jpg" }
+    ]
+  }
+];
+
+type Subcategory = {
+  name: string;
+  description: string;
+  image: string;
+};
 
 const Products = () => {
-  const navigate = useNavigate();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<{category: string, item: string, description: string} | null>(null);
@@ -30,11 +72,11 @@ const Products = () => {
   const [showCateringModal, setShowCateringModal] = useState(false);
   const [showWorkshopModal, setShowWorkshopModal] = useState(false);
 
-  const toggleCategory = (category: string) => {
-    setExpandedCategory(expandedCategory === category ? null : category);
-  };
+  const toggleCategory = useCallback((category: string) => {
+    setExpandedCategory(prev => (prev === category ? null : category));
+  }, []);
 
-  const handleOrderClick = (categoryTitle: string, subcategory: {name: string, description: string}) => {
+  const handleOrderClick = useCallback((categoryTitle: string, subcategory: Subcategory) => {
     setSelectedItem({
       category: categoryTitle,
       item: subcategory.name,
@@ -48,16 +90,16 @@ const Products = () => {
       name: '',
       specialInstructions: ''
     });
-  };
+  }, []);
 
-  const handleFormChange = (field: string, value: string | number) => {
+  const handleFormChange = useCallback((field: string, value: string | number) => {
     setOrderForm(prev => ({
       ...prev,
       [field]: value
     }));
-  };
+  }, []);
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = useCallback(() => {
     if (!orderForm.name || !orderForm.email || !orderForm.phone) {
       alert('Please fill in all required fields');
       return;
@@ -91,14 +133,14 @@ const Products = () => {
          console.log('FAILED...', err);
          alert('Failed to send order. Please try again.');
       });
-  };
+  }, [orderForm, selectedItem]);
 
-  const closeModal = () => {
+  const closeModal = useCallback(() => {
     setShowOrderModal(false);
     setSelectedItem(null);
-  };
+  }, []);
 
-  const handleCateringClick = () => {
+  const handleCateringClick = useCallback(() => {
     setShowCateringModal(true);
     setCateringForm({
       name: '',
@@ -109,16 +151,16 @@ const Products = () => {
       query: '',
       phone: ''
     });
-  };
+  }, []);
 
-  const handleCateringFormChange = (field: string, value: string) => {
+  const handleCateringFormChange = useCallback((field: string, value: string) => {
     setCateringForm(prev => ({
       ...prev,
       [field]: value
     }));
-  };
+  }, []);
 
-  const handleSubmitCatering = () => {
+  const handleSubmitCatering = useCallback(() => {
     if (!cateringForm.name || !cateringForm.eventDate || !cateringForm.eventTime || !cateringForm.serviceType || !cateringForm.people || !cateringForm.phone) {
       alert('Please fill in all required fields');
       return;
@@ -126,48 +168,13 @@ const Products = () => {
     setShowCateringModal(false);
     setShowThankYou(true);
     setTimeout(() => setShowThankYou(false), 4000);
-  };
+  }, [cateringForm]);
 
-  const closeCateringModal = () => {
+  const closeCateringModal = useCallback(() => {
     setShowCateringModal(false);
-  };
+  }, []);
 
-  const categories = [
-    {
-      id: "ready-to-cook",
-      title: "Ready to Cook",
-      subtitle: "Fresh ingredients, pre-prepared",
-      image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
-      subcategories: [
-        { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/lovable-uploads-optimized/drypasta.jpg" },
-        { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/fresh pasta.jpg" },
-        { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/lovable-uploads-optimized/seasonal sauces.jpg" }
-      ]
-    },
-    {
-      id: "ready-to-eat",
-      title: "Ready to Eat",
-      subtitle: "Delicious meals, instantly served",
-      image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
-      subcategories: [
-        { name: "Gourmet Sandwiches", description: "Freshly made daily", image: "/lovable-uploads-optimized/gourmet sandwich.jpg" },
-        { name: "Fresh Salad Bowls", description: "Crisp & healthy options", image: "/lovable-uploads-optimized/fresh salad.jpg" },
-        { name: "Hot Curry Meals", description: "Authentic flavors", image: "/lovable-uploads-optimized/hot curry.jpg" },
-        { name: "Dessert Platters", description: "Sweet treats", image: "/lovable-uploads-optimized/dessert platter.jpg" },
-        { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/cooked pasta.jpg" }
-      ]
-    },
-    {
-      id: "services",
-      title: "Our Services",
-      subtitle: "Professional catering & workshops",
-      image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
-      subcategories: [
-        { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/lovable-uploads-optimized/catering (1).jpg" },
-        { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/lovable-uploads-optimized/pasta workshop.jpg" }
-      ]
-    }
-  ];
+  const handleBookWorkshop = useCallback(() => setShowWorkshopModal(true), []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -192,102 +199,15 @@ const Products = () => {
           
           <div className="space-y-6">
             {categories.map((category) => (
-              <div key={category.id} className="bg-white rounded-lg shadow-sm border border-gray-200">
-                {/* Category Header */}
-                <div 
-                  className="flex items-center justify-between p-6 cursor-pointer hover:bg-gray-50 transition-colors"
-                  onClick={() => toggleCategory(category.id)}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 rounded-full overflow-hidden bg-orange-100 flex items-center justify-center">
-                      <img 
-                        src={category.image} 
-                        alt={category.title}
-                        className="w-12 h-12 object-cover rounded-full"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-800">{category.title}</h3>
-                      <p className="text-gray-600 text-sm">{category.subtitle}</p>
-                    </div>
-                  </div>
-                  {expandedCategory === category.id ? (
-                    <ChevronUp className="w-6 h-6 text-gray-400" />
-                  ) : (
-                    <ChevronDown className="w-6 h-6 text-gray-400" />
-                  )}
-                </div>
-
-                {/* Subcategories */}
-                {expandedCategory === category.id && (
-                  <div className="px-6 pb-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ml-0 md:ml-20">
-                      {category.subcategories.map((subcategory, index) => (
-                        <div key={index} className="bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow">
-                          <div className="text-center mb-4">
-                            <div className="w-16 h-16 rounded-full bg-orange-100 mx-auto mb-3 flex items-center justify-center">
-                              <img 
-                                src={subcategory.image || category.image} 
-                                alt={subcategory.name}
-                                className="w-12 h-12 object-cover rounded-full"
-                              />
-                            </div>
-                            <h4 className="text-lg font-semibold text-gray-800 mb-2">{subcategory.name}</h4>
-                            <p className="text-sm text-gray-600 mb-4">{subcategory.description}</p>
-                          </div>
-                          {category.title === 'Our Services' && subcategory.name === 'Pasta Workshop' ? (
-                            <>
-                              <button
-                                className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors text-center"
-                                onClick={() => setShowWorkshopModal(true)}
-                              >
-                                Book
-                              </button>
-                            </>
-                          ) : null}
-                          {category.title === 'Our Services' && subcategory.name === 'Catering' ? (
-                            <button
-                              className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                              onClick={handleCateringClick}
-                            >
-                              Book
-                            </button>
-                          ) : null}
-                          {!(category.title === 'Our Services' && (subcategory.name === 'Pasta Workshop' || subcategory.name === 'Catering')) ? (
-                            <button
-                              className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                              onClick={() => {
-                                if (subcategory.name === "Dry Pasta") {
-                                  navigate('/dry-pasta');
-                                } else if (subcategory.name === "Fresh Pasta") {
-                                  navigate('/fresh-pasta');
-                                } else if (subcategory.name === "Seasonal Sauces") {
-                                  navigate('/seasonal-sauces');
-                                } else if (subcategory.name === "Gourmet Sandwiches") {
-                                  navigate('/gourmet-sandwiches');
-                                } else if (subcategory.name === "Fresh Salad Bowls") {
-                                  navigate('/fresh-salad-bowls');
-                                } else if (subcategory.name === "Hot Curry Meals") {
-                                  navigate('/hot-curry-meals');
-                                } else if (subcategory.name === "Dessert Platters") {
-                                  navigate('/dessert-platters');
-                                } else if (subcategory.name === "Cooked Pasta") {
-                                  navigate('/cooked-pasta');
-                                } else {
-                                  handleOrderClick(category.title, subcategory);
-                                }
-                              }}
-                            >
-                              <ShoppingCart className="w-4 h-4" />
-                              {subcategory.name === "Dry Pasta" || subcategory.name === "Fresh Pasta" || subcategory.name === "Seasonal Sauces" || subcategory.name === "Gourmet Sandwiches" || subcategory.name === "Fresh Salad Bowls" || subcategory.name === "Hot Curry Meals" || subcategory.name === "Dessert Platters" || subcategory.name === "Cooked Pasta" ? "View Products" : "Order Now"}
-                            </button>
-                          ) : null}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+              <CategoryItem
+                key={category.id}
+                category={category}
+                isExpanded={expandedCategory === category.id}
+                onToggle={toggleCategory}
+                onOrderClick={handleOrderClick}
+                onBookWorkshop={handleBookWorkshop}
+                onCater={handleCateringClick}
+              />
             ))}
           </div>
         </div>
@@ -295,100 +215,100 @@ const Products = () => {
 
       {/* Order Modal */}
       {showOrderModal && selectedItem && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-800">Order Details</h3>
-                <button 
-                  onClick={closeModal}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                  title="Close order modal"
-                >
-                  <X className="w-5 h-5 text-gray-500" />
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-bold text-gray-800">Place Order</h3>
+                <button onClick={closeModal} className="text-gray-400 hover:text-gray-600" aria-label="Close order modal">
+                  <X className="w-6 h-6" />
                 </button>
               </div>
+              <p className="text-gray-600 mt-2">For {selectedItem.item} in {selectedItem.category}</p>
             </div>
-            
-            <div className="p-6">
-              <div className="bg-orange-50 rounded-lg p-4 mb-6">
-                <h4 className="font-semibold text-orange-800 mb-1">{selectedItem.item}</h4>
-                <p className="text-sm text-orange-700">{selectedItem.category}</p>
-                <p className="text-xs text-orange-600 mt-1">{selectedItem.description}</p>
-              </div>
 
-              <div className="space-y-4">
+            <div className="p-6">
+              <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <User className="w-4 h-4 inline mr-1" />
-                    Full Name *
+                  <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+                  <input
+                    type="number"
+                    id="quantity"
+                    value={orderForm.quantity}
+                    onChange={(e) => handleFormChange('quantity', parseInt(e.target.value, 10))}
+                    min="1"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                    placeholder="Enter your full name"
+                    id="name"
                     value={orderForm.name}
                     onChange={(e) => handleFormChange('name', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition"
+                    required
                   />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Mail className="w-4 h-4 inline mr-1" />
-                    Email Address *
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email Address <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="email"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                    placeholder="Enter your email"
+                    id="email"
                     value={orderForm.email}
                     onChange={(e) => handleFormChange('email', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition"
+                    required
                   />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <Phone className="w-4 h-4 inline mr-1" />
-                    Phone Number *
+                  <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone Number <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="tel"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
-                    placeholder="Enter your phone number"
+                    id="phone"
                     value={orderForm.phone}
                     onChange={(e) => handleFormChange('phone', e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition"
+                    required
                   />
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Special Instructions (Optional)
+                  <label htmlFor="specialInstructions" className="flex items-center text-sm font-medium text-gray-700 mb-2">
+                    Special Instructions
+                    <span className="text-gray-500 text-sm ml-2">(optional)</span>
                   </label>
                   <textarea
-                    rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none resize-none"
-                    placeholder="Any special requests or dietary requirements..."
+                    id="specialInstructions"
                     value={orderForm.specialInstructions}
                     onChange={(e) => handleFormChange('specialInstructions', e.target.value)}
-                  />
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-orange-500 focus:border-orange-500 transition"
+                    rows={3}
+                    placeholder="e.g., allergies, delivery notes"
+                  ></textarea>
                 </div>
-
-                <div className="flex gap-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={closeModal}
-                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSubmitOrder}
-                    className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg font-semibold transition-colors"
-                  >
-                    Place Order
-                  </button>
-                </div>
+              </div>
+              <div className="mt-8 flex justify-end gap-4">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitOrder}
+                  className="px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-semibold"
+                >
+                  Submit Order
+                </button>
               </div>
             </div>
           </div>
@@ -397,7 +317,7 @@ const Products = () => {
 
       {/* Catering Modal */}
       {showCateringModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
               <div className="flex items-center justify-between">

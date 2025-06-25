@@ -84,6 +84,7 @@ const FreshSaladBowls = () => {
                     src={salad.image} 
                     alt={salad.name}
                     className="w-full h-full object-cover"
+                    loading="lazy"
                   />
                 </div>
                 

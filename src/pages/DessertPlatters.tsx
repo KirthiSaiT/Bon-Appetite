@@ -14,30 +14,11 @@ const DessertPlatters = () => {
   };
 
   const dessertPlatters = [
-    {
-      id: "dp001",
-      name: "Chocolate Lava Cake",
-      description: "A rich chocolate cake with a molten chocolate center, served with vanilla ice cream.",
-      price: "₹250",
-      image: "/lovable-uploads-optimized/dessert platter.jpg",
-      features: ["Decadent", "Warm", "Indulgent"]
-    },
-    {
-      id: "dp002",
-      name: "Tiramisu",
-      description: "A classic Italian dessert with layers of coffee-soaked ladyfingers and mascarpone cheese.",
-      price: "₹300",
-      image: "/lovable-uploads-optimized/dessert platter.jpg",
-      features: ["Classic Italian", "Creamy", "Coffee-infused"]
-    },
-    {
-      id: "dp003",
-      name: "Cheesecake",
-      description: "A creamy New York-style cheesecake with a graham cracker crust and a berry compote.",
-      price: "₹280",
-      image: "/lovable-uploads-optimized/dessert platter.jpg",
-      features: ["Creamy", "Rich", "Tangy"]
-    },
+    { id: "d001", name: "Brownie", description: "Classic chocolate brownie, rich and fudgy.", price: "100", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Chocolate", "Classic", "Fudgy"] },
+    { id: "d002", name: "Walnut Brownie", description: "Brownie with crunchy walnuts for extra texture.", price: "120", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Chocolate", "Walnut", "Crunchy"] },
+    { id: "d003", name: "Chocolave cake", description: "Molten chocolate lava cake, gooey center.", price: "90", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Molten", "Chocolate", "Warm"] },
+    { id: "d004", name: "Ice cream - Vanilla", description: "Classic vanilla ice cream scoop.", price: "40", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Ice Cream", "Vanilla", "Chilled"] },
+    { id: "d005", name: "Ice cream - Chocolate", description: "Rich chocolate ice cream scoop.", price: "50", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Ice Cream", "Chocolate", "Chilled"] },
   ];
 
   const handleAddToCart = (dessert: typeof dessertPlatters[0]) => {

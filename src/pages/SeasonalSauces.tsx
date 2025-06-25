@@ -14,30 +14,14 @@ const SeasonalSauces = () => {
   };
 
   const seasonalSauces = [
-    {
-      id: "ss001",
-      name: "Classic Pesto",
-      description: "A vibrant sauce of fresh basil, pine nuts, Parmesan, and garlic.",
-      price: "₹300 per 200g jar",
-      image: "/lovable-uploads-optimized/seasonal sauces.jpg",
-      features: ["Vibrant & Fresh", "Vegetarian", "Versatile"]
-    },
-    {
-      id: "ss002",
-      name: "Arrabbiata",
-      description: "A spicy tomato sauce made with garlic, tomatoes, and red chili peppers.",
-      price: "₹280 per 200g jar",
-      image: "/lovable-uploads-optimized/seasonal sauces.jpg",
-      features: ["Spicy Kick", "Vegan", "Classic Italian"]
-    },
-    {
-      id: "ss003",
-      name: "Alfredo",
-      description: "A rich and creamy sauce made from butter, cream, and Parmesan cheese.",
-      price: "₹350 per 200g jar",
-      image: "/lovable-uploads-optimized/seasonal sauces.jpg",
-      features: ["Rich & Creamy", "Indulgent", "Comfort Food"]
-    },
+    { id: "s001", name: "Pink Sauce", description: "A creamy tomato-based sauce with a hint of cream.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Creamy", "Tomato", "Popular"] },
+    { id: "s002", name: "Rose Sauce", description: "A delicate blend of tomatoes and cream for a rosy finish.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Rosy", "Smooth", "Mild"] },
+    { id: "s003", name: "Tikka Sauce", description: "Spicy tikka-style sauce, perfect for fusion pasta.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Spicy", "Indian", "Fusion"] },
+    { id: "s004", name: "Mustard Sauce", description: "Tangy mustard sauce for a unique flavor twist.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Tangy", "Mustard", "Unique"] },
+    { id: "s005", name: "Butter Sauce", description: "Rich and buttery sauce, classic comfort.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Buttery", "Rich", "Classic"] },
+    { id: "s006", name: "Mushroom Sauce", description: "Earthy mushroom sauce, creamy and savory.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Mushroom", "Earthy", "Creamy"] },
+    { id: "s007", name: "Creamy Garlic Lemon", description: "Creamy sauce with garlic and a hint of lemon zest.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Garlic", "Lemon", "Creamy"] },
+    { id: "s008", name: "Spinach Love", description: "Spinach-based sauce, healthy and vibrant.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Spinach", "Healthy", "Vibrant"] },
   ];
 
   const handleAddToCart = (sauce: typeof seasonalSauces[0]) => {

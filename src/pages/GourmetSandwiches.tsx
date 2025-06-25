@@ -14,30 +14,16 @@ const GourmetSandwiches = () => {
   };
 
   const gourmetSandwiches = [
-    {
-      id: "gs001",
-      name: "Classic Club",
-      description: "A delicious sandwich with layers of turkey, bacon, lettuce, tomato, and mayonnaise.",
-      price: "₹350",
-      image: "/lovable-uploads-optimized/gourmet sandwich.jpg",
-      features: ["Hearty", "Classic", "Triple-decker"]
-    },
-    {
-      id: "gs002",
-      name: "Caprese",
-      description: "A simple yet elegant sandwich with fresh mozzarella, tomatoes, basil, and a balsamic glaze.",
-      price: "₹300",
-      image: "/lovable-uploads-optimized/gourmet sandwich.jpg",
-      features: ["Vegetarian", "Fresh", "Italian"]
-    },
-    {
-      id: "gs003",
-      name: "Spicy Chicken",
-      description: "A fiery sandwich with spicy grilled chicken, jalapeños, and a cooling yogurt sauce.",
-      price: "₹380",
-      image: "/lovable-uploads-optimized/gourmet sandwich.jpg",
-      features: ["Spicy", "Grilled", "Flavorful"]
-    },
+    { id: "gs001", name: "Mustard Egg", description: "Egg sandwich with a tangy mustard twist.", price: "₹120", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Egg", "Tangy", "Protein-rich"] },
+    { id: "gs002", name: "Veg", description: "Classic vegetarian sandwich with fresh veggies.", price: "₹100", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Vegetarian", "Fresh", "Healthy"] },
+    { id: "gs003", name: "Club", description: "Triple-layered club sandwich with assorted fillings.", price: "₹150", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Hearty", "Layered", "Classic"] },
+    { id: "gs004", name: "Coleslaw", description: "Creamy coleslaw sandwich, perfect for a light bite.", price: "₹110", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Creamy", "Vegetarian", "Light"] },
+    { id: "gs005", name: "Chicken Tikka", description: "Spicy chicken tikka in a soft sandwich.", price: "₹140", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Spicy", "Chicken", "Indian"] },
+    { id: "gs006", name: "Paneer Tikka", description: "Paneer tikka sandwich with Indian spices.", price: "₹130", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Paneer", "Spicy", "Vegetarian"] },
+    { id: "gs007", name: "Chicken Coleslaw", description: "Chicken and creamy coleslaw in every bite.", price: "₹135", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Chicken", "Creamy", "Fusion"] },
+    { id: "gs008", name: "Mustard honey chicken", description: "Chicken sandwich with mustard and honey glaze.", price: "₹145", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Chicken", "Sweet & Tangy", "Signature"] },
+    { id: "gs009", name: "Nutella sandwich", description: "Sweet sandwich with rich Nutella spread.", price: "₹90", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Sweet", "Nutella", "Kids' favorite"] },
+    { id: "gs010", name: "MMM Sandwich", description: "Our special MMM sandwich - a must try!", price: "₹160", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Special", "Chef's Choice", "Unique"] },
   ];
 
   const handleAddToCart = (sandwich: typeof gourmetSandwiches[0]) => {
@@ -52,7 +38,6 @@ const GourmetSandwiches = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       <Navigation />
-      
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
           <button
@@ -62,18 +47,16 @@ const GourmetSandwiches = () => {
             <ChevronLeft className="w-5 h-5 mr-2" />
             Back to Products
           </button>
-          
           <div className="text-center">
             <h1 className="text-5xl font-bold text-gray-800 mb-6">
               Our <span className="text-orange-600">Gourmet Sandwiches</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-              Freshly made daily with premium ingredients.
+              Freshly made daily with premium ingredients. Find your favorite from our delicious sandwich menu!
             </p>
           </div>
         </div>
       </section>
-
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -87,11 +70,9 @@ const GourmetSandwiches = () => {
                     loading="lazy"
                   />
                 </div>
-                
                 <div className="p-6 flex-grow flex flex-col">
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{sandwich.name}</h3>
                   <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{sandwich.description}</p>
-                  
                   <div className="mb-4">
                     <div className="flex flex-wrap gap-2">
                       {sandwich.features.map((feature, idx) => (
@@ -104,11 +85,9 @@ const GourmetSandwiches = () => {
                       ))}
                     </div>
                   </div>
-                  
                   <div className="flex items-center justify-between mb-4 mt-auto">
-                    <span className="text-lg font-bold text-orange-600">{`₹${parsePrice(sandwich.price)}`}</span>
+                    <span className="text-lg font-bold text-orange-600">{sandwich.price}</span>
                   </div>
-                  
                   <button
                     onClick={() => handleAddToCart(sandwich)}
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
@@ -122,7 +101,6 @@ const GourmetSandwiches = () => {
           </div>
         </div>
       </section>
-
       <SimpleFooter />
     </div>
   );

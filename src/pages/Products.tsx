@@ -10,34 +10,34 @@ const categories = [
     id: "ready-to-cook",
     title: "Ready to Cook",
     subtitle: "Fresh ingredients, pre-prepared",
-    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
+    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).webp",
     subcategories: [
-      { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/lovable-uploads-optimized/drypasta.jpg" },
-      { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/fresh pasta.jpg" },
-      { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/lovable-uploads-optimized/seasonal sauces.jpg" }
+      { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/lovable-uploads-optimized/drypasta.webp" },
+      { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/fresh pasta.webp" },
+      { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/lovable-uploads-optimized/seasonal sauces.webp" }
     ]
   },
   {
     id: "ready-to-eat",
     title: "Ready to Eat",
     subtitle: "Delicious meals, instantly served",
-    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
+    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).webp",
     subcategories: [
-      { name: "Gourmet Sandwiches", description: "Freshly made daily", image: "/lovable-uploads-optimized/gourmet sandwich.jpg" },
-      { name: "Fresh Salad Bowls", description: "Crisp & healthy options", image: "/lovable-uploads-optimized/fresh salad.jpg" },
-      { name: "Hot Curry Meals", description: "Authentic flavors", image: "/lovable-uploads-optimized/hot curry.jpg" },
-      { name: "Dessert Platters", description: "Sweet treats", image: "/lovable-uploads-optimized/dessert platter.jpg" },
-      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/cooked pasta.jpg" }
+      { name: "Gourmet Sandwiches", description: "Freshly made daily", image: "/lovable-uploads-optimized/gourmet sandwich.webp" },
+      { name: "Fresh Salad Bowls", description: "Crisp & healthy options", image: "/lovable-uploads-optimized/fresh salad.webp" },
+      { name: "Hot Curry Meals", description: "Authentic flavors", image: "/lovable-uploads-optimized/hot curry.webp" },
+      { name: "Dessert Platters", description: "Sweet treats", image: "/lovable-uploads-optimized/dessert platter.webp" },
+      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/cooked pasta.webp" }
     ]
   },
   {
     id: "services",
     title: "Our Services",
     subtitle: "Professional catering & workshops",
-    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).png",
+    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).webp",
     subcategories: [
-      { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/lovable-uploads-optimized/catering (1).jpg" },
-      { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/lovable-uploads-optimized/pasta workshop.jpg" }
+      { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/lovable-uploads-optimized/catering (1).webp" },
+      { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/lovable-uploads-optimized/pasta workshop.webp" }
     ]
   }
 ];

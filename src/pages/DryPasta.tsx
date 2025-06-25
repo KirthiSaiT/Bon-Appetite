@@ -20,7 +20,7 @@ const DryPasta = () => {
       name: "Spaghetti",
       description: "Long, thin cylindrical pasta. Perfect for classic Italian dishes like Carbonara, Marinara, and Aglio e Olio.",
       price: "₹120 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.jpg",
+      image: "/lovable-uploads-optimized/drypasta.webp",
       features: ["Traditional Italian", "Versatile", "Quick cooking"]
     },
     {
@@ -28,7 +28,7 @@ const DryPasta = () => {
       name: "Penne",
       description: "Cylindrical pasta with angled ends. Great for chunky sauces and baked pasta dishes.",
       price: "₹130 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.jpg",
+      image: "/lovable-uploads-optimized/drypasta.webp",
       features: ["Ridged surface", "Sauce-friendly", "Baking perfect"]
     },
     {
@@ -36,7 +36,7 @@ const DryPasta = () => {
       name: "Fusilli",
       description: "Corkscrew-shaped pasta that holds sauces beautifully. Ideal for creamy sauces and pasta salads.",
       price: "₹140 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.jpg",
+      image: "/lovable-uploads-optimized/drypasta.webp",
       features: ["Spiral shape", "Sauce-trapping", "Salad-friendly"]
     },
     {
@@ -44,7 +44,7 @@ const DryPasta = () => {
       name: "Farfalle",
       description: "Bow-tie shaped pasta. Elegant presentation and perfect for light sauces and cream-based dishes.",
       price: "₹150 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.jpg",
+      image: "/lovable-uploads-optimized/drypasta.webp",
       features: ["Bow-tie shape", "Elegant", "Light sauces"]
     },
     {
@@ -52,7 +52,7 @@ const DryPasta = () => {
       name: "Rigatoni",
       description: "Large tubular pasta with ridges. Excellent for hearty meat sauces and baked dishes.",
       price: "₹160 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.jpg",
+      image: "/lovable-uploads-optimized/drypasta.webp",
       features: ["Large tubes", "Hearty sauces", "Baking ideal"]
     },
     {
@@ -60,7 +60,7 @@ const DryPasta = () => {
       name: "Linguine",
       description: "Flat, ribbon-like pasta. Perfect for seafood dishes and light oil-based sauces.",
       price: "₹145 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.jpg",
+      image: "/lovable-uploads-optimized/drypasta.webp",
       features: ["Flat ribbons", "Seafood pairing", "Light sauces"]
     },
     {
@@ -68,7 +68,7 @@ const DryPasta = () => {
       name: "Orecchiette",
       description: "Small ear-shaped pasta. Traditional from Puglia, great with vegetable sauces and pesto.",
       price: "₹170 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.jpg",
+      image: "/lovable-uploads-optimized/drypasta.webp",
       features: ["Ear-shaped", "Puglia tradition", "Vegetable-friendly"]
     },
     {
@@ -76,7 +76,7 @@ const DryPasta = () => {
       name: "Conchiglie",
       description: "Shell-shaped pasta. Perfect for capturing chunky sauces and cheese-based dishes.",
       price: "₹155 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.jpg",
+      image: "/lovable-uploads-optimized/drypasta.webp",
       features: ["Shell shape", "Sauce-capturing", "Cheese-friendly"]
     }
   ];

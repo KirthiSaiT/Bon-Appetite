@@ -431,7 +431,7 @@ const Products = () => {
 
       {/* Pasta Workshop Modal */}
       {showWorkshopModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
               <div className="flex items-center justify-between">
@@ -471,39 +471,12 @@ const Products = () => {
         </div>
       )}
 
-      {/* Thank You Message */}
+      {/* Thank You Toast */}
       {showThankYou && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-xl p-8 max-w-md w-full text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <ShoppingCart className="w-8 h-8 text-green-600" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-800 mb-2">Order Placed!</h3>
-            <p className="text-gray-600 mb-4">
-              Thank you for purchasing with Bon Appétit! We'll contact you soon with order confirmation.
-            </p>
-            <div className="text-sm text-gray-500">
-              This message will close automatically...
-            </div>
-          </div>
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transition-all">
+          Thank you! Your request has been received.
         </div>
       )}
-
-      {/* Order CTA Section */}
-      <section className="py-16 px-4 bg-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Ready to Order?</h2>
-          <p className="text-gray-600 mb-8">
-            Explore our categories and place your order for fresh, delicious meals delivered right to your doorstep.
-          </p>
-          <a 
-            href="/contact" 
-            className="inline-block bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
-          >
-            Contact Us
-          </a>
-        </div>
-      </section>
 
       <SimpleFooter />
     </div>

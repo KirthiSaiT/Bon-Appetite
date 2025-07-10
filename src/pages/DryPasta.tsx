@@ -3,6 +3,7 @@ import { ChevronLeft, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
+import React from "react"; // Added missing import
 
 const DryPasta = () => {
   const navigate = useNavigate();
@@ -17,77 +18,85 @@ const DryPasta = () => {
   const dryPastaVarieties = [
     {
       id: "dp001",
-      name: "Spaghetti",
-      description: "Long, thin cylindrical pasta. Perfect for classic Italian dishes like Carbonara, Marinara, and Aglio e Olio.",
+      name: "Wheat",
+      description: "Classic wheat pasta, made from premium durum wheat for a wholesome taste and perfect texture.",
       price: "₹120 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Traditional Italian", "Versatile", "Quick cooking"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
     },
     {
       id: "dp002",
-      name: "Penne",
-      description: "Cylindrical pasta with angled ends. Great for chunky sauces and baked pasta dishes.",
+      name: "Fettucine",
+      description: "Flat, thick pasta ribbons ideal for creamy and hearty sauces.",
       price: "₹130 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Ridged surface", "Sauce-friendly", "Baking perfect"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
     },
     {
       id: "dp003",
-      name: "Fusilli",
-      description: "Corkscrew-shaped pasta that holds sauces beautifully. Ideal for creamy sauces and pasta salads.",
+      name: "Farfalle",
+      description: "Bow-tie shaped pasta, perfect for light sauces and elegant presentations.",
       price: "₹140 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Spiral shape", "Sauce-trapping", "Salad-friendly"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
     },
     {
       id: "dp004",
-      name: "Farfalle",
-      description: "Bow-tie shaped pasta. Elegant presentation and perfect for light sauces and cream-based dishes.",
-      price: "₹150 per 500g",
+      name: "Spaghetti",
+      description: "Long, thin cylindrical pasta, a staple for classic Italian dishes.",
+      price: "₹120 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Bow-tie shape", "Elegant", "Light sauces"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
     },
     {
       id: "dp005",
-      name: "Rigatoni",
-      description: "Large tubular pasta with ridges. Excellent for hearty meat sauces and baked dishes.",
-      price: "₹160 per 500g",
+      name: "Heart",
+      description: "Fun heart-shaped pasta, perfect for special occasions and kids.",
+      price: "₹150 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Large tubes", "Hearty sauces", "Baking ideal"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
     },
     {
       id: "dp006",
-      name: "Linguine",
-      description: "Flat, ribbon-like pasta. Perfect for seafood dishes and light oil-based sauces.",
+      name: "Star",
+      description: "Star-shaped pasta, great for soups and adding a playful touch to meals.",
       price: "₹145 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Flat ribbons", "Seafood pairing", "Light sauces"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
     },
     {
       id: "dp007",
-      name: "Orecchiette",
-      description: "Small ear-shaped pasta. Traditional from Puglia, great with vegetable sauces and pesto.",
-      price: "₹170 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Ear-shaped", "Puglia tradition", "Vegetable-friendly"]
-    },
-    {
-      id: "dp008",
-      name: "Conchiglie",
-      description: "Shell-shaped pasta. Perfect for capturing chunky sauces and cheese-based dishes.",
+      name: "Flower",
+      description: "Flower-shaped pasta, brings a decorative and delightful look to your dishes.",
       price: "₹155 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Shell shape", "Sauce-capturing", "Cheese-friendly"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
     }
   ];
 
-  const handleAddToCart = (pasta: typeof dryPastaVarieties[0]) => {
-    addToCart({
-      id: pasta.id,
-      name: pasta.name,
-      price: parsePrice(pasta.price),
-      image: pasta.image,
-    });
+  // New state for dropdown
+  const [selectedPasta, setSelectedPasta] = React.useState<null | typeof dryPastaVarieties[0]>(null);
+  const [selectedFlavour, setSelectedFlavour] = React.useState<string>("");
+  const [showDropdown, setShowDropdown] = React.useState(false);
+
+  const handleAddToCartClick = (pasta: typeof dryPastaVarieties[0]) => {
+    setSelectedPasta(pasta);
+    setSelectedFlavour("");
+    setShowDropdown(true);
+  };
+
+  const handleFlavourSelect = (flavour: string) => {
+    if (selectedPasta) {
+      addToCart({
+        id: selectedPasta.id + "-" + flavour,
+        name: `${selectedPasta.name} - ${flavour}`,
+        price: parsePrice(selectedPasta.price),
+        image: selectedPasta.image,
+      });
+    }
+    setShowDropdown(false);
+    setSelectedPasta(null);
+    setSelectedFlavour("");
   };
 
   return (
@@ -138,27 +147,20 @@ const DryPasta = () => {
                 
                 <div className="p-6 flex flex-col flex-grow">
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{pasta.name}</h3>
+                  <div className="mb-2 flex flex-wrap gap-2">
+                    {pasta.features.map((feature, idx) => (
+                      <span 
+                        key={idx}
+                        className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
                   <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{pasta.description}</p>
-                  
-                  <div className="mb-4">
-                    <div className="flex flex-wrap gap-2">
-                      {pasta.features.map((feature, idx) => (
-                        <span 
-                          key={idx}
-                          className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full"
-                        >
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-between mb-4 mt-auto">
-                    <span className="text-lg font-bold text-orange-600">{`₹${parsePrice(pasta.price)}`}</span>
-                  </div>
-                  
+                  {/* Price removed from here */}
                   <button
-                    onClick={() => handleAddToCart(pasta)}
+                    onClick={() => handleAddToCartClick(pasta)}
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                   >
                     <ShoppingCart className="w-4 h-4" />
@@ -169,6 +171,31 @@ const DryPasta = () => {
             ))}
           </div>
         </div>
+        {/* Flavour Dropdown Modal */}
+        {showDropdown && selectedPasta && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+            <div className="bg-white rounded-lg shadow-lg p-8 min-w-[300px]">
+              <h3 className="text-lg font-bold mb-4">Select Flavour for {selectedPasta.name}</h3>
+              <div className="flex flex-col gap-2 mb-4">
+                {selectedPasta.features.map((flavour) => (
+                  <button
+                    key={flavour}
+                    onClick={() => handleFlavourSelect(flavour)}
+                    className="w-full bg-orange-100 hover:bg-orange-200 text-orange-800 px-4 py-2 rounded-lg font-semibold transition-colors"
+                  >
+                    {flavour}
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowDropdown(false)}
+                className="w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Info Section */}

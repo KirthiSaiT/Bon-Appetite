@@ -23,9 +23,9 @@ const CookedPasta = () => {
   const [extraCheese, setExtraCheese] = useState(false);
 
   const pastaOptions = [
-    { name: 'Fettuccine', variants: ['Plain'] },
-    { name: 'Farfalle', variants: ['Paprika'] },
-    { name: 'Spaghetti', variants: ['Spinach'] },
+    { name: 'Fettuccine', variants: ['Plain', 'Paprika', 'Spinach', 'Beetroot', 'Wheat'] },
+    { name: 'Farfalle', variants: ['Plain', 'Paprika', 'Spinach', 'Beetroot', 'Wheat'] },
+    { name: 'Spaghetti', variants: ['Plain', 'Paprika', 'Spinach', 'Beetroot', 'Wheat'] },
   ];
   const ravioliOptions = [
     { name: 'Ricotta Spinach', variants: ['Beetroot'] },
@@ -109,8 +109,8 @@ const CookedPasta = () => {
                     Ravioli Combo
                   </button>
                 </div>
-              </div>
-
+                </div>
+                
               {/* Step 2: Pasta/Ravioli & Variant */}
               <div className="mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -219,9 +219,9 @@ const CookedPasta = () => {
                     />
                     <span className="ml-2 text-gray-700">Extra Cheese <span className="text-xs text-orange-500">(+₹50)</span></span>
                   </label>
-                </div>
-              </div>
-
+                    </div>
+                  </div>
+                  
               {/* Step 5: Summary & Add to Cart */}
               <div className="bg-orange-50 rounded-2xl p-4 mb-4 shadow-inner">
                 <div className="flex flex-col gap-1 text-sm text-gray-700">

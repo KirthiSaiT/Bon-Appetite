@@ -133,7 +133,6 @@ const FreshPasta = () => {
                     src={pasta.image} 
                     alt={pasta.name}
                     className="w-full h-full object-cover"
-                    loading="lazy"
                   />
                 </div>
                 <div className="p-6 flex-grow flex flex-col">

@@ -67,7 +67,6 @@ const GourmetSandwiches = () => {
                     src={sandwich.image} 
                     alt={sandwich.name}
                     className="w-full h-full object-cover"
-                    loading="lazy"
                   />
                 </div>
                 <div className="p-6 flex-grow flex flex-col">

@@ -84,7 +84,6 @@ const HotCurryMeals = () => {
                     src={curry.image} 
                     alt={curry.name}
                     className="w-full h-full object-cover"
-                    loading="lazy"
                   />
                 </div>
                 

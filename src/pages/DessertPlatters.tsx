@@ -65,7 +65,6 @@ const DessertPlatters = () => {
                     src={dessert.image} 
                     alt={dessert.name}
                     className="w-full h-full object-cover"
-                    loading="lazy"
                   />
                 </div>
                 

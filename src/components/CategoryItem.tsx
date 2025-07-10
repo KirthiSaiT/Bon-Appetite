@@ -48,7 +48,6 @@ const CategoryItem = ({
               src={category.image} 
               alt={category.title}
               className="w-12 h-12 object-cover rounded-full"
-              loading="lazy"
             />
           </div>
           <div>
@@ -74,7 +73,6 @@ const CategoryItem = ({
                       src={subcategory.image || category.image} 
                       alt={subcategory.name}
                       className="w-12 h-12 object-cover rounded-full"
-                      loading="lazy"
                     />
                   </div>
                   <h4 className="text-lg font-semibold text-gray-800 mb-2">{subcategory.name}</h4>

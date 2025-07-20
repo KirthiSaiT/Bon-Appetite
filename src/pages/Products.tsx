@@ -23,11 +23,8 @@ const categories = [
     subtitle: "Delicious meals, instantly served",
     image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).webp",
     subcategories: [
-      { name: "Gourmet Sandwiches", description: "Freshly made daily", image: "/lovable-uploads-optimized/gourmet sandwich.webp" },
-      { name: "Fresh Salad Bowls", description: "Crisp & healthy options", image: "/lovable-uploads-optimized/fresh salad.webp" },
-      { name: "Hot Curry Meals", description: "Authentic flavors", image: "/lovable-uploads-optimized/hot curry.webp" },
-      { name: "Dessert Platters", description: "Sweet treats", image: "/lovable-uploads-optimized/dessert platter.webp" },
-      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/cooked pasta.webp" }
+      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/cooked pasta.webp" },
+      { name: "Dessert Platters", description: "Sweet treats", image: "/lovable-uploads-optimized/dessert platter.webp" }
     ]
   },
   {

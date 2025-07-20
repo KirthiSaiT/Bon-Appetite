@@ -29,7 +29,7 @@ const FreshPasta = () => {
       description: "Flat, thick pasta ribbons ideal for creamy and hearty sauces.",
       price: "₹180 per 250g",
       image: "/lovable-uploads-optimized/fresh pasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "fp003",
@@ -37,7 +37,7 @@ const FreshPasta = () => {
       description: "Bow-tie shaped pasta, perfect for light sauces and elegant presentations.",
       price: "₹180 per 250g",
       image: "/lovable-uploads-optimized/fresh pasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "fp004",
@@ -45,7 +45,7 @@ const FreshPasta = () => {
       description: "Long, thin cylindrical pasta, a staple for classic Italian dishes.",
       price: "₹180 per 250g",
       image: "/lovable-uploads-optimized/fresh pasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "fp005",
@@ -53,7 +53,7 @@ const FreshPasta = () => {
       description: "Fun heart-shaped pasta, perfect for special occasions and kids.",
       price: "₹180 per 250g",
       image: "/lovable-uploads-optimized/fresh pasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "fp006",
@@ -61,7 +61,7 @@ const FreshPasta = () => {
       description: "Star-shaped pasta, great for soups and adding a playful touch to meals.",
       price: "₹180 per 250g",
       image: "/lovable-uploads-optimized/fresh pasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "fp007",
@@ -69,34 +69,23 @@ const FreshPasta = () => {
       description: "Flower-shaped pasta, brings a decorative and delightful look to your dishes.",
       price: "₹180 per 250g",
       image: "/lovable-uploads-optimized/fresh pasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     }
   ];
 
-  // Dropdown/modal state for type selection
-  const [selectedPasta, setSelectedPasta] = React.useState<null | typeof freshPastaTypes[0]>(null);
-  const [selectedType, setSelectedType] = React.useState<string>("");
-  const [showDropdown, setShowDropdown] = React.useState(false);
-
-  const handleAddToCartClick = (pasta: typeof freshPastaTypes[0]) => {
-    setSelectedPasta(pasta);
-    setSelectedType("");
-    setShowDropdown(true);
-  };
-
-  const handleTypeSelect = (type: string) => {
-    if (selectedPasta) {
-      addToCart({
-        id: selectedPasta.id + "-" + type,
-        name: `${selectedPasta.name} - ${type}`,
-        price: parsePrice(selectedPasta.price),
-        image: selectedPasta.image,
-      });
-    }
-    setShowDropdown(false);
-    setSelectedPasta(null);
-    setSelectedType("");
-  };
+  // Flattened array: each flavor is a separate item
+  const freshPastaFlavours = freshPastaTypes.flatMap((pasta) =>
+    pasta.features.map((flavour) => ({
+      id: pasta.id + '-' + flavour,
+      name: `${pasta.name} ${flavour}`,
+      description: pasta.description,
+      price: pasta.price,
+      image: pasta.image,
+      baseId: pasta.id,
+      baseName: pasta.name,
+      flavour,
+    }))
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -126,31 +115,27 @@ const FreshPasta = () => {
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {freshPastaTypes.map((pasta) => (
-              <div key={pasta.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+            {freshPastaFlavours.map((item) => (
+              <div key={item.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
                 <div className="h-48 bg-orange-100 flex items-center justify-center">
                   <img 
-                    src={pasta.image} 
-                    alt={pasta.name}
+                    src={item.image} 
+                    alt={item.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <div className="p-6 flex-grow flex flex-col">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{pasta.name}</h3>
-                  <div className="mb-2 flex flex-wrap gap-2">
-                    {pasta.features.map((feature, idx) => (
-                      <span 
-                        key={idx}
-                        className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full"
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{pasta.description}</p>
-                  {/* Price removed from here */}
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">{item.name}</h3>
+                  <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full mb-2">{item.flavour}</span>
+                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{item.description}</p>
+                  <span className="text-lg font-bold text-orange-600 mb-2">{item.price}</span>
                   <button
-                    onClick={() => handleAddToCartClick(pasta)}
+                    onClick={() => addToCart({
+                      id: item.id,
+                      name: item.name,
+                      price: parsePrice(item.price),
+                      image: item.image,
+                    })}
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                   >
                     <ShoppingCart className="w-4 h-4" />
@@ -161,31 +146,6 @@ const FreshPasta = () => {
             ))}
           </div>
         </div>
-        {/* Type Dropdown Modal */}
-        {showDropdown && selectedPasta && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white rounded-lg shadow-lg p-8 min-w-[300px]">
-              <h3 className="text-lg font-bold mb-4">Select Type for {selectedPasta.name}</h3>
-              <div className="flex flex-col gap-2 mb-4">
-                {selectedPasta.features.map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => handleTypeSelect(type)}
-                    className="w-full bg-orange-100 hover:bg-orange-200 text-orange-800 px-4 py-2 rounded-lg font-semibold transition-colors"
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
-              <button
-                onClick={() => setShowDropdown(false)}
-                className="w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
       </section>
       
       <SimpleFooter />

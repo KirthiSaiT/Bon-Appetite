@@ -17,20 +17,12 @@ const DryPasta = () => {
 
   const dryPastaVarieties = [
     {
-      id: "dp001",
-      name: "Wheat",
-      description: "Classic wheat pasta, made from premium durum wheat for a wholesome taste and perfect texture.",
-      price: "₹120 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
-    },
-    {
       id: "dp002",
       name: "Fettucine",
       description: "Flat, thick pasta ribbons ideal for creamy and hearty sauces.",
       price: "₹130 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "dp003",
@@ -38,7 +30,7 @@ const DryPasta = () => {
       description: "Bow-tie shaped pasta, perfect for light sauces and elegant presentations.",
       price: "₹140 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "dp004",
@@ -46,7 +38,7 @@ const DryPasta = () => {
       description: "Long, thin cylindrical pasta, a staple for classic Italian dishes.",
       price: "₹120 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "dp005",
@@ -54,7 +46,7 @@ const DryPasta = () => {
       description: "Fun heart-shaped pasta, perfect for special occasions and kids.",
       price: "₹150 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "dp006",
@@ -62,7 +54,7 @@ const DryPasta = () => {
       description: "Star-shaped pasta, great for soups and adding a playful touch to meals.",
       price: "₹145 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
       id: "dp007",
@@ -70,34 +62,23 @@ const DryPasta = () => {
       description: "Flower-shaped pasta, brings a decorative and delightful look to your dishes.",
       price: "₹155 per 500g",
       image: "/lovable-uploads-optimized/drypasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot"]
+      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     }
   ];
 
-  // New state for dropdown
-  const [selectedPasta, setSelectedPasta] = React.useState<null | typeof dryPastaVarieties[0]>(null);
-  const [selectedFlavour, setSelectedFlavour] = React.useState<string>("");
-  const [showDropdown, setShowDropdown] = React.useState(false);
-
-  const handleAddToCartClick = (pasta: typeof dryPastaVarieties[0]) => {
-    setSelectedPasta(pasta);
-    setSelectedFlavour("");
-    setShowDropdown(true);
-  };
-
-  const handleFlavourSelect = (flavour: string) => {
-    if (selectedPasta) {
-      addToCart({
-        id: selectedPasta.id + "-" + flavour,
-        name: `${selectedPasta.name} - ${flavour}`,
-        price: parsePrice(selectedPasta.price),
-        image: selectedPasta.image,
-      });
-    }
-    setShowDropdown(false);
-    setSelectedPasta(null);
-    setSelectedFlavour("");
-  };
+  // Flattened array: each flavor is a separate item
+  const dryPastaFlavours = dryPastaVarieties.flatMap((pasta) =>
+    pasta.features.map((flavour) => ({
+      id: pasta.id + '-' + flavour,
+      name: `${pasta.name} ${flavour}`,
+      description: pasta.description,
+      price: pasta.price,
+      image: pasta.image,
+      baseId: pasta.id,
+      baseName: pasta.name,
+      flavour,
+    }))
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -134,32 +115,27 @@ const DryPasta = () => {
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {dryPastaVarieties.map((pasta) => (
-              <div key={pasta.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+            {dryPastaFlavours.map((item) => (
+              <div key={item.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
                 <div className="h-48 bg-orange-100 flex items-center justify-center">
                   <img 
-                    src={pasta.image} 
-                    alt={pasta.name}
+                    src={item.image} 
+                    alt={item.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                
                 <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{pasta.name}</h3>
-                  <div className="mb-2 flex flex-wrap gap-2">
-                    {pasta.features.map((feature, idx) => (
-                      <span 
-                        key={idx}
-                        className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full"
-                      >
-                        {feature}
-                      </span>
-                    ))}
-                  </div>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{pasta.description}</p>
-                  {/* Price removed from here */}
+                  <h3 className="text-xl font-bold text-gray-800 mb-2">{item.name}</h3>
+                  <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full mb-2">{item.flavour}</span>
+                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{item.description}</p>
+                  <span className="text-lg font-bold text-orange-600 mb-2">{item.price}</span>
                   <button
-                    onClick={() => handleAddToCartClick(pasta)}
+                    onClick={() => addToCart({
+                      id: item.id,
+                      name: item.name,
+                      price: parsePrice(item.price),
+                      image: item.image,
+                    })}
                     className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                   >
                     <ShoppingCart className="w-4 h-4" />
@@ -170,31 +146,6 @@ const DryPasta = () => {
             ))}
           </div>
         </div>
-        {/* Flavour Dropdown Modal */}
-        {showDropdown && selectedPasta && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white rounded-lg shadow-lg p-8 min-w-[300px]">
-              <h3 className="text-lg font-bold mb-4">Select Flavour for {selectedPasta.name}</h3>
-              <div className="flex flex-col gap-2 mb-4">
-                {selectedPasta.features.map((flavour) => (
-                  <button
-                    key={flavour}
-                    onClick={() => handleFlavourSelect(flavour)}
-                    className="w-full bg-orange-100 hover:bg-orange-200 text-orange-800 px-4 py-2 rounded-lg font-semibold transition-colors"
-                  >
-                    {flavour}
-                  </button>
-                ))}
-              </div>
-              <button
-                onClick={() => setShowDropdown(false)}
-                className="w-full mt-2 bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg font-semibold transition-colors"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        )}
       </section>
 
       {/* Info Section */}

@@ -53,7 +53,7 @@ const CookedPasta = () => {
       id: `combo-${comboType}-${selectedPasta || selectedRavioli}-${selectedVariant}-${selectedSauce}`,
       name: extras ? `${name} + ${extras}` : name,
       price: getComboPrice(),
-      image: '/lovable-uploads-optimized/cooked pasta.webp',
+      image: '/assets/cooked pasta.webp',
     });
   };
 

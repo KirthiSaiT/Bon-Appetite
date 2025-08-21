@@ -14,9 +14,9 @@ const SeasonalSauces = () => {
   };
 
   const seasonalSauces = [
-    { id: "s009", name: "Tomato Basil Sauce", description: "Classic Italian sauce made with ripe tomatoes and fresh basil.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Tomato", "Basil", "Classic"] },
-    { id: "s010", name: "Arrabbita", description: "Spicy tomato sauce with garlic and chili, a bold Italian favorite.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Spicy", "Tomato", "Chili"] },
-    { id: "s011", name: "Pesto", description: "Fresh basil pesto with pine nuts, garlic, and parmesan.", price: "--", image: "/lovable-uploads-optimized/seasonal sauces.jpg", features: ["Basil", "Pine nuts", "Parmesan"] },
+    { id: "s009", name: "Tomato Basil Sauce", description: "Classic Italian sauce made with ripe tomatoes and fresh basil.", price: "--", image: "/assets/seasonal sauces.jpg", features: ["Tomato", "Basil", "Classic"] },
+    { id: "s010", name: "Arrabbita", description: "Spicy tomato sauce with garlic and chili, a bold Italian favorite.", price: "--", image: "/assets/seasonal sauces.jpg", features: ["Spicy", "Tomato", "Chili"] },
+    { id: "s011", name: "Pesto", description: "Fresh basil pesto with pine nuts, garlic, and parmesan.", price: "--", image: "/assets/seasonal sauces.jpg", features: ["Basil", "Pine nuts", "Parmesan"] },
   ];
 
   const handleAddToCart = (sauce: typeof seasonalSauces[0]) => {

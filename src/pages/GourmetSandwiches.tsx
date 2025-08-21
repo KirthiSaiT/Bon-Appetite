@@ -14,16 +14,16 @@ const GourmetSandwiches = () => {
   };
 
   const gourmetSandwiches = [
-    { id: "gs001", name: "Mustard Egg", description: "Egg sandwich with a tangy mustard twist.", price: "₹120", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Egg", "Tangy", "Protein-rich"] },
-    { id: "gs002", name: "Veg", description: "Classic vegetarian sandwich with fresh veggies.", price: "₹100", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Vegetarian", "Fresh", "Healthy"] },
-    { id: "gs003", name: "Club", description: "Triple-layered club sandwich with assorted fillings.", price: "₹150", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Hearty", "Layered", "Classic"] },
-    { id: "gs004", name: "Coleslaw", description: "Creamy coleslaw sandwich, perfect for a light bite.", price: "₹110", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Creamy", "Vegetarian", "Light"] },
-    { id: "gs005", name: "Chicken Tikka", description: "Spicy chicken tikka in a soft sandwich.", price: "₹140", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Spicy", "Chicken", "Indian"] },
-    { id: "gs006", name: "Paneer Tikka", description: "Paneer tikka sandwich with Indian spices.", price: "₹130", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Paneer", "Spicy", "Vegetarian"] },
-    { id: "gs007", name: "Chicken Coleslaw", description: "Chicken and creamy coleslaw in every bite.", price: "₹135", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Chicken", "Creamy", "Fusion"] },
-    { id: "gs008", name: "Mustard honey chicken", description: "Chicken sandwich with mustard and honey glaze.", price: "₹145", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Chicken", "Sweet & Tangy", "Signature"] },
-    { id: "gs009", name: "Nutella sandwich", description: "Sweet sandwich with rich Nutella spread.", price: "₹90", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Sweet", "Nutella", "Kids' favorite"] },
-    { id: "gs010", name: "MMM Sandwich", description: "Our special MMM sandwich - a must try!", price: "₹160", image: "/lovable-uploads-optimized/gourmet sandwich.webp", features: ["Special", "Chef's Choice", "Unique"] },
+    { id: "gs001", name: "Mustard Egg", description: "Egg sandwich with a tangy mustard twist.", price: "₹120", image: "/assets/gourmet sandwich.webp", features: ["Egg", "Tangy", "Protein-rich"] },
+    { id: "gs002", name: "Veg", description: "Classic vegetarian sandwich with fresh veggies.", price: "₹100", image: "/assets/gourmet sandwich.webp", features: ["Vegetarian", "Fresh", "Healthy"] },
+    { id: "gs003", name: "Club", description: "Triple-layered club sandwich with assorted fillings.", price: "₹150", image: "/assets/gourmet sandwich.webp", features: ["Hearty", "Layered", "Classic"] },
+    { id: "gs004", name: "Coleslaw", description: "Creamy coleslaw sandwich, perfect for a light bite.", price: "₹110", image: "/assets/gourmet sandwich.webp", features: ["Creamy", "Vegetarian", "Light"] },
+    { id: "gs005", name: "Chicken Tikka", description: "Spicy chicken tikka in a soft sandwich.", price: "₹140", image: "/assets/gourmet sandwich.webp", features: ["Spicy", "Chicken", "Indian"] },
+    { id: "gs006", name: "Paneer Tikka", description: "Paneer tikka sandwich with Indian spices.", price: "₹130", image: "/assets/gourmet sandwich.webp", features: ["Paneer", "Spicy", "Vegetarian"] },
+    { id: "gs007", name: "Chicken Coleslaw", description: "Chicken and creamy coleslaw in every bite.", price: "₹135", image: "/assets/gourmet sandwich.webp", features: ["Chicken", "Creamy", "Fusion"] },
+    { id: "gs008", name: "Mustard honey chicken", description: "Chicken sandwich with mustard and honey glaze.", price: "₹145", image: "/assets/gourmet sandwich.webp", features: ["Chicken", "Sweet & Tangy", "Signature"] },
+    { id: "gs009", name: "Nutella sandwich", description: "Sweet sandwich with rich Nutella spread.", price: "₹90", image: "/assets/gourmet sandwich.webp", features: ["Sweet", "Nutella", "Kids' favorite"] },
+    { id: "gs010", name: "MMM Sandwich", description: "Our special MMM sandwich - a must try!", price: "₹160", image: "/assets/gourmet sandwich.webp", features: ["Special", "Chef's Choice", "Unique"] },
   ];
 
   const handleAddToCart = (sandwich: typeof gourmetSandwiches[0]) => {

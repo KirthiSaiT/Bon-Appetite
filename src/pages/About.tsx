@@ -74,7 +74,7 @@ const About = () => {
           </div>
           <div className="rounded-lg overflow-hidden shadow-lg">
             <img 
-              src="/lovable-uploads-optimized/2.webp" 
+              src="/assets/2.webp" 
               alt="About Us - Bon Appetit Cafe"
               className="w-full h-full object-cover"
             />
@@ -124,7 +124,7 @@ const About = () => {
         {/* Bottom Image */}
         <div className="mb-16 rounded-lg overflow-hidden shadow-lg">
           <img 
-            src="/lovable-uploads-optimized/5.webp" 
+            src="/assets/5.webp" 
             alt="Bon Appetit Cafe - Italian Pasta" 
             className="w-full h-[80vh] object-cover" 
           />

@@ -14,11 +14,11 @@ const DessertPlatters = () => {
   };
 
   const dessertPlatters = [
-    { id: "d001", name: "Brownie", description: "Classic chocolate brownie, rich and fudgy.", price: "100", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Chocolate", "Classic", "Fudgy"] },
-    { id: "d002", name: "Walnut Brownie", description: "Brownie with crunchy walnuts for extra texture.", price: "120", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Chocolate", "Walnut", "Crunchy"] },
-    { id: "d003", name: "Chocolave cake", description: "Molten chocolate lava cake, gooey center.", price: "90", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Molten", "Chocolate", "Warm"] },
-    { id: "d004", name: "Ice cream - Vanilla", description: "Classic vanilla ice cream scoop.", price: "40", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Ice Cream", "Vanilla", "Chilled"] },
-    { id: "d005", name: "Ice cream - Chocolate", description: "Rich chocolate ice cream scoop.", price: "50", image: "/lovable-uploads-optimized/dessert platter.jpg", features: ["Ice Cream", "Chocolate", "Chilled"] },
+    { id: "d001", name: "Brownie", description: "Classic chocolate brownie, rich and fudgy.", price: "100", image: "/assets/dessert platter.jpg", features: ["Chocolate", "Classic", "Fudgy"] },
+    { id: "d002", name: "Walnut Brownie", description: "Brownie with crunchy walnuts for extra texture.", price: "120", image: "/assets/dessert platter.jpg", features: ["Chocolate", "Walnut", "Crunchy"] },
+    { id: "d003", name: "Chocolave cake", description: "Molten chocolate lava cake, gooey center.", price: "90", image: "/assets/dessert platter.jpg", features: ["Molten", "Chocolate", "Warm"] },
+    { id: "d004", name: "Ice cream - Vanilla", description: "Classic vanilla ice cream scoop.", price: "40", image: "/assets/dessert platter.jpg", features: ["Ice Cream", "Vanilla", "Chilled"] },
+    { id: "d005", name: "Ice cream - Chocolate", description: "Rich chocolate ice cream scoop.", price: "50", image: "/assets/dessert platter.jpg", features: ["Ice Cream", "Chocolate", "Chilled"] },
   ];
 
   const handleAddToCart = (dessert: typeof dessertPlatters[0]) => {

@@ -21,7 +21,7 @@ const DryPasta = () => {
       name: "Fettucine",
       description: "Flat, thick pasta ribbons ideal for creamy and hearty sauces.",
       price: "₹130 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.webp",
+      image: "/assets/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -29,7 +29,7 @@ const DryPasta = () => {
       name: "Farfalle",
       description: "Bow-tie shaped pasta, perfect for light sauces and elegant presentations.",
       price: "₹140 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.webp",
+      image: "/assets/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -37,7 +37,7 @@ const DryPasta = () => {
       name: "Spaghetti",
       description: "Long, thin cylindrical pasta, a staple for classic Italian dishes.",
       price: "₹120 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.webp",
+      image: "/assets/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -45,7 +45,7 @@ const DryPasta = () => {
       name: "Heart",
       description: "Fun heart-shaped pasta, perfect for special occasions and kids.",
       price: "₹150 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.webp",
+      image: "/assets/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -53,7 +53,7 @@ const DryPasta = () => {
       name: "Star",
       description: "Star-shaped pasta, great for soups and adding a playful touch to meals.",
       price: "₹145 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.webp",
+      image: "/assets/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -61,7 +61,7 @@ const DryPasta = () => {
       name: "Flower",
       description: "Flower-shaped pasta, brings a decorative and delightful look to your dishes.",
       price: "₹155 per 500g",
-      image: "/lovable-uploads-optimized/drypasta.webp",
+      image: "/assets/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     }
   ];

@@ -10,31 +10,31 @@ const categories = [
     id: "ready-to-cook",
     title: "Ready to Cook",
     subtitle: "Fresh ingredients, pre-prepared",
-    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).webp",
+    image: "/assets/BAC-Logo-E-Vertical (2).webp",
     subcategories: [
-      { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/lovable-uploads-optimized/drypasta.webp" },
-      { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/fresh pasta.webp" },
-      { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/lovable-uploads-optimized/seasonal sauces.webp" }
+      { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/assets/drypasta.webp" },
+      { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/assets/fresh pasta.webp" },
+      { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/assets/seasonal sauces.webp" }
     ]
   },
   {
     id: "ready-to-eat",
     title: "Ready to Eat",
     subtitle: "Delicious meals, instantly served",
-    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).webp",
+    image: "/assets/BAC-Logo-E-Vertical (2).webp",
     subcategories: [
-      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/lovable-uploads-optimized/cooked pasta.webp" },
-      { name: "Dessert Platters", description: "Sweet treats", image: "/lovable-uploads-optimized/dessert platter.webp" }
+      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/assets/cooked pasta.webp" },
+      { name: "Dessert Platters", description: "Sweet treats", image: "/assets/dessert platter.webp" }
     ]
   },
   {
     id: "services",
     title: "Our Services",
     subtitle: "Professional catering & workshops",
-    image: "/lovable-uploads-optimized/BAC-Logo-E-Vertical (2).webp",
+    image: "/assets/BAC-Logo-E-Vertical (2).webp",
     subcategories: [
-      { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/lovable-uploads-optimized/catering (1).webp" },
-      { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/lovable-uploads-optimized/pasta workshop.webp" }
+      { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/assets/catering (1).webp" },
+      { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/assets/pasta workshop.webp" }
     ]
   }
 ];

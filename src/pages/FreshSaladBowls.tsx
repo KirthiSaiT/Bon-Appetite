@@ -19,7 +19,7 @@ const FreshSaladBowls = () => {
       name: "Caesar Salad",
       description: "Crisp romaine lettuce, Parmesan cheese, croutons, and Caesar dressing.",
       price: "₹280",
-      image: "/lovable-uploads-optimized/fresh salad.jpg",
+      image: "/assets/fresh salad.jpg",
       features: ["Classic", "Vegetarian", "Creamy dressing"]
     },
     {
@@ -27,7 +27,7 @@ const FreshSaladBowls = () => {
       name: "Greek Salad",
       description: "A mix of cucumbers, tomatoes, olives, onions, and feta cheese with a lemon-herb vinaigrette.",
       price: "₹320",
-      image: "/lovable-uploads-optimized/fresh salad.jpg",
+      image: "/assets/fresh salad.jpg",
       features: ["Refreshing", "Healthy", "Tangy"]
     },
     {
@@ -35,7 +35,7 @@ const FreshSaladBowls = () => {
       name: "Quinoa Salad",
       description: "A nutritious salad with quinoa, mixed greens, chickpeas, and a lemon-tahini dressing.",
       price: "₹350",
-      image: "/lovable-uploads-optimized/fresh salad.jpg",
+      image: "/assets/fresh salad.jpg",
       features: ["Nutrient-rich", "Vegan", "Hearty"]
     },
   ];

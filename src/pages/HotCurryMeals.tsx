@@ -19,7 +19,7 @@ const HotCurryMeals = () => {
       name: "Chicken Tikka Masala",
       description: "Creamy and flavorful curry with grilled chicken in a spiced tomato sauce.",
       price: "₹400",
-      image: "/lovable-uploads-optimized/hot curry.jpg",
+      image: "/assets/hot curry.jpg",
       features: ["Rich & Creamy", "Popular", "Medium-spicy"]
     },
     {
@@ -27,7 +27,7 @@ const HotCurryMeals = () => {
       name: "Paneer Butter Masala",
       description: "A vegetarian favorite with soft paneer cubes in a buttery, tangy tomato gravy.",
       price: "₹380",
-      image: "/lovable-uploads-optimized/hot curry.jpg",
+      image: "/assets/hot curry.jpg",
       features: ["Vegetarian", "Creamy", "Mild"]
     },
     {
@@ -35,7 +35,7 @@ const HotCurryMeals = () => {
       name: "Lamb Rogan Josh",
       description: "Aromatic and tender lamb curry with a blend of fragrant spices.",
       price: "₹450",
-      image: "/lovable-uploads-optimized/hot curry.jpg",
+      image: "/assets/hot curry.jpg",
       features: ["Aromatic", "Tender", "Spicy"]
     },
   ];

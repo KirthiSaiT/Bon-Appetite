@@ -13,113 +13,73 @@ const Gallery = () => {
   const galleryItems = [
     {
       id: 1,
-      title: "Our Professional Kitchen",
+      title: "CM EVENT: Our Professional Kitchen",
       image: "/cmpic1.webp",
-      category: "Kitchen Space",
+      category: "CM EVENT",
       description: "State-of-the-art commercial kitchen where all the magic happens. Equipped with modern appliances and designed for efficiency.",
       location: "Main Kitchen",
       date: "Established 2023",
       story: "This is where our culinary dreams come to life. Every dish is crafted with precision in our spotless, professional-grade kitchen.",
       tags: ["Professional", "Modern", "Spacious"]
     },
+   
+    
+    
+   
     {
-      id: 2,
-      title: "Fresh Ingredients Collection",
-      image: "/assets/b2b50198-3ee8-4357-b982-4b2765b951c7.webp",
-      category: "Ingredients",
-      description: "We source the finest ingredients daily from local markets and trusted suppliers to ensure quality in every bite.",
-      location: "Storage Area",
-      date: "Daily Fresh",
-      story: "Quality starts with ingredients. We handpick every vegetable, spice, and protein to maintain our high standards.",
-      tags: ["Fresh", "Local", "Premium"]
-    },
-    {
-      id: 3,
-      title: "Signature Dish Creation",
-      image: "/assets/bonapp.webp",
-      category: "Cooking Process",
-      description: "Behind the scenes of creating our most popular dishes. Watch our chefs pour their heart into every preparation.",
-      location: "Cooking Station",
-      date: "In Progress",
-      story: "Each dish tells a story. From traditional family recipes to innovative fusion creations, we craft with passion.",
-      tags: ["Signature", "Handcrafted", "Love"]
-    },
-    {
-      id: 4,
-      title: "Team in Action",
-      image: "/assets/b2b50198-3ee8-4357-b982-4b2765b951c7.webp",
-      category: "Our Team",
-      description: "Meet our dedicated team of chefs and kitchen staff who work tirelessly to bring you exceptional food.",
-      location: "Kitchen Floor",
-      date: "Every Day",
-      story: "Our team is our strength. Together, we create culinary experiences that touch hearts and satisfy souls.",
-      tags: ["Teamwork", "Dedication", "Skilled"]
-    },
-    {
-      id: 5,
-      title: "Award-Winning Presentation",
-      image: "/assets/bonapp.webp",
-      category: "Achievements",
-      description: "Our commitment to excellence has earned us recognition and awards from food critics and customers alike.",
-      location: "Awards Corner",
-      date: "2024 Winner",
-      story: "Recognition motivates us to push boundaries and continue delivering exceptional culinary experiences.",
-      tags: ["Award", "Excellence", "Recognition"]
-    },
-    {
-      id: 6,
-      title: "Special Event Catering",
-      image: "/assets/b2b50198-3ee8-4357-b982-4b2765b951c7.webp",
-      category: "Events",
-      description: "Memorable moments from catering special events, bringing joy to celebrations across the city.",
+      id: 11,
+      title: "CM Event: Group Photo",
+      image: "/cmpic2.webp",
+      category: "CM EVENT",
+      description: "A memorable group photo from a recent CM Event, capturing the spirit of collaboration and joy.",
       location: "Event Venue",
-      date: "Recent Event",
-      story: "Being part of your special moments is what drives us. Every event is a new opportunity to create memories.",
-      tags: ["Events", "Celebration", "Memorable"]
+      date: "August 2025",
+      story: "These events are a testament to our vibrant community and shared passion for culinary arts.",
+      tags: ["CM Event", "Group", "Celebration"]
     },
     {
-      id: 7,
-      title: "Customer Favorites Wall",
-      image: "/assets/bonapp.webp",
-      category: "Customer Love",
-      description: "A collection of our most loved dishes as chosen by our loyal customers. These are the dishes that made us who we are.",
-      location: "Display Area",
-      date: "Hall of Fame",
-      story: "These dishes have won hearts and created loyal customers. Each one represents a successful culinary journey.",
-      tags: ["Popular", "Favorites", "Bestsellers"]
-    },
-    {
-      id: 8,
-      title: "Innovation Lab",
-      image: "/assets/b2b50198-3ee8-4357-b982-4b2765b951c7.webp",
-      category: "Innovation",
-      description: "Our experimental kitchen where we develop new recipes and test innovative cooking techniques.",
-      location: "R&D Kitchen",
-      date: "Ongoing",
-      story: "Innovation never stops. We constantly experiment with new flavors and techniques to surprise and delight.",
-      tags: ["Innovation", "Experimental", "Future"]
-    },
-    {
-      id: 9,
-      title: "Packaging & Delivery Setup",
-      image: "/assets/bonapp.webp",
-      category: "Operations",
-      description: "Our systematic packaging and delivery preparation area ensuring your food reaches you fresh and hot.",
-      location: "Packaging Station",
+      id: 12,
+      title: "Behind the Scenes: Prep Work",
+      image: "/bts1.webp",
+      category: "Behind the scene",
+      description: "Our dedicated team meticulously preparing ingredients, ensuring every dish is perfect.",
+      location: "Prep Station",
       date: "Daily Operations",
-      story: "The final step in our process - ensuring your food travels safely from our kitchen to your table.",
-      tags: ["Packaging", "Delivery", "Fresh"]
+      story: "The unseen efforts that go into creating delicious meals, from fresh produce to final touches.",
+      tags: ["Preparation", "Teamwork", "Efficiency"]
     },
     {
-      id: 10,
-      title: "Community Engagement",
-      image: "/assets/b2b50198-3ee8-4357-b982-4b2765b951c7.webp",
-      category: "Community",
-      description: "Giving back to the community through food donations and local partnerships.",
-      location: "Community Center",
-      date: "Monthly Drive",
-      story: "Food brings people together. We believe in sharing our blessings with those who need it most.",
-      tags: ["Community", "Giving", "Together"]
+      id: 13,
+      title: "School Event: Cooking Class",
+      image: "/school1 (1).jpg",
+      category: "School event",
+      description: "Students engaging in a hands-on cooking class, learning the basics of culinary arts.",
+      location: "School Kitchen",
+      date: "Spring 2025",
+      story: "Fostering young talent and inspiring the next generation of chefs through interactive sessions.",
+      tags: ["Education", "Students", "Cooking"]
+    },
+    {
+      id: 14,
+      title: "Workshop: Pasta Making",
+      image: "/workshop1.jpg",
+      category: "workshop",
+      description: "Participants learning the traditional art of pasta making from scratch in an engaging workshop.",
+      location: "Workshop Studio",
+      date: "Summer 2025",
+      story: "Bringing people together to share the joy of creating delicious, homemade pasta.",
+      tags: ["Hands-on", "Culinary", "Learning"]
+    },
+    {
+      id: 15,
+      title: "Workshop: Baking Session",
+      image: "/workshop2.JPG",
+      category: "workshop",
+      description: "A fun and interactive baking workshop, exploring techniques for perfect pastries and desserts.",
+      location: "Baking Studio",
+      date: "Autumn 2025",
+      story: "Sweet creations and shared laughter, as participants master the art of baking.",
+      tags: ["Baking", "Desserts", "Fun"]
     }
   ];
 

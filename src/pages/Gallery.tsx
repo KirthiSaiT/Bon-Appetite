@@ -22,14 +22,10 @@ const Gallery = () => {
       story: "This is where our culinary dreams come to life. Every dish is crafted with precision in our spotless, professional-grade kitchen.",
       tags: ["Professional", "Modern", "Spacious"]
     },
-   
-    
-    
-   
     {
-      id: 11,
+      id: 2,
       title: "CM Event: Group Photo",
-      image: "/cmpic2.webp",
+      image: "/cmpic21.webp",
       category: "CM EVENT",
       description: "A memorable group photo from a recent CM Event, capturing the spirit of collaboration and joy.",
       location: "Event Venue",
@@ -38,7 +34,7 @@ const Gallery = () => {
       tags: ["CM Event", "Group", "Celebration"]
     },
     {
-      id: 12,
+      id: 3,
       title: "Behind the Scenes: Prep Work",
       image: "/bts1.webp",
       category: "Behind the scene",
@@ -49,9 +45,9 @@ const Gallery = () => {
       tags: ["Preparation", "Teamwork", "Efficiency"]
     },
     {
-      id: 13,
+      id: 4,
       title: "School Event: Cooking Class",
-      image: "/school1 (1).jpg",
+      image: "/school1.webp",
       category: "School event",
       description: "Students engaging in a hands-on cooking class, learning the basics of culinary arts.",
       location: "School Kitchen",
@@ -60,9 +56,9 @@ const Gallery = () => {
       tags: ["Education", "Students", "Cooking"]
     },
     {
-      id: 14,
+      id:5,
       title: "Workshop: Pasta Making",
-      image: "/workshop1.jpg",
+      image: "/workshop1.webp",
       category: "workshop",
       description: "Participants learning the traditional art of pasta making from scratch in an engaging workshop.",
       location: "Workshop Studio",
@@ -71,9 +67,9 @@ const Gallery = () => {
       tags: ["Hands-on", "Culinary", "Learning"]
     },
     {
-      id: 15,
+      id: 6,
       title: "Workshop: Baking Session",
-      image: "/workshop2.JPG",
+      image: "/school2.webp",
       category: "workshop",
       description: "A fun and interactive baking workshop, exploring techniques for perfect pastries and desserts.",
       location: "Baking Studio",

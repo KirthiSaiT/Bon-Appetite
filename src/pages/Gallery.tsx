@@ -14,7 +14,7 @@ const Gallery = () => {
     {
       id: 1,
       title: "Our Professional Kitchen",
-      image: "/assets/bonapp.webp",
+      image: "/cmpic1.webp",
       category: "Kitchen Space",
       description: "State-of-the-art commercial kitchen where all the magic happens. Equipped with modern appliances and designed for efficiency.",
       location: "Main Kitchen",
@@ -123,7 +123,7 @@ const Gallery = () => {
     }
   ];
 
-  const categories = ["All", "Kitchen Space", "Ingredients", "Cooking Process", "Our Team", "Achievements", "Events", "Customer Love", "Innovation", "Operations", "Community"];
+  const categories = ["All", "CM EVENT", "workshop", "School event", "Behind the scene"];
 
   const getCategoryIcon = (category) => {
     switch (category) {

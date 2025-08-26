@@ -10,7 +10,7 @@ const categories = [
     id: "ready-to-cook",
     title: "Ready to Cook",
     subtitle: "Fresh ingredients, pre-prepared",
-    image: "/assets/BAC-Logo-E-Vertical (2).webp",
+    image: "/readytocook.webp",
     subcategories: [
       { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/assets/drypasta.webp" },
       { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/assets/fresh pasta.webp" },
@@ -21,7 +21,7 @@ const categories = [
     id: "ready-to-eat",
     title: "Ready to Eat",
     subtitle: "Delicious meals, instantly served",
-    image: "/assets/BAC-Logo-E-Vertical (2).webp",
+    image: "/readytoeat.webp",
     subcategories: [
       { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/assets/cooked pasta.webp" },
       { name: "Dessert Platters", description: "Sweet treats", image: "/assets/dessert platter.webp" }
@@ -31,7 +31,7 @@ const categories = [
     id: "services",
     title: "Our Services",
     subtitle: "Professional catering & workshops",
-    image: "/assets/BAC-Logo-E-Vertical (2).webp",
+    image: "/services.webp",
     subcategories: [
       { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/assets/catering (1).webp" },
       { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/assets/pasta workshop.webp" }

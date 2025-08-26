@@ -61,14 +61,13 @@ const CategoryItem = ({
               <img 
                 src="/placeholder.svg" 
                 alt="placeholder" 
-                className="w-12 h-12 object-cover rounded-full absolute" 
-                style={{ position: 'absolute' }}
+                className="w-16 h-16 object-cover rounded-full"
               />
             )}
             <img 
               src={category.image} 
               alt={category.title}
-              className="w-12 h-12 object-cover rounded-full"
+              className="w-16 h-16 object-cover rounded-full"
               style={{ opacity: catImgLoaded && !catImgError ? 1 : 0 }}
               onLoad={() => setCatImgLoaded(true)}
               onError={() => setCatImgError(true)}
@@ -98,14 +97,13 @@ const CategoryItem = ({
                       <img 
                         src="/placeholder.svg" 
                         alt="placeholder" 
-                        className="w-12 h-12 object-cover rounded-full absolute" 
-                        style={{ position: 'absolute' }}
+                        className="w-16 h-16 object-cover rounded-full"
                       />
                     )}
                     <img 
                       src={subcategory.image || category.image} 
                       alt={subcategory.name}
-                      className="w-12 h-12 object-cover rounded-full"
+                      className="w-16 h-16 object-cover rounded-full"
                       style={{ opacity: subImgLoaded[index] && !subImgError[index] ? 1 : 0 }}
                       onLoad={() => handleSubImgLoad(index)}
                       onError={() => handleSubImgError(index)}

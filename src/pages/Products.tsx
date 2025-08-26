@@ -12,9 +12,9 @@ const categories = [
     subtitle: "Fresh ingredients, pre-prepared",
     image: "/readytocook.webp",
     subcategories: [
-      { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/assets/drypasta.webp" },
-      { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/assets/fresh pasta.webp" },
-      { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/assets/seasonal sauces.webp" }
+      { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/drypasta.webp" },
+      { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hours shelf life", image: "/freshpasta.webp" },
+      { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/seaonal.webp" }
     ]
   },
   {
@@ -23,8 +23,8 @@ const categories = [
     subtitle: "Delicious meals, instantly served",
     image: "/readytoeat.webp",
     subcategories: [
-      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/assets/cooked pasta.webp" },
-      { name: "Dessert Platters", description: "Sweet treats", image: "/assets/dessert platter.webp" }
+      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/cooked.webp" },
+      { name: "Dessert Platters", description: "Sweet treats", image: "/dessertplatter.webp" }
     ]
   },
   {
@@ -33,8 +33,8 @@ const categories = [
     subtitle: "Professional catering & workshops",
     image: "/services.webp",
     subcategories: [
-      { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/assets/catering (1).webp" },
-      { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/assets/pasta workshop.webp" }
+      { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/catering.webp" },
+      { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/pastaworkshop.webp" }
     ]
   }
 ];

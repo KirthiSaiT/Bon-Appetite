@@ -54,7 +54,7 @@ const Index = () => {
       {/* Pasta Feature Section */}
       <section className="py-12 flex justify-center items-center">
         <img 
-          src="/#" 
+          src="/indexpic.webp" 
           alt="Bon Appetit Pasta Feature" 
           className="rounded-3xl shadow-2xl w-full max-w-3xl h-auto object-contain" 
         />

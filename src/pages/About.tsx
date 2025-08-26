@@ -74,7 +74,7 @@ const About = () => {
           </div>
           <div className="rounded-lg overflow-hidden shadow-lg">
             <img 
-              src="/assets/2.webp" 
+              src="/aboutus.webp" 
               alt="About Us - Bon Appetit Cafe"
               className="w-full h-full object-cover"
             />
@@ -109,26 +109,38 @@ const About = () => {
           </div>
         </div>
 
-        {/* Mission Section */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-lg p-8 shadow-lg mb-16">
-          <div className="text-center">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">Our Mission</h2>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
+        {/* Mission Section - Redesigned like About Us */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
+          <div className="rounded-lg overflow-hidden shadow-lg">
+            <img 
+              src="/aboutus2.webp" 
+              alt="Our Mission - Bon Appetit Cafe"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <div>
+            <div className="bg-blue-100 rounded-lg p-2 inline-block mb-6">
+              <h2 className="text-2xl font-bold text-blue-800 px-4 py-2">OUR MISSION</h2>
+            </div>
+            <p className="text-gray-700 mb-6 text-lg leading-relaxed">
               To make exceptional Italian cuisine accessible to everyone by combining traditional cooking 
               techniques with modern technology, ensuring every meal we deliver exceeds expectations 
               and creates memorable dining experiences in the comfort of your home.
+            </p>
+            <p className="text-gray-700 mb-6 text-lg leading-relaxed">
+              We believe that great food has the power to bring people together, create lasting memories, 
+              and transform ordinary moments into extraordinary experiences. Our commitment extends beyond 
+              just delivering meals – we're delivering happiness, one plate at a time.
+            </p>
+            <p className="text-gray-700 text-lg leading-relaxed">
+              Through innovation and dedication to quality, we strive to be the bridge between 
+              authentic Italian traditions and the modern world, making every bite a journey to Italy.
             </p>
           </div>
         </div>
 
         {/* Bottom Image */}
-        <div className="mb-16 rounded-lg overflow-hidden shadow-lg">
-          <img 
-            src="/assets/5.webp" 
-            alt="Bon Appetit Cafe - Italian Pasta" 
-            className="w-full h-[80vh] object-cover" 
-          />
-        </div>
+       
       </div>
 
       <SimpleFooter />

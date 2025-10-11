@@ -3,6 +3,7 @@ import { ChevronLeft, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
+import { useState } from "react";
 
 const GourmetSandwiches = () => {
   const navigate = useNavigate();
@@ -26,14 +27,14 @@ const GourmetSandwiches = () => {
     { id: "gs010", name: "MMM Sandwich", description: "Our special MMM sandwich - a must try!", price: "₹160", image: "/assets/gourmet sandwich.webp", features: ["Special", "Chef's Choice", "Unique"] },
   ];
 
-  const handleAddToCart = (sandwich: typeof gourmetSandwiches[0]) => {
-    addToCart({
-      id: sandwich.id,
-      name: sandwich.name,
-      price: parsePrice(sandwich.price),
-      image: sandwich.image,
-    });
-  };
+  // Quantity options for sandwiches
+  const quantityOptions = [
+    { value: 1, label: "1 sandwich" },
+    { value: 2, label: "2 sandwiches" },
+    { value: 3, label: "3 sandwiches" },
+    { value: 4, label: "4 sandwiches" },
+    { value: 5, label: "5 sandwiches" }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -60,31 +61,58 @@ const GourmetSandwiches = () => {
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {gourmetSandwiches.map((sandwich) => (
-              <div key={sandwich.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
-                <div className="h-48 bg-orange-100 flex items-center justify-center">
-                  <img 
-                    src={sandwich.image} 
-                    alt={sandwich.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="p-6 flex-grow flex flex-col">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{sandwich.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{sandwich.description}</p>
-                  <div className="flex items-center justify-between mb-4 mt-auto">
-                    <span className="text-lg font-bold text-orange-600">{sandwich.price}</span>
+            {gourmetSandwiches.map((sandwich) => {
+              const [selectedQuantity, setSelectedQuantity] = useState(1);
+              const currentPrice = (parsePrice(sandwich.price) * selectedQuantity).toFixed(2);
+              
+              return (
+                <div key={sandwich.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+                  <div className="h-48 bg-orange-100 flex items-center justify-center">
+                    <img 
+                      src={sandwich.image} 
+                      alt={sandwich.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                  <button
-                    onClick={() => handleAddToCart(sandwich)}
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    Add to Cart
-                  </button>
+                  <div className="p-6 flex-grow flex flex-col">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{sandwich.name}</h3>
+                    <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{sandwich.description}</p>
+                    
+                    {/* Quantity Selector */}
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Select Quantity</label>
+                      <select 
+                        value={selectedQuantity}
+                        onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      >
+                        {quantityOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label} - ₹{(parsePrice(sandwich.price) * option.value).toFixed(2)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4 mt-auto">
+                      <span className="text-lg font-bold text-orange-600">₹{currentPrice}</span>
+                    </div>
+                    <button
+                      onClick={() => addToCart({
+                        id: `${sandwich.id}-${selectedQuantity}`,
+                        name: `${sandwich.name} (${selectedQuantity} sandwich${selectedQuantity > 1 ? 'es' : ''})`,
+                        price: parseFloat(currentPrice),
+                        image: sandwich.image,
+                      })}
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -93,4 +121,4 @@ const GourmetSandwiches = () => {
   );
 };
 
-export default GourmetSandwiches; 
+export default GourmetSandwiches;

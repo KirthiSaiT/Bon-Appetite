@@ -3,6 +3,7 @@ import { ChevronLeft, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
+import { useState } from "react";
 
 const SeasonalSauces = () => {
   const navigate = useNavigate();
@@ -14,19 +15,24 @@ const SeasonalSauces = () => {
   };
 
   const seasonalSauces = [
-    { id: "s009", name: "Tomato Basil Sauce", description: "Classic Italian sauce made with ripe tomatoes and fresh basil.", price: "--", image: "/assets/seasonal sauces.jpg", features: ["Tomato", "Basil", "Classic"] },
-    { id: "s010", name: "Arrabbita", description: "Spicy tomato sauce with garlic and chili, a bold Italian favorite.", price: "--", image: "/assets/seasonal sauces.jpg", features: ["Spicy", "Tomato", "Chili"] },
-    { id: "s011", name: "Pesto", description: "Fresh basil pesto with pine nuts, garlic, and parmesan.", price: "--", image: "/assets/seasonal sauces.jpg", features: ["Basil", "Pine nuts", "Parmesan"] },
+    { id: "s009", name: "Tomato Basil Sauce", description: "Classic Italian sauce made with ripe tomatoes and fresh basil.", price: "₹150 per 200ml", image: "/assets/seasonal sauces.jpg", features: ["Tomato", "Basil", "Classic"] },
+    { id: "s010", name: "Arrabbita", description: "Spicy tomato sauce with garlic and chili, a bold Italian favorite.", price: "₹150 per 200ml", image: "/assets/seasonal sauces.jpg", features: ["Spicy", "Tomato", "Chili"] },
+    { id: "s011", name: "Pesto", description: "Fresh basil pesto with pine nuts, garlic, and parmesan.", price: "₹180 per 200ml", image: "/assets/seasonal sauces.jpg", features: ["Basil", "Pine nuts", "Parmesan"] },
   ];
 
-  const handleAddToCart = (sauce: typeof seasonalSauces[0]) => {
-    addToCart({
-      id: sauce.id,
-      name: sauce.name,
-      price: parsePrice(sauce.price),
-      image: sauce.image,
-    });
+  // Calculate price based on quantity
+  const calculatePrice = (basePrice: string, quantity: number) => {
+    const pricePer200ml = parsePrice(basePrice);
+    return (pricePer200ml * quantity / 200).toFixed(2);
   };
+
+  // Quantity options for sauces
+  const quantityOptions = [
+    { value: 100, label: "100ml - ₹75" },
+    { value: 200, label: "200ml - ₹150" },
+    { value: 300, label: "300ml - ₹225" },
+    { value: 500, label: "500ml - ₹375" }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -56,34 +62,60 @@ const SeasonalSauces = () => {
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {seasonalSauces.map((sauce) => (
-              <div key={sauce.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
-                <div className="h-48 bg-orange-100 flex items-center justify-center">
-                  <img 
-                    src={sauce.image} 
-                    alt={sauce.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                
-                <div className="p-6 flex-grow flex flex-col">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{sauce.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{sauce.description}</p>
-                  
-                  <div className="flex items-center justify-between mb-4 mt-auto">
-                    <span className="text-lg font-bold text-orange-600">{`₹${parsePrice(sauce.price)}`}</span>
+            {seasonalSauces.map((sauce) => {
+              const [selectedQuantity, setSelectedQuantity] = useState(200);
+              const currentPrice = calculatePrice(sauce.price, selectedQuantity);
+              
+              return (
+                <div key={sauce.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+                  <div className="h-48 bg-orange-100 flex items-center justify-center">
+                    <img 
+                      src={sauce.image} 
+                      alt={sauce.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   
-                  <button
-                    onClick={() => handleAddToCart(sauce)}
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    Add to Cart
-                  </button>
+                  <div className="p-6 flex-grow flex flex-col">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{sauce.name}</h3>
+                    <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{sauce.description}</p>
+                    
+                    {/* Quantity Selector */}
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Select Quantity</label>
+                      <select 
+                        value={selectedQuantity}
+                        onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      >
+                        {quantityOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label.split(' - ')[0]} - ₹{calculatePrice(sauce.price, option.value)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4 mt-auto">
+                      <span className="text-lg font-bold text-orange-600">₹{currentPrice}</span>
+                    </div>
+                    
+                    <button
+                      onClick={() => addToCart({
+                        id: sauce.id,
+                        name: `${sauce.name} (${selectedQuantity}ml)`,
+                        price: parseFloat(currentPrice),
+                        image: sauce.image,
+                      })}
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -93,4 +125,4 @@ const SeasonalSauces = () => {
   );
 };
 
-export default SeasonalSauces; 
+export default SeasonalSauces;

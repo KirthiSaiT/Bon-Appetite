@@ -3,6 +3,7 @@ import { ChevronLeft, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
+import { useState } from "react";
 
 const DessertPlatters = () => {
   const navigate = useNavigate();
@@ -21,14 +22,14 @@ const DessertPlatters = () => {
     { id: "d005", name: "Ice cream - Chocolate", description: "Rich chocolate ice cream scoop.", price: "50", image: "/assets/dessert platter.jpg", features: ["Ice Cream", "Chocolate", "Chilled"] },
   ];
 
-  const handleAddToCart = (dessert: typeof dessertPlatters[0]) => {
-    addToCart({
-      id: dessert.id,
-      name: dessert.name,
-      price: parsePrice(dessert.price),
-      image: dessert.image,
-    });
-  };
+  // Quantity options for desserts (pieces/units)
+  const quantityOptions = [
+    { value: 1, label: "1 piece" },
+    { value: 2, label: "2 pieces" },
+    { value: 3, label: "3 pieces" },
+    { value: 4, label: "4 pieces" },
+    { value: 5, label: "5 pieces" }
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
@@ -58,34 +59,60 @@ const DessertPlatters = () => {
       <section className="py-16 px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {dessertPlatters.map((dessert) => (
-              <div key={dessert.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
-                <div className="h-48 bg-orange-100 flex items-center justify-center">
-                  <img 
-                    src={dessert.image} 
-                    alt={dessert.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                
-                <div className="p-6 flex-grow flex flex-col">
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">{dessert.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{dessert.description}</p>
-                  
-                  <div className="flex items-center justify-between mb-4 mt-auto">
-                    <span className="text-lg font-bold text-orange-600">{`₹${parsePrice(dessert.price)}`}</span>
+            {dessertPlatters.map((dessert) => {
+              const [selectedQuantity, setSelectedQuantity] = useState(1);
+              const currentPrice = (parsePrice(dessert.price) * selectedQuantity).toFixed(2);
+              
+              return (
+                <div key={dessert.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+                  <div className="h-48 bg-orange-100 flex items-center justify-center">
+                    <img 
+                      src={dessert.image} 
+                      alt={dessert.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   
-                  <button
-                    onClick={() => handleAddToCart(dessert)}
-                    className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
-                  >
-                    <ShoppingCart className="w-4 h-4" />
-                    Add to Cart
-                  </button>
+                  <div className="p-6 flex-grow flex flex-col">
+                    <h3 className="text-xl font-bold text-gray-800 mb-2">{dessert.name}</h3>
+                    <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{dessert.description}</p>
+                    
+                    {/* Quantity Selector */}
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Select Quantity</label>
+                      <select 
+                        value={selectedQuantity}
+                        onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      >
+                        {quantityOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label} - ₹{(parsePrice(dessert.price) * option.value).toFixed(2)}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div className="flex items-center justify-between mb-4 mt-auto">
+                      <span className="text-lg font-bold text-orange-600">₹{currentPrice}</span>
+                    </div>
+                    
+                    <button
+                      onClick={() => addToCart({
+                        id: `${dessert.id}-${selectedQuantity}`,
+                        name: `${dessert.name} (${selectedQuantity} piece${selectedQuantity > 1 ? 's' : ''})`,
+                        price: parseFloat(currentPrice),
+                        image: dessert.image,
+                      })}
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                    >
+                      <ShoppingCart className="w-4 h-4" />
+                      Add to Cart
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -95,4 +122,4 @@ const DessertPlatters = () => {
   );
 };
 
-export default DessertPlatters; 
+export default DessertPlatters;

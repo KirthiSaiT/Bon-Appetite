@@ -91,19 +91,6 @@ const HotCurryMeals = () => {
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{curry.name}</h3>
                   <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{curry.description}</p>
                   
-                  <div className="mb-4">
-                    <div className="flex flex-wrap gap-2">
-                      {curry.features.map((feature, idx) => (
-                        <span 
-                          key={idx}
-                          className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full"
-                        >
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                  
                   <div className="flex items-center justify-between mb-4 mt-auto">
                     <span className="text-lg font-bold text-orange-600">{`₹${parsePrice(curry.price)}`}</span>
                   </div>

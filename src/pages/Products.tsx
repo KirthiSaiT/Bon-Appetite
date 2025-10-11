@@ -31,7 +31,8 @@ const categories = [
     id: "services",
     title: "Our Services",
     subtitle: "Professional catering & workshops",
-    image: "/services.webp",
+    image: "/services2.png",
+
     subcategories: [
       { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/catering.webp" },
       { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/pastaworkshop.webp" }

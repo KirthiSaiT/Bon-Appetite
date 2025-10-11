@@ -126,7 +126,6 @@ const FreshPasta = () => {
                 </div>
                 <div className="p-6 flex-grow flex flex-col">
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{item.name}</h3>
-                  <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full mb-2">{item.flavour}</span>
                   <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{item.description}</p>
                   <span className="text-lg font-bold text-orange-600 mb-2">{item.price}</span>
                   <button

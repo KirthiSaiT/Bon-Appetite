@@ -72,18 +72,6 @@ const GourmetSandwiches = () => {
                 <div className="p-6 flex-grow flex flex-col">
                   <h3 className="text-xl font-bold text-gray-800 mb-2">{sandwich.name}</h3>
                   <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{sandwich.description}</p>
-                  <div className="mb-4">
-                    <div className="flex flex-wrap gap-2">
-                      {sandwich.features.map((feature, idx) => (
-                        <span 
-                          key={idx}
-                          className="px-2 py-1 bg-orange-100 text-orange-700 text-xs rounded-full"
-                        >
-                          {feature}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
                   <div className="flex items-center justify-between mb-4 mt-auto">
                     <span className="text-lg font-bold text-orange-600">{sandwich.price}</span>
                   </div>

@@ -9,7 +9,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       <Navigation />
-      
+
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto text-center">
@@ -17,7 +17,7 @@ const Index = () => {
             Welcome to <span className="text-orange-600">Bon Appetit Cafe</span>
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Your premier cloud kitchen for artisanal, uncooked pasta. 
+            Your premier cloud kitchen for artisanal, uncooked pasta.
             Experience culinary excellence with every bite you create.
           </p>
           <Link to="/products">
@@ -53,10 +53,10 @@ const Index = () => {
 
       {/* Pasta Feature Section */}
       <section className="py-12 flex justify-center items-center">
-        <img 
-          src="/indexpic.webp" 
-          alt="Bon Appetit Pasta Feature" 
-          className="rounded-3xl shadow-2xl w-full max-w-3xl h-auto object-contain" 
+        <img
+          src="/home.jpeg"
+          alt="Bon Appetit Pasta Feature"
+          className="rounded-3xl shadow-2xl w-full max-w-3xl h-auto object-contain"
         />
       </section>
 
@@ -67,7 +67,7 @@ const Index = () => {
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             From ready-to-cook ingredients to delicious ready-to-eat meals, discover our complete range of culinary offerings.
           </p>
-          <Link 
+          <Link
             to="/products"
             className="inline-block bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
           >

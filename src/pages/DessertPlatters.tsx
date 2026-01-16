@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { useState } from "react";
+import ImageUpload from "@/components/ImageUpload";
+import { fileToDataUrl } from "@/lib/imageUtils";
 
 const DessertPlatters = () => {
   const navigate = useNavigate();
@@ -14,13 +16,31 @@ const DessertPlatters = () => {
     return numericPart ? parseFloat(numericPart[0]) : 0;
   };
 
-  const dessertPlatters = [
-    { id: "d001", name: "Brownie", description: "Classic chocolate brownie, rich and fudgy.", price: "100", image: "/assets/dessert platter.jpg", features: ["Chocolate", "Classic", "Fudgy"] },
-    { id: "d002", name: "Walnut Brownie", description: "Brownie with crunchy walnuts for extra texture.", price: "120", image: "/assets/dessert platter.jpg", features: ["Chocolate", "Walnut", "Crunchy"] },
-    { id: "d003", name: "Chocolave cake", description: "Molten chocolate lava cake, gooey center.", price: "90", image: "/assets/dessert platter.jpg", features: ["Molten", "Chocolate", "Warm"] },
-    { id: "d004", name: "Ice cream - Vanilla", description: "Classic vanilla ice cream scoop.", price: "40", image: "/assets/dessert platter.jpg", features: ["Ice Cream", "Vanilla", "Chilled"] },
-    { id: "d005", name: "Ice cream - Chocolate", description: "Rich chocolate ice cream scoop.", price: "50", image: "/assets/dessert platter.jpg", features: ["Ice Cream", "Chocolate", "Chilled"] },
-  ];
+  const [dessertPlatters, setDessertPlatters] = useState([
+    { id: "d001", name: "Brownie", description: "Classic chocolate brownie, rich and fudgy.", price: "100", image: "/dessertplatter.webp", features: ["Chocolate", "Classic", "Fudgy"] },
+    { id: "d002", name: "Walnut Brownie", description: "Brownie with crunchy walnuts for extra texture.", price: "120", image: "/dessertplatter.webp", features: ["Chocolate", "Walnut", "Crunchy"] },
+    { id: "d003", name: "Chocolave cake", description: "Molten chocolate lava cake, gooey center.", price: "90", image: "/dessertplatter.webp", features: ["Molten", "Chocolate", "Warm"] },
+    { id: "d004", name: "Ice cream - Vanilla", description: "Classic vanilla ice cream scoop.", price: "40", image: "/dessertplatter.webp", features: ["Ice Cream", "Vanilla", "Chilled"] },
+    { id: "d005", name: "Ice cream - Chocolate", description: "Rich chocolate ice cream scoop.", price: "50", image: "/dessertplatter.webp", features: ["Ice Cream", "Chocolate", "Chilled"] },
+  ]);
+
+  // Handle image upload for a specific product
+  const handleImageUpload = async (productId: string, file: File) => {
+    try {
+      const imageDataUrl = await fileToDataUrl(file);
+      
+      // Update the product with the new image
+      setDessertPlatters(prev => 
+        prev.map(product => 
+          product.id === productId 
+            ? { ...product, image: imageDataUrl } 
+            : product
+        )
+      );
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
 
   // Quantity options for desserts (pieces/units)
   const quantityOptions = [
@@ -65,13 +85,10 @@ const DessertPlatters = () => {
               
               return (
                 <div key={dessert.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
-                  <div className="h-48 bg-orange-100 flex items-center justify-center">
-                    <img 
-                      src={dessert.image} 
-                      alt={dessert.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
+                  <ImageUpload
+                    imageUrl={dessert.image}
+                    onImageUpload={(file) => handleImageUpload(dessert.id, file)}
+                  />
                   
                   <div className="p-6 flex-grow flex flex-col">
                     <h3 className="text-xl font-bold text-gray-800 mb-2">{dessert.name}</h3>

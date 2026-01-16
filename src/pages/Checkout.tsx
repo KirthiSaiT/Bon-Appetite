@@ -5,16 +5,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { User, Mail, Phone, Home, CheckCircle, MessageSquare } from "lucide-react";
 import emailjs from "@emailjs/browser";
 import { Label } from "@/components/ui/label";
 
 const Checkout = () => {
   const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', zip: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', city: '', zip: '', query: '' });
   const [isOrderPlaced, setIsOrderPlaced] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Initialize EmailJS
+    emailjs.init("lBQ8UpD7SH9b45AVq");
+  }, []);
 
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -26,11 +31,25 @@ const Checkout = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const serviceID = "service_0ngsn9l";
-    const templateID = "template_rdzt2i6";
-    const publicKey = "lBQ8UpD7SH9b45AVq";
+    // Validate required fields
+    if (!formData.name || !formData.email || !formData.phone || !formData.address || !formData.city || !formData.zip) {
+      alert("Please fill in all required fields.");
+      return;
+    }
 
-    const cartDetails = cartItems.map(item => `${item.name} (Qty: ${item.quantity}) - ₹${(item.price * item.quantity).toFixed(2)}`).join("\n");
+    // Check if cart is empty
+    if (cartItems.length === 0) {
+      alert("Your cart is empty. Please add items to your cart before placing an order.");
+      return;
+    }
+
+    console.log("Cart items:", cartItems);
+    console.log("Form data:", formData);
+
+    const cartDetails = cartItems.map(item => {
+      console.log("Processing item:", item);
+      return `${item.name} (Qty: ${item.quantity}) - ₹${(item.price * item.quantity).toFixed(2)}`;
+    }).join("\n");
 
     const templateParams = {
       from_name: formData.name,
@@ -41,21 +60,38 @@ const Checkout = () => {
       Email: ${formData.email}
       Phone: ${formData.phone}
       Address: ${formData.address}, ${formData.city}, ${formData.zip}
+      ${formData.query ? `\nSpecial Instructions: ${formData.query}` : ''}
       
       Order Items:
       ${cartDetails}
       
       Total: ₹${total.toFixed(2)}`,
-      reply_to: formData.email
+      user_email: formData.email
     };
 
+    console.log("Sending email with params:", templateParams);
+
+    // Test EmailJS configuration
+    const serviceID = 'service_0ngsn9l';
+    const templateID = 'template_rdzt2i6';
+    const publicKey = 'lBQ8UpD7SH9b45AVq';
+
+    console.log("EmailJS config - Service ID:", serviceID, "Template ID:", templateID, "Public Key:", publicKey);
+
     emailjs.send(serviceID, templateID, templateParams, publicKey)
-      .then(() => {
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
         setIsOrderPlaced(true);
         clearCart();
       }, (err) => {
         console.log('FAILED...', err);
-        alert("Failed to place order. Please try again.");
+        console.error("EmailJS Error Details:", {
+          status: err.status,
+          text: err.text,
+          message: err.message,
+          stack: err.stack
+        });
+        alert("Failed to place order. Please try again. Error: " + (err.text || err.message || "Unknown error"));
       });
   };
 
@@ -114,7 +150,7 @@ const Checkout = () => {
               </div>
               <div className="relative">
                 <MessageSquare className="absolute left-3 top-5 h-5 w-5 text-gray-400" />
-                <Textarea id="query" name="query" placeholder="Any special instructions or queries?" rows={3} className="pl-10 pt-4" />
+                <Textarea id="query" name="query" placeholder="Any special instructions or queries?" value={formData.query} onChange={handleChange} rows={3} className="pl-10 pt-4" />
               </div>
 
               <Button 
@@ -133,7 +169,7 @@ const Checkout = () => {
             <div className="space-y-6">
               {cartItems.map(item => (
                 <div key={item.id} className="flex items-center space-x-4">
-                  <img src={item.image} alt={item.name} className="w-20 h-20 rounded-lg object-cover" />
+                  <img src={item.image || '/placeholder-image.jpg'} alt={item.name} className="w-20 h-20 rounded-lg object-cover" onError={(e) => {(e.target as HTMLImageElement).src = '/placeholder-image.jpg'}} />
                   <div className="flex-1">
                     <p className="font-bold text-gray-800">{item.name}</p>
                     <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>

@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import React, { useState } from "react";
+import ImageUpload from "@/components/ImageUpload";
+import { fileToDataUrl } from "@/lib/imageUtils";
 
 const DryPasta = () => {
   const navigate = useNavigate();
@@ -15,13 +17,13 @@ const DryPasta = () => {
     return numericPart ? parseFloat(numericPart[0]) : 0;
   };
 
-  const dryPastaVarieties = [
+  const [dryPastaVarieties, setDryPastaVarieties] = useState([
     {
       id: "dp002",
       name: "Fettucine",
       description: "Flat, thick pasta ribbons ideal for creamy and hearty sauces.",
       price: "₹130 per 500g",
-      image: "/assets/drypasta.webp",
+      image: "/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -29,7 +31,7 @@ const DryPasta = () => {
       name: "Farfalle",
       description: "Bow-tie shaped pasta, perfect for light sauces and elegant presentations.",
       price: "₹140 per 500g",
-      image: "/assets/drypasta.webp",
+      image: "/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -37,7 +39,7 @@ const DryPasta = () => {
       name: "Spaghetti",
       description: "Long, thin cylindrical pasta, a staple for classic Italian dishes.",
       price: "₹120 per 500g",
-      image: "/assets/drypasta.webp",
+      image: "/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -45,7 +47,7 @@ const DryPasta = () => {
       name: "Heart",
       description: "Fun heart-shaped pasta, perfect for special occasions and kids.",
       price: "₹150 per 500g",
-      image: "/assets/drypasta.webp",
+      image: "/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -53,7 +55,7 @@ const DryPasta = () => {
       name: "Star",
       description: "Star-shaped pasta, great for soups and adding a playful touch to meals.",
       price: "₹145 per 500g",
-      image: "/assets/drypasta.webp",
+      image: "/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     },
     {
@@ -61,10 +63,28 @@ const DryPasta = () => {
       name: "Flower",
       description: "Flower-shaped pasta, brings a decorative and delightful look to your dishes.",
       price: "₹155 per 500g",
-      image: "/assets/drypasta.webp",
+      image: "/drypasta.webp",
       features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
     }
-  ];
+  ]);
+
+  // Handle image upload for a specific product
+  const handleImageUpload = async (productId: string, file: File) => {
+    try {
+      const imageDataUrl = await fileToDataUrl(file);
+      
+      // Update the product with the new image
+      setDryPastaVarieties(prev => 
+        prev.map(product => 
+          product.id === productId 
+            ? { ...product, image: imageDataUrl } 
+            : product
+        )
+      );
+    } catch (error) {
+      console.error("Error uploading image:", error);
+    }
+  };
 
   // Flattened array: each flavor is a separate item
   const dryPastaFlavours = dryPastaVarieties.flatMap((pasta) =>
@@ -141,15 +161,17 @@ const DryPasta = () => {
               const [selectedQuantity, setSelectedQuantity] = useState(250);
               const currentPrice = calculatePrice(selectedQuantity);
               
+              // Find the base product to get the actual image
+              const baseProduct = dryPastaVarieties.find(p => p.id === item.baseId);
+              
               return (
                 <div key={item.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
-                  <div className="h-48 bg-orange-100 flex items-center justify-center">
-                    <img 
-                      src={item.image} 
-                      alt={item.name}
-                      className="w-full h-full object-cover"
+                  {baseProduct && (
+                    <ImageUpload
+                      imageUrl={baseProduct.image}
+                      onImageUpload={(file) => handleImageUpload(baseProduct.id, file)}
                     />
-                  </div>
+                  )}
                   <div className="p-6 flex flex-col flex-grow">
                     <h3 className="text-xl font-bold text-gray-800 mb-2">{item.name}</h3>
                     <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{item.description}</p>
@@ -176,7 +198,7 @@ const DryPasta = () => {
                         id: item.id,
                         name: `${item.name} (${selectedQuantity}g)`,
                         price: parseFloat(currentPrice),
-                        image: item.image,
+                        image: baseProduct?.image || '/drypasta.webp',
                       })}
                       className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
                     >

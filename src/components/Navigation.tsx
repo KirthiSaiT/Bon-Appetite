@@ -20,23 +20,22 @@ const Navigation = () => {
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-24">
           <div className="flex-shrink-0">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <img src="/bonappetitlogo.jpeg" alt="Bon Appetit Logo" className="h-20 w-auto" />
+              <img src="/bonappetitlogo.jpeg" alt="Bon Appetit Logo" className="h-24 w-auto" />
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex space-x-10">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`text-gray-600 hover:text-orange-600 transition-colors ${
-                  location.pathname === item.path ? "text-orange-600 font-semibold" : ""
-                }`}
+                className={`text-lg font-medium text-gray-600 hover:text-orange-600 transition-colors ${location.pathname === item.path ? "text-orange-600 font-bold" : ""
+                  }`}
               >
                 {item.name}
               </Link>
@@ -63,9 +62,8 @@ const Navigation = () => {
                 <Link
                   key={item.name}
                   to={item.path}
-                  className={`text-gray-600 hover:text-orange-600 transition-colors ${
-                    location.pathname === item.path ? "text-orange-600 font-semibold" : ""
-                  }`}
+                  className={`text-gray-600 hover:text-orange-600 transition-colors ${location.pathname === item.path ? "text-orange-600 font-semibold" : ""
+                    }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {item.name}

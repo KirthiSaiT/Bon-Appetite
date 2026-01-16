@@ -20,21 +20,21 @@ const Navigation = () => {
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center h-24">
+        <div className="flex justify-between items-center h-20 pl-4">
           <div className="flex-shrink-0">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <img src="/bonappetitlogo.jpeg" alt="Bon Appetit Logo" className="h-24 w-auto" />
+              <img src="/bonappetitlogo.jpeg" alt="Bon Appetit Logo" className="h-20 w-auto absolute top-0 mt-[-8px] z-50 rounded-b-xl shadow-lg" />
             </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-10">
+          <div className="hidden md:flex space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 to={item.path}
-                className={`text-lg font-medium text-gray-600 hover:text-orange-600 transition-colors ${location.pathname === item.path ? "text-orange-600 font-bold" : ""
+                className={`text-base font-medium text-gray-600 hover:text-orange-600 transition-colors ${location.pathname === item.path ? "text-orange-600 font-bold" : ""
                   }`}
               >
                 {item.name}

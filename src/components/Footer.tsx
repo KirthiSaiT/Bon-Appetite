@@ -59,9 +59,24 @@ const meeshoLogo = (
 );
 
 const socialIcons = [
-  { name: "Instagram", href: "#", svg: <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M22 10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h8zm-4 2.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.5-.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1z" stroke="#fff" strokeWidth="2"/></svg> },
-  { name: "Facebook", href: "#", svg: <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M20 11h-2a2 2 0 0 0-2 2v2h-2v3h2v7h3v-7h2.1l.4-3H19v-1a.5.5 0 0 1 .5-.5H20v-3z" stroke="#fff" strokeWidth="2"/></svg> },
-  { name: "YouTube", href: "#", svg: <svg width="48" height="48" fill="none" viewBox="0 0 32 32"><rect width="32" height="32" rx="8" fill="none"/><path d="M22 16.5l-8 4.5v-9l8 4.5z" fill="#fff"/></svg> },
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/bonappetitcafe_hyd",
+    label: "Instagram",
+    svg: <svg width="28" height="28" fill="none" viewBox="0 0 32 32"><path d="M22 10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-8a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h8zm-4 2.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.5-.5a.5.5 0 1 0 0 1 .5.5 0 0 0 0-1z" stroke="#fff" strokeWidth="2"/></svg>,
+  },
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/bonappetitcafe",
+    label: "Facebook",
+    svg: <svg width="28" height="28" fill="none" viewBox="0 0 32 32"><path d="M20 11h-2a2 2 0 0 0-2 2v2h-2v3h2v7h3v-7h2.1l.4-3H19v-1a.5.5 0 0 1 .5-.5H20v-3z" stroke="#fff" strokeWidth="2"/></svg>,
+  },
+  {
+    name: "YouTube",
+    href: "https://www.youtube.com/@bonappetitcafe",
+    label: "YouTube",
+    svg: <svg width="28" height="28" fill="none" viewBox="0 0 32 32"><path d="M22 16.5l-8 4.5v-9l8 4.5z" fill="#fff"/><rect x="6" y="9" width="20" height="14" rx="3" stroke="#fff" strokeWidth="2"/></svg>,
+  },
 ];
 
 const Footer = () => (
@@ -120,9 +135,19 @@ const Footer = () => (
           </div>
         </div>
         {/* Social Icons */}
-        <div className="flex-1 flex flex-row justify-center md:justify-end items-center gap-4 mt-8 md:mt-0">
+        <div className="flex-1 flex flex-row justify-center md:justify-end items-center gap-5 mt-8 md:mt-0">
           {socialIcons.map((icon, i) => (
-            <a key={i} href={icon.href} aria-label={icon.name} className="hover:opacity-80">{icon.svg}</a>
+            <a
+              key={i}
+              href={icon.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={icon.name}
+              className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity"
+            >
+              {icon.svg}
+              <span className="text-white text-xs">{icon.label}</span>
+            </a>
           ))}
         </div>
       </div>
@@ -130,7 +155,7 @@ const Footer = () => (
   </footer>
 );
 
-// SimpleFooter: Only Info Row, no logos
+// SimpleFooter: Only Info Row, no marketplace logos
 const SimpleFooter = () => (
   <footer className="mt-16">
     <div className="w-full bg-[#7BA16D] py-12 px-4">
@@ -159,17 +184,28 @@ const SimpleFooter = () => (
           <div>
             <div className="text-white text-lg font-semibold mb-4 tracking-widest">EXPLORE</div>
             <ul className="space-y-2">
-              <li><a href="#" className="text-white font-bold hover:underline">FAQ</a></li>
-              <li><a href="#" className="text-white font-bold hover:underline">Blogs</a></li>
-              <li><a href="#" className="text-white font-bold hover:underline">About Us</a></li>
+              <li><a href="/faq" className="text-white font-bold hover:underline">FAQ</a></li>
+              <li><a href="/gallery" className="text-white font-bold hover:underline">Gallery</a></li>
+              <li><a href="/about" className="text-white font-bold hover:underline">About Us</a></li>
+              <li><a href="/careers" className="text-white font-bold hover:underline">Careers</a></li>
               <li><a href="#" className="text-white font-bold hover:underline">Terms & Conditions</a></li>
             </ul>
           </div>
         </div>
         {/* Social Icons */}
-        <div className="flex-1 flex flex-row justify-center md:justify-end items-center gap-4 mt-8 md:mt-0">
+        <div className="flex-1 flex flex-row justify-center md:justify-end items-center gap-5 mt-8 md:mt-0">
           {socialIcons.map((icon, i) => (
-            <a key={i} href={icon.href} aria-label={icon.name} className="hover:opacity-80">{icon.svg}</a>
+            <a
+              key={i}
+              href={icon.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={icon.name}
+              className="flex flex-col items-center gap-1 hover:opacity-80 transition-opacity"
+            >
+              {icon.svg}
+              <span className="text-white text-xs">{icon.label}</span>
+            </a>
           ))}
         </div>
       </div>

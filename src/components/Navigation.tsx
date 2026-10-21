@@ -1,77 +1,115 @@
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { Menu } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuLink,
+} from "@/components/ui/navigation-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import { CartDrawer } from "./CartDrawer";
+import { cn } from "@/lib/utils";
+
+const navItems = [
+  { name: "Home", path: "/" },
+  { name: "About Us", path: "/about" },
+  { name: "Our Pasta Brand", path: "/our-pasta-brand" },
+  { name: "Food & Pre-orders", path: "/products" },
+  { name: "Pasta Workshops", path: "/pasta-workshops" },
+  { name: "Community & Gallery", path: "/gallery" },
+  { name: "Recipes", path: "/recipes" },
+  { name: "Careers", path: "/careers" },
+  { name: "Contact Us", path: "/contact" },
+];
 
 const Navigation = () => {
   const location = useLocation();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const navItems = [
-    { name: "Home", path: "/" },
-    { name: "About Us", path: "/about" },
-    { name: "Products", path: "/products" },
-    { name: "Gallery", path: "/gallery" },
-    { name: "FAQ", path: "/faq" },
-    { name: "Recipes", path: "/recipes" },
-    { name: "Contact Us", path: "/contact" }
-  ];
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="flex justify-between items-center h-20 pl-4">
-          <div className="flex-shrink-0">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <img src="/bonappetitlogo.jpeg" alt="Bon Appetit Logo" className="h-20 w-auto absolute top-0 mt-[-8px] z-50 rounded-b-xl shadow-lg" />
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="flex justify-between items-center h-20 pl-2">
+          {/* Logo */}
+          <div className="flex-shrink-0 relative w-20">
+            <Link to="/">
+              <img
+                src="/bonappetitlogo.jpeg"
+                alt="Bon Appetit Logo"
+                className="h-20 w-auto absolute top-0 mt-[-8px] z-50 rounded-b-xl shadow-lg"
+              />
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.name}
-                to={item.path}
-                className={`text-base font-medium text-gray-600 hover:text-orange-600 transition-colors ${location.pathname === item.path ? "text-orange-600 font-bold" : ""
-                  }`}
-              >
-                {item.name}
-              </Link>
-            ))}
+          {/* Desktop Navigation — shadcn NavigationMenu */}
+          <div className="hidden lg:flex flex-1 justify-center">
+            <NavigationMenu>
+              <NavigationMenuList className="gap-0 flex-wrap justify-center">
+                {navItems.map((item) => (
+                  <NavigationMenuItem key={item.path}>
+                    <NavigationMenuLink asChild>
+                      <Link
+                        to={item.path}
+                        className={cn(
+                          "inline-flex h-9 items-center justify-center rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors hover:bg-orange-50 hover:text-orange-600 focus:outline-none whitespace-nowrap",
+                          location.pathname === item.path
+                            ? "text-orange-600 font-semibold"
+                            : "text-gray-600"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    </NavigationMenuLink>
+                  </NavigationMenuItem>
+                ))}
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
 
-          <div className="flex items-center space-x-4">
+          {/* Cart + Mobile trigger */}
+          <div className="flex items-center gap-2">
             <CartDrawer />
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
+
+            {/* Mobile Sheet */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="lg:hidden">
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Open menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-72 pt-10">
+                <SheetHeader className="mb-4">
+                  <SheetTitle className="text-orange-600 text-lg font-bold">Menu</SheetTitle>
+                </SheetHeader>
+                <nav className="flex flex-col gap-1">
+                  {navItems.map((item) => (
+                    <SheetClose asChild key={item.path}>
+                      <Link
+                        to={item.path}
+                        className={cn(
+                          "flex items-center px-4 py-3 rounded-md text-sm font-medium transition-colors hover:bg-orange-50 hover:text-orange-600",
+                          location.pathname === item.path
+                            ? "bg-orange-50 text-orange-600 font-semibold"
+                            : "text-gray-600"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    </SheetClose>
+                  ))}
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-4">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  className={`text-gray-600 hover:text-orange-600 transition-colors ${location.pathname === item.path ? "text-orange-600 font-semibold" : ""
-                    }`}
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </nav>
   );

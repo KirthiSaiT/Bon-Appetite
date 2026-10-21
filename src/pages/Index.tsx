@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Utensils, Users } from "lucide-react";
+import { Clock, Utensils, Users, ShoppingBag, ChefHat, Package } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -25,6 +25,55 @@ const Index = () => {
               Order Now
             </Button>
           </Link>
+        </div>
+      </section>
+
+      {/* Quick Access Tiles — prominent links to the 3 core sections */}
+      <section className="py-12 px-4 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Food & Pre-orders */}
+            <Link to="/products" className="group">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 p-8 text-white text-center hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <ShoppingBag className="w-14 h-14 mx-auto mb-4 opacity-90" />
+                <h3 className="text-2xl font-bold mb-2">Food & Pre-orders</h3>
+                <p className="text-orange-100 text-sm mb-5">
+                  Fresh pasta, cooked meals, sauces & more — order online for delivery.
+                </p>
+                <span className="inline-block bg-white text-orange-600 font-semibold px-5 py-2 rounded-full text-sm group-hover:bg-orange-50 transition-colors">
+                  Order Now →
+                </span>
+              </div>
+            </Link>
+
+            {/* Pasta Workshops */}
+            <Link to="/pasta-workshops" className="group">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 p-8 text-white text-center hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <ChefHat className="w-14 h-14 mx-auto mb-4 opacity-90" />
+                <h3 className="text-2xl font-bold mb-2">Pasta Workshops</h3>
+                <p className="text-orange-100 text-sm mb-5">
+                  Hands-on online & offline workshops every month. Beginners welcome!
+                </p>
+                <span className="inline-block bg-white text-orange-600 font-semibold px-5 py-2 rounded-full text-sm group-hover:bg-orange-50 transition-colors">
+                  Book a Slot →
+                </span>
+              </div>
+            </Link>
+
+            {/* Our Pasta Brand */}
+            <Link to="/our-pasta-brand" className="group">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-500 to-pink-600 p-8 text-white text-center hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                <Package className="w-14 h-14 mx-auto mb-4 opacity-90" />
+                <h3 className="text-2xl font-bold mb-2">Our Pasta Brand</h3>
+                <p className="text-orange-100 text-sm mb-5">
+                  Handmade dry pasta — 30+ retail stores across Hyderabad & online.
+                </p>
+                <span className="inline-block bg-white text-red-600 font-semibold px-5 py-2 rounded-full text-sm group-hover:bg-red-50 transition-colors">
+                  Explore Brand →
+                </span>
+              </div>
+            </Link>
+          </div>
         </div>
       </section>
 

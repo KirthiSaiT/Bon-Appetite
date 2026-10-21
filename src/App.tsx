@@ -21,6 +21,9 @@ import HotCurryMeals from "./pages/HotCurryMeals";
 import DessertPlatters from "./pages/DessertPlatters";
 import CookedPasta from "./pages/CookedPasta";
 import Checkout from "./pages/Checkout";
+import OurPastaBrand from "./pages/OurPastaBrand";
+import PastaWorkshops from "./pages/PastaWorkshops";
+import Careers from "./pages/Careers";
 import { CartProvider } from "./context/CartContext";
 
 const queryClient = new QueryClient();
@@ -49,6 +52,9 @@ const App = () => (
             <Route path="/recipes" element={<Recipes />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/our-pasta-brand" element={<OurPastaBrand />} />
+            <Route path="/pasta-workshops" element={<PastaWorkshops />} />
+            <Route path="/careers" element={<Careers />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -166,7 +166,7 @@ const DryPasta = () => {
               const baseProduct = dryPastaVarieties.find(p => p.id === item.baseId);
               
               return (
-                <div key={item.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+                <div key={item.id} className="bg-white border border-stone-200 hover:border-orange-300 transition-colors overflow-hidden flex flex-col">
                   {baseProduct && (
                     <ImageUpload
                       imageUrl={baseProduct.image}
@@ -174,7 +174,7 @@ const DryPasta = () => {
                     />
                   )}
                   <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-bold text-stone-900 mb-2">{item.name}</h3>
+                    <h3 className="text-xl font-bold text-stone-900 mb-2 font-display">{item.name}</h3>
                     <p className="text-stone-600 text-sm mb-4 leading-relaxed flex-grow">{item.description}</p>
                     
                     {/* Quantity Selector */}
@@ -183,7 +183,7 @@ const DryPasta = () => {
                       <select 
                         value={selectedQuantity}
                         onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full border border-stone-300 rounded-none px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
                       >
                         {quantityOptions.map(option => (
                           <option key={option.value} value={option.value}>
@@ -201,7 +201,7 @@ const DryPasta = () => {
                         price: parseFloat(currentPrice),
                         image: baseProduct?.image || '/drypasta.webp',
                       })}
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-none font-semibold transition-colors flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add to Cart
@@ -217,27 +217,27 @@ const DryPasta = () => {
       {/* Info Section */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-stone-900 mb-8">Why Choose Our Dry Pasta?</h2>
+          <h2 className="text-2xl md:text-3xl font-bold text-stone-900 mb-8 font-display">Why Choose Our Dry Pasta?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="flex items-center justify-center mb-3">
                 <span className="text-2xl">🍝</span>
               </div>
-              <h3 className="text-xl font-semibold text-stone-900 mb-2">Traditional Recipe</h3>
+              <h3 className="text-xl font-semibold text-stone-900 mb-2 font-display">Traditional Recipe</h3>
               <p className="text-stone-600">Made using authentic Italian methods passed down through generations</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="flex items-center justify-center mb-3">
                 <span className="text-2xl">🌾</span>
               </div>
-              <h3 className="text-xl font-semibold text-stone-900 mb-2">Premium Ingredients</h3>
+              <h3 className="text-xl font-semibold text-stone-900 mb-2 font-display">Premium Ingredients</h3>
               <p className="text-stone-600">Only the finest durum wheat semolina and pure water used</p>
             </div>
             <div className="text-center">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="flex items-center justify-center mb-3">
                 <span className="text-2xl">🚫</span>
               </div>
-              <h3 className="text-xl font-semibold text-stone-900 mb-2">No Preservatives</h3>
+              <h3 className="text-xl font-semibold text-stone-900 mb-2 font-display">No Preservatives</h3>
               <p className="text-stone-600">100% natural with no artificial additives or preservatives</p>
             </div>
           </div>

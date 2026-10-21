@@ -68,7 +68,7 @@ const SeasonalSauces = () => {
               const currentPrice = calculatePrice(sauce.price, selectedQuantity);
               
               return (
-                <div key={sauce.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+                <div key={sauce.id} className="bg-white border border-stone-200 hover:border-orange-300 transition-colors overflow-hidden flex flex-col">
                   <div className="h-48 bg-orange-100 flex items-center justify-center">
                     <img 
                       src={sauce.image} 
@@ -87,7 +87,7 @@ const SeasonalSauces = () => {
                       <select 
                         value={selectedQuantity}
                         onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full border border-stone-300 rounded-none px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
                       >
                         {quantityOptions.map(option => (
                           <option key={option.value} value={option.value}>
@@ -108,7 +108,7 @@ const SeasonalSauces = () => {
                         price: parseFloat(currentPrice),
                         image: sauce.image,
                       })}
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-none font-semibold transition-colors flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add to Cart

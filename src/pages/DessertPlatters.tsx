@@ -85,7 +85,7 @@ const DessertPlatters = () => {
               const currentPrice = (parsePrice(dessert.price) * selectedQuantity).toFixed(2);
               
               return (
-                <div key={dessert.id} className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
+                <div key={dessert.id} className="bg-white border border-stone-200 hover:border-orange-300 transition-colors overflow-hidden flex flex-col">
                   <ImageUpload
                     imageUrl={dessert.image}
                     onImageUpload={(file) => handleImageUpload(dessert.id, file)}
@@ -101,7 +101,7 @@ const DessertPlatters = () => {
                       <select 
                         value={selectedQuantity}
                         onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-                        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        className="w-full border border-stone-300 rounded-none px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
                       >
                         {quantityOptions.map(option => (
                           <option key={option.value} value={option.value}>
@@ -122,7 +122,7 @@ const DessertPlatters = () => {
                         price: parseFloat(currentPrice),
                         image: dessert.image,
                       })}
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2"
+                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-none font-semibold transition-colors flex items-center justify-center gap-2"
                     >
                       <ShoppingCart className="w-4 h-4" />
                       Add to Cart

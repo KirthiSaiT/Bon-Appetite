@@ -83,7 +83,7 @@ const CookedPasta = () => {
 
           {/* Ready to Eat Combo Section - Sleek Modern UI */}
           <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="w-full max-w-xl bg-white/90 rounded-3xl shadow-2xl p-8 border border-orange-100">
+            <div className="w-full max-w-xl bg-white border border-stone-200 p-8">
               <h2 className="text-3xl font-extrabold text-orange-700 mb-6 text-center tracking-tight">Ready to Eat Combos</h2>
 
               {/* Step 1: Combo Type */}
@@ -121,7 +121,7 @@ const CookedPasta = () => {
                         <label htmlFor="combo-pasta" className="text-xs text-orange-700 font-semibold mb-1 block">Step 1: Choose Pasta</label>
                         <select
                           id="combo-pasta"
-                          className="w-full border border-orange-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                          className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
                           value={selectedPasta}
                           onChange={e => {
                             setSelectedPasta(e.target.value);
@@ -137,7 +137,7 @@ const CookedPasta = () => {
                         <label htmlFor="combo-pasta-variant" className="text-xs text-orange-700 font-semibold mb-1 block">Step 2: Variant</label>
                         <select
                           id="combo-pasta-variant"
-                          className="w-full border border-orange-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                          className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
                           value={selectedVariant}
                           onChange={e => setSelectedVariant(e.target.value)}
                         >
@@ -153,7 +153,7 @@ const CookedPasta = () => {
                         <label htmlFor="combo-ravioli" className="text-xs text-orange-700 font-semibold mb-1 block">Step 1: Choose Ravioli</label>
                         <select
                           id="combo-ravioli"
-                          className="w-full border border-orange-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                          className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
                           value={selectedRavioli}
                           onChange={e => {
                             setSelectedRavioli(e.target.value);
@@ -169,7 +169,7 @@ const CookedPasta = () => {
                         <label htmlFor="combo-ravioli-variant" className="text-xs text-orange-700 font-semibold mb-1 block">Step 2: Variant</label>
                         <select
                           id="combo-ravioli-variant"
-                          className="w-full border border-orange-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                          className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
                           value={selectedVariant}
                           onChange={e => setSelectedVariant(e.target.value)}
                         >
@@ -188,7 +188,7 @@ const CookedPasta = () => {
                 <label htmlFor="combo-sauce" className="text-xs text-orange-700 font-semibold mb-1 block">Step 3: Choose Sauce</label>
                 <select
                   id="combo-sauce"
-                  className="w-full border border-orange-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
+                  className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
                   value={selectedSauce}
                   onChange={e => setSelectedSauce(e.target.value)}
                 >
@@ -224,7 +224,7 @@ const CookedPasta = () => {
                   </div>
                   
               {/* Step 5: Summary & Add to Cart */}
-              <div className="bg-orange-50 rounded-2xl p-4 mb-4 shadow-inner">
+              <div className="bg-stone-50 border border-stone-200 p-4 mb-4">
                 <div className="flex flex-col gap-1 text-sm text-stone-700">
                   <div><span className="font-semibold text-orange-700">Combo:</span> {comboType === 'standard' ? 'Standard' : 'Ravioli'}</div>
                   <div>

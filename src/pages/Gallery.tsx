@@ -1,387 +1,515 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
-import { Card, CardContent } from "@/components/ui/card";
 import { SimpleFooter } from "@/components/Footer";
-import { Search, Filter, Heart, Eye, ChefHat, Utensils, Coffee, Cookie, Camera, MapPin, Clock, Users, Award, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  MapPin,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+  ArrowRight,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+
+// ── Data ──────────────────────────────────────────────────────────────────────
+
+const stats = [
+  { value: "500+", label: "Happy Customers" },
+  { value: "20+", label: "Workshops Conducted" },
+  { value: "30+", label: "Retail Store Partners" },
+  { value: "6", label: "Years of Craftsmanship" },
+];
+
+const galleryItems = [
+  {
+    id: 1,
+    title: "Our Professional Kitchen",
+    image: "/cmpic1.webp",
+    category: "events",
+    tag: "CM Event",
+    location: "Main Kitchen",
+    date: "Est. 2023",
+    desc: "State-of-the-art commercial kitchen where every pasta is crafted with precision and love.",
+  },
+  {
+    id: 2,
+    title: "Community Gathering",
+    image: "/cmpic21.webp",
+    category: "events",
+    tag: "CM Event",
+    location: "Event Venue",
+    date: "August 2025",
+    desc: "A vibrant gathering that showcases the growing community of pasta lovers around our brand.",
+  },
+  {
+    id: 3,
+    title: "Behind the Scenes",
+    image: "/bts1.webp",
+    category: "bts",
+    tag: "Behind the Scenes",
+    location: "Prep Station",
+    date: "Daily Operations",
+    desc: "The unseen care and dedication that goes into every single batch of pasta we make.",
+  },
+  {
+    id: 4,
+    title: "School Cooking Class",
+    image: "/school1.webp",
+    category: "school",
+    tag: "School Event",
+    location: "School Kitchen",
+    date: "Spring 2025",
+    desc: "Inspiring the next generation of chefs through interactive, hands-on cooking experiences.",
+  },
+  {
+    id: 5,
+    title: "Pasta Making Workshop",
+    image: "/workshop1.webp",
+    category: "workshop",
+    tag: "Workshop",
+    location: "Workshop Studio",
+    date: "Summer 2025",
+    desc: "Participants mastering the art of fresh pasta from scratch — flour, eggs, and passion.",
+  },
+  {
+    id: 6,
+    title: "Italian Baking Session",
+    image: "/school2.webp",
+    category: "workshop",
+    tag: "Workshop",
+    location: "Baking Studio",
+    date: "Autumn 2025",
+    desc: "Exploring Italian flavours through a collaborative workshop full of laughter and learning.",
+  },
+];
+
+const categories = [
+  { value: "all", label: "All" },
+  { value: "events", label: "CM Events" },
+  { value: "workshop", label: "Workshops" },
+  { value: "school", label: "School Events" },
+  { value: "bts", label: "Behind the Scenes" },
+];
+
+// ── Sub-component: masonry card ───────────────────────────────────────────────
+
+type GalleryItem = (typeof galleryItems)[0];
+
+const MasonryCard = ({
+  item,
+  onClick,
+  className = "",
+  large = false,
+}: {
+  item: GalleryItem;
+  onClick: () => void;
+  className?: string;
+  large?: boolean;
+}) => (
+  <div
+    className={`group relative overflow-hidden rounded-2xl cursor-pointer ${className}`}
+    onClick={onClick}
+  >
+    <img
+      src={item.image}
+      alt={item.title}
+      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+    />
+    {/* Gradient overlay */}
+    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+    {/* Badge */}
+    <div className="absolute top-4 left-4">
+      <span className="bg-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide shadow">
+        {item.tag}
+      </span>
+    </div>
+    {/* Info */}
+    <div className="absolute bottom-0 left-0 right-0 p-5">
+      <h3
+        className={`text-white font-bold leading-tight mb-1 ${
+          large ? "text-2xl" : "text-base"
+        }`}
+      >
+        {item.title}
+      </h3>
+      <div className="flex items-center gap-3 text-white/60 text-xs">
+        <span className="flex items-center gap-1">
+          <MapPin className="w-3 h-3" />
+          {item.location}
+        </span>
+        <span className="flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {item.date}
+        </span>
+      </div>
+    </div>
+  </div>
+);
+
+// ── Sub-component: filter grid card ──────────────────────────────────────────
+
+const GridCard = ({
+  item,
+  onClick,
+}: {
+  item: GalleryItem;
+  onClick: () => void;
+}) => (
+  <div
+    className="group relative aspect-[4/3] overflow-hidden rounded-xl cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
+    onClick={onClick}
+  >
+    <img
+      src={item.image}
+      alt={item.title}
+      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+    />
+    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+      <span className="bg-orange-600 text-white text-xs font-bold px-2.5 py-1 rounded-full inline-block mb-2">
+        {item.tag}
+      </span>
+      <h3 className="text-white font-semibold text-sm leading-tight">{item.title}</h3>
+      <div className="flex items-center gap-3 text-white/65 text-xs mt-1">
+        <span className="flex items-center gap-1">
+          <MapPin className="w-3 h-3" />
+          {item.location}
+        </span>
+        <span className="flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {item.date}
+        </span>
+      </div>
+    </div>
+  </div>
+);
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 
 const Gallery = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [likedItems, setLikedItems] = useState(new Set());
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [lightboxId, setLightboxId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState("all");
 
-  const galleryItems = [
-    {
-      id: 1,
-      title: "CM EVENT: Our Professional Kitchen",
-      image: "/cmpic1.webp",
-      category: "CM EVENT",
-      description: "State-of-the-art commercial kitchen where all the magic happens. Equipped with modern appliances and designed for efficiency.",
-      location: "Main Kitchen",
-      date: "Established 2023",
-      story: "This is where our culinary dreams come to life. Every dish is crafted with precision in our spotless, professional-grade kitchen.",
-      tags: ["Professional", "Modern", "Spacious"]
-    },
-    {
-      id: 2,
-      title: "CM Event: Group Photo",
-      image: "/cmpic21.webp",
-      category: "CM EVENT",
-      description: "A memorable group photo from a recent CM Event, capturing the spirit of collaboration and joy.",
-      location: "Event Venue",
-      date: "August 2025",
-      story: "These events are a testament to our vibrant community and shared passion for culinary arts.",
-      tags: ["CM Event", "Group", "Celebration"]
-    },
-    {
-      id: 3,
-      title: "Behind the Scenes: Prep Work",
-      image: "/bts1.webp",
-      category: "Behind the scene",
-      description: "Our dedicated team meticulously preparing ingredients, ensuring every dish is perfect.",
-      location: "Prep Station",
-      date: "Daily Operations",
-      story: "The unseen efforts that go into creating delicious meals, from fresh produce to final touches.",
-      tags: ["Preparation", "Teamwork", "Efficiency"]
-    },
-    {
-      id: 4,
-      title: "School Event: Cooking Class",
-      image: "/school1.webp",
-      category: "School event",
-      description: "Students engaging in a hands-on cooking class, learning the basics of culinary arts.",
-      location: "School Kitchen",
-      date: "Spring 2025",
-      story: "Fostering young talent and inspiring the next generation of chefs through interactive sessions.",
-      tags: ["Education", "Students", "Cooking"]
-    },
-    {
-      id:5,
-      title: "Workshop: Pasta Making",
-      image: "/workshop1.webp",
-      category: "workshop",
-      description: "Participants learning the traditional art of pasta making from scratch in an engaging workshop.",
-      location: "Workshop Studio",
-      date: "Summer 2025",
-      story: "Bringing people together to share the joy of creating delicious, homemade pasta.",
-      tags: ["Hands-on", "Culinary", "Learning"]
-    },
-    {
-      id: 6,
-      title: "Workshop: Baking Session",
-      image: "/school2.webp",
-      category: "workshop",
-      description: "A fun and interactive baking workshop, exploring techniques for perfect pastries and desserts.",
-      location: "Baking Studio",
-      date: "Autumn 2025",
-      story: "Sweet creations and shared laughter, as participants master the art of baking.",
-      tags: ["Baking", "Desserts", "Fun"]
-    }
-  ];
+  const currentItem = galleryItems.find((g) => g.id === lightboxId) ?? null;
 
-  const categories = ["All", "CM EVENT", "workshop", "School event", "Behind the scene"];
-
-  const getCategoryIcon = (category) => {
-    switch (category) {
-      case "Kitchen Space": return <ChefHat className="w-4 h-4" />;
-      case "Ingredients": return <Sparkles className="w-4 h-4" />;
-      case "Cooking Process": return <Utensils className="w-4 h-4" />;
-      case "Our Team": return <Users className="w-4 h-4" />;
-      case "Achievements": return <Award className="w-4 h-4" />;
-      case "Events": return <Camera className="w-4 h-4" />;
-      case "Customer Love": return <Heart className="w-4 h-4" />;
-      case "Innovation": return <Coffee className="w-4 h-4" />;
-      case "Operations": return <Clock className="w-4 h-4" />;
-      case "Community": return <MapPin className="w-4 h-4" />;
-      default: return <Camera className="w-4 h-4" />;
-    }
+  const navigateLightbox = (dir: 1 | -1) => {
+    if (!currentItem) return;
+    const pool =
+      activeTab === "all"
+        ? galleryItems
+        : galleryItems.filter((g) => g.category === activeTab);
+    const idx = pool.findIndex((g) => g.id === currentItem.id);
+    const next = pool[(idx + dir + pool.length) % pool.length];
+    setLightboxId(next.id);
   };
 
-  const filteredItems = galleryItems.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.story.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         item.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory = selectedCategory === "All" || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const toggleLike = (itemId) => {
-    const newLikedItems = new Set(likedItems);
-    if (newLikedItems.has(itemId)) {
-      newLikedItems.delete(itemId);
-    } else {
-      newLikedItems.add(itemId);
-    }
-    setLikedItems(newLikedItems);
-  };
-
-  const openImageModal = (item) => {
-    setSelectedImage(item);
-  };
-
-  const closeImageModal = () => {
-    setSelectedImage(null);
-  };
+  const filtered =
+    activeTab === "all"
+      ? galleryItems
+      : galleryItems.filter((g) => g.category === activeTab);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-red-50">
+    <div className="min-h-screen bg-white">
       <Navigation />
-      
-      {/* Hero Section */}
-      <section className="py-20 px-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-600/10 to-red-600/10"></div>
-        <div className="absolute top-10 left-10 w-32 h-32 bg-orange-200/30 rounded-full blur-xl"></div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-red-200/30 rounded-full blur-xl"></div>
-        
-        <div className="max-w-6xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm rounded-full px-4 py-2 mb-6 shadow-md">
-            <Camera className="w-5 h-5 text-orange-600" />
-            <span className="text-gray-700 font-medium">Behind the Scenes</span>
-          </div>
-          
-          <h1 className="text-6xl font-bold text-gray-800 mb-6">
-            Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">Story</span> in Pictures
+
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <section className="relative h-[72vh] min-h-[500px] flex items-end overflow-hidden">
+        <img
+          src="/bts1.webp"
+          alt="Bon Appetit Community"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        {/* Layered gradient for depth */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent" />
+
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-8 pb-20">
+          <p className="text-orange-400 text-sm font-bold uppercase tracking-[0.2em] mb-4">
+            Community & Gallery
+          </p>
+          <h1 className="text-5xl md:text-7xl font-extrabold text-white mb-5 leading-[1.05] max-w-3xl">
+            Where Pasta Brings<br />
+            <span className="text-orange-400">People Together</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-4xl mx-auto leading-relaxed">
-            Take a journey through our cloud kitchen - from the ingredients we carefully select to the moments we create together. 
-            Every image tells a story of passion, dedication, and the love we put into every dish we serve.
+          <p className="text-white/70 text-lg max-w-xl leading-relaxed">
+            From intimate workshops to lively community events — every image
+            is a chapter in the story of a brand built on craft, passion, and
+            the love of Italian food.
           </p>
         </div>
       </section>
 
-      {/* Search and Filter Section */}
-      <section className="py-8 px-4 bg-white/60 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col lg:flex-row gap-6 items-center justify-between">
-            
-            {/* Search Bar */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search our story, moments, or memories..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-full border border-orange-200 focus:border-orange-400 focus:ring-2 focus:ring-orange-200 focus:outline-none bg-white/90 backdrop-blur-sm transition-all"
-              />
+      {/* ── Stats strip ──────────────────────────────────────────────────── */}
+      <section className="bg-orange-600">
+        <div className="max-w-7xl mx-auto px-8 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-white text-center">
+          {stats.map((s) => (
+            <div key={s.label}>
+              <div className="text-4xl md:text-5xl font-extrabold tracking-tight mb-1">
+                {s.value}
+              </div>
+              <div className="text-orange-200 text-xs font-semibold uppercase tracking-widest">
+                {s.label}
+              </div>
             </div>
+          ))}
+        </div>
+      </section>
 
-            {/* Category Filters */}
-            <div className="flex flex-wrap gap-2 max-w-4xl">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  onClick={() => setSelectedCategory(category)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-full font-medium transition-all duration-300 text-sm ${
-                    selectedCategory === category
-                      ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg transform scale-105"
-                      : "bg-white/80 text-gray-600 hover:bg-orange-100 hover:text-orange-700 hover:shadow-md"
-                  }`}
-                >
-                  {category !== "All" && getCategoryIcon(category)}
-                  {category}
-                </button>
-              ))}
+      {/* ── Masonry featured grid ─────────────────────────────────────────── */}
+      <section className="py-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Section header */}
+          <div className="flex items-end justify-between mb-12">
+            <div>
+              <p className="text-orange-600 text-sm font-bold uppercase tracking-widest mb-2">
+                Highlights
+              </p>
+              <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900">
+                Featured Moments
+              </h2>
             </div>
+            <button
+              onClick={() => setActiveTab("all")}
+              className="hidden md:flex items-center gap-1.5 text-gray-400 hover:text-orange-600 text-sm font-semibold transition-colors"
+            >
+              Browse all
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Masonry: 1 large (2×2) + 5 small */}
+          <div
+            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+            style={{ gridAutoRows: "260px" }}
+          >
+            <MasonryCard
+              item={galleryItems[0]}
+              onClick={() => setLightboxId(galleryItems[0].id)}
+              className="md:col-span-2 md:row-span-2"
+              large
+            />
+            {galleryItems.slice(1, 6).map((item) => (
+              <MasonryCard
+                key={item.id}
+                item={item}
+                onClick={() => setLightboxId(item.id)}
+              />
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Gallery Grid */}
-      <section className="py-16 px-4">
+      {/* ── Category filter + full grid ───────────────────────────────────── */}
+      <section className="py-20 px-6 bg-gray-50">
         <div className="max-w-7xl mx-auto">
-          {filteredItems.length === 0 ? (
-            <div className="text-center py-20">
-              <div className="w-24 h-24 mx-auto mb-6 bg-orange-100 rounded-full flex items-center justify-center">
-                <Search className="w-12 h-12 text-orange-400" />
+          <div className="text-center mb-12">
+            <p className="text-orange-600 text-sm font-bold uppercase tracking-widest mb-2">
+              Browse
+            </p>
+            <h2 className="text-4xl font-extrabold text-gray-900 mb-8">
+              All Stories
+            </h2>
+            {/* shadcn Tabs as filter */}
+            <Tabs value={activeTab} onValueChange={setActiveTab}>
+              <div className="flex justify-center">
+                <TabsList className="bg-white border border-gray-200 shadow-sm p-1 h-auto gap-1 rounded-xl">
+                  {categories.map((c) => (
+                    <TabsTrigger
+                      key={c.value}
+                      value={c.value}
+                      className="px-5 py-2.5 text-sm font-medium rounded-lg data-[state=active]:bg-orange-600 data-[state=active]:text-white data-[state=active]:shadow transition-all"
+                    >
+                      {c.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
               </div>
-              <h3 className="text-2xl font-bold text-gray-700 mb-2">No moments found</h3>
-              <p className="text-gray-500">Try adjusting your search or filter criteria to explore our story</p>
+            </Tabs>
+          </div>
+
+          {/* Filtered grid */}
+          {filtered.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((item) => (
+                <GridCard
+                  key={item.id}
+                  item={item}
+                  onClick={() => setLightboxId(item.id)}
+                />
+              ))}
             </div>
           ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredItems.map((item) => (
-                <Card key={item.id} className="group overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 bg-white/95 backdrop-blur-sm border-0 shadow-lg h-full flex flex-col">
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                  <img 
-                    src={item.image} 
-                    alt={item.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 cursor-pointer"
-                      onClick={() => openImageModal(item)}
-                    />
-                    
-                    {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
-                    
-                    {/* Quick Info Overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-2 group-hover:translate-y-0 transition-transform duration-300">
-                      <div className="flex items-center gap-2 text-xs mb-1 opacity-90">
-                        <MapPin className="w-3 h-3" />
-                        <span>{item.location}</span>
-                        <span>•</span>
-                        <Clock className="w-3 h-3" />
-                        <span>{item.date}</span>
-                      </div>
-                      <h3 className="font-semibold text-sm mb-1">{item.title}</h3>
-                    </div>
-                    
-                    {/* Action Buttons */}
-                    <div className="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          toggleLike(item.id);
-                        }}
-                        className={`p-2 rounded-full backdrop-blur-sm transition-all duration-300 ${
-                          likedItems.has(item.id)
-                            ? "bg-red-500 text-white shadow-lg"
-                            : "bg-white/90 text-gray-600 hover:bg-white hover:text-red-500"
-                        }`}
-                      >
-                        <Heart className={`w-4 h-4 ${likedItems.has(item.id) ? "fill-current" : ""}`} />
-                      </button>
-                      <button
-                        onClick={() => openImageModal(item)}
-                        className="p-2 rounded-full bg-white/90 text-gray-600 hover:bg-white hover:text-orange-500 backdrop-blur-sm transition-all duration-300"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Category Badge */}
-                    <div className="absolute top-3 left-3">
-                      <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-sm">
-                        {getCategoryIcon(item.category)}
-                        <span className="text-xs font-medium text-gray-700">{item.category}</span>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <CardContent className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-orange-600 transition-colors">
-                      {item.title}
-                    </h3>
-                    
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2 flex-1">{item.description}</p>
-                    
-                    {/* Story Preview */}
-                    <div className="bg-orange-50 rounded-lg p-3 mb-4">
-                      <p className="text-xs text-orange-800 italic line-clamp-2">"{item.story}"</p>
-                    </div>
-                    
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-1">
-                      {item.tags.map((tag, tagIndex) => (
-                        <span
-                          key={tagIndex}
-                          className="text-xs px-2 py-1 bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 rounded-full font-medium"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+            <p className="text-center text-gray-400 py-20 text-lg">
+              No photos in this category yet — check back soon.
+            </p>
           )}
         </div>
       </section>
 
-      {/* Image Modal */}
-      {selectedImage && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={closeImageModal}>
-          <div className="relative max-w-6xl max-h-[95vh] bg-white rounded-2xl overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <button
-              onClick={closeImageModal}
-              className="absolute top-4 right-4 z-10 p-3 bg-white/90 rounded-full hover:bg-white transition-colors shadow-lg"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            
-            <div className="grid lg:grid-cols-2">
-              <div className="aspect-square lg:aspect-auto">
-                <img
-                  src={selectedImage.image}
-                  alt={selectedImage.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-8 lg:p-12 overflow-y-auto max-h-[95vh]">
-                <div className="flex items-center gap-2 mb-4">
-                  {getCategoryIcon(selectedImage.category)}
-                  <span className="text-sm font-medium text-orange-600 bg-orange-100 px-3 py-1 rounded-full">
-                    {selectedImage.category}
-                  </span>
-                </div>
-                
-                <h2 className="text-3xl font-bold text-gray-800 mb-4">{selectedImage.title}</h2>
-                
-                <div className="flex items-center gap-4 text-sm text-gray-600 mb-6">
-                  <div className="flex items-center gap-1">
-                    <MapPin className="w-4 h-4" />
-                    <span>{selectedImage.location}</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="w-4 h-4" />
-                    <span>{selectedImage.date}</span>
-                  </div>
-                </div>
-                
-                <p className="text-gray-700 mb-6 leading-relaxed text-lg">{selectedImage.description}</p>
-                
-                {/* Story Section */}
-                <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-6 mb-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <Heart className="w-5 h-5 text-red-500" />
-                    Our Story
-                  </h3>
-                  <p className="text-gray-700 italic leading-relaxed">"{selectedImage.story}"</p>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 mb-8">
-                  {selectedImage.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="px-4 py-2 bg-gradient-to-r from-orange-100 to-red-100 text-orange-700 rounded-full font-medium"
-                    >
-                      {tag}
-                    </span>
-                  ))}
+      {/* ── Join the community CTAs ───────────────────────────────────────── */}
+      <section className="py-24 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <p className="text-orange-600 text-sm font-bold uppercase tracking-widest mb-2">
+              Get Involved
+            </p>
+            <h2 className="text-4xl font-extrabold text-gray-900">
+              Be Part of Our Story
+            </h2>
           </div>
-          
-                <div className="flex gap-4">
-                  <button 
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleLike(selectedImage.id);
-                    }}
-                    className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                      likedItems.has(selectedImage.id)
-                        ? "bg-red-500 text-white shadow-lg"
-                        : "bg-gray-100 text-gray-700 hover:bg-red-50 hover:text-red-600"
-                    }`}
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Workshop CTA card */}
+            <div className="group relative overflow-hidden rounded-2xl h-80 cursor-pointer">
+              <img
+                src="/pastaworkshop.webp"
+                alt="Pasta Workshops"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8">
+                <Badge className="bg-orange-600 text-white hover:bg-orange-600 mb-3 text-xs uppercase tracking-wider">
+                  Every Month
+                </Badge>
+                <h3 className="text-white text-2xl font-extrabold mb-2">
+                  Join a Workshop
+                </h3>
+                <p className="text-white/70 text-sm mb-5 leading-relaxed">
+                  Make pasta from scratch alongside other enthusiasts. Beginners
+                  always welcome.
+                </p>
+                <Button
+                  asChild
+                  className="bg-orange-600 hover:bg-orange-700 text-white font-semibold"
+                >
+                  <Link to="/pasta-workshops">Book Your Slot →</Link>
+                </Button>
+              </div>
+            </div>
+
+            {/* Instagram / social CTA card */}
+            <div className="group relative overflow-hidden rounded-2xl h-80 cursor-pointer">
+              <img
+                src="/cmpic21.webp"
+                alt="Community"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-8">
+                <Badge className="bg-white/20 text-white hover:bg-white/20 border border-white/30 mb-3 text-xs uppercase tracking-wider backdrop-blur-sm">
+                  Follow Along
+                </Badge>
+                <h3 className="text-white text-2xl font-extrabold mb-2">
+                  Follow Our Story
+                </h3>
+                <p className="text-white/70 text-sm mb-5 leading-relaxed">
+                  Daily pasta inspiration, recipes & behind-the-scenes on
+                  Instagram.
+                </p>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="border-white text-white hover:bg-white hover:text-gray-900 font-semibold"
+                >
+                  <a
+                    href="https://www.instagram.com/bonappetitcafe_hyd"
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <Heart className={`w-5 h-5 ${likedItems.has(selectedImage.id) ? "fill-current" : ""}`} />
-                    {likedItems.has(selectedImage.id) ? "Loved" : "Love This"}
-                  </button>
-                  
-                  <button className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 text-white py-3 px-6 rounded-xl font-semibold hover:from-orange-600 hover:to-red-600 transition-all duration-300 transform hover:scale-105 shadow-lg">
-                    Experience Our Kitchen
-                  </button>
-            </div>
-            </div>
+                    @bonappetitcafe_hyd
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
-      )}
+      </section>
+
+      {/* ── Lightbox Dialog ───────────────────────────────────────────────── */}
+      <Dialog
+        open={lightboxId !== null}
+        onOpenChange={(open) => !open && setLightboxId(null)}
+      >
+        <DialogContent className="max-w-5xl w-full p-0 overflow-hidden border-0 gap-0">
+          <DialogTitle className="sr-only">
+            {currentItem?.title ?? "Gallery image"}
+          </DialogTitle>
+
+          {currentItem && (
+            <div className="grid md:grid-cols-[3fr_2fr] min-h-[520px]">
+              {/* Image pane */}
+              <div className="relative bg-black min-h-[300px]">
+                <img
+                  src={currentItem.image}
+                  alt={currentItem.title}
+                  className="w-full h-full object-cover max-h-[80vh]"
+                />
+                {/* Prev */}
+                <button
+                  onClick={() => navigateLightbox(-1)}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2.5 backdrop-blur-sm transition-colors"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="w-5 h-5" />
+                </button>
+                {/* Next */}
+                <button
+                  onClick={() => navigateLightbox(1)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 text-white rounded-full p-2.5 backdrop-blur-sm transition-colors"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+                {/* Image counter */}
+                <div className="absolute bottom-3 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs px-3 py-1 rounded-full backdrop-blur-sm">
+                  {galleryItems.findIndex((g) => g.id === currentItem.id) + 1} /{" "}
+                  {galleryItems.length}
+                </div>
+              </div>
+
+              {/* Info pane */}
+              <div className="bg-white flex flex-col p-8">
+                <span className="inline-block bg-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider w-fit mb-5">
+                  {currentItem.tag}
+                </span>
+                <h2 className="text-2xl font-extrabold text-gray-900 mb-4 leading-tight">
+                  {currentItem.title}
+                </h2>
+                <p className="text-gray-600 leading-relaxed text-sm flex-1">
+                  {currentItem.desc}
+                </p>
+                <div className="mt-6 pt-6 border-t border-gray-100 space-y-3">
+                  <div className="flex items-center gap-2.5 text-sm text-gray-500">
+                    <MapPin className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                    {currentItem.location}
+                  </div>
+                  <div className="flex items-center gap-2.5 text-sm text-gray-500">
+                    <Clock className="w-4 h-4 text-orange-500 flex-shrink-0" />
+                    {currentItem.date}
+                  </div>
+                </div>
+                <Button
+                  asChild
+                  className="mt-6 bg-orange-600 hover:bg-orange-700 text-white w-full"
+                >
+                  <Link to="/pasta-workshops">Join Our Next Workshop →</Link>
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <SimpleFooter />
     </div>
   );
 };
 
-export default Gallery; 
+export default Gallery;

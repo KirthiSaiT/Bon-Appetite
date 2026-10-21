@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -37,20 +39,27 @@
     --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Hallmark · custom theme tokens */
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --color-paper: oklch(98% 0.01 80);
+    --color-ink: oklch(18% 0.02 80);
+    --color-accent: oklch(65% 0.17 40);
+    --color-sage: oklch(66% 0.10 140);
+    --color-amber: oklch(87% 0.12 85);
+    --color-ink-muted: oklch(45% 0.03 80);
+    --color-rule: oklch(88% 0.01 80);
+    --dur-fast: 150ms;
+    --dur-base: 250ms;
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .dark {
@@ -94,14 +103,17 @@
 
 @layer base {
   html {
-    font-size: 112.5%; /* 1rem = 18px — scales all rem-based sizes up proportionally */
-  }
-
-  * {
-    @apply border-border;
+    font-size: 112.5%;
+    overflow-x: clip;
   }
 
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    overflow-x: clip;
+  }
+
+  * {
+    @apply border-border;
   }
 }

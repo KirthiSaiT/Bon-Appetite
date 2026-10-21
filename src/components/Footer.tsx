@@ -105,7 +105,7 @@ const Footer = () => (
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-start gap-10">
         {/* Brand */}
         <div className="flex-1 flex flex-col items-center md:items-start mb-8 md:mb-0">
-          <span className="text-white text-4xl font-bold mb-2" style={{ fontFamily: 'cursive' }}>Bon Appetite</span>
+          <span className="text-white text-4xl font-light mb-2" style={{ fontFamily: 'var(--font-display)' }}>Bon Appetite</span>
           <div className="mt-4 text-center md:text-left">
             <p className="text-white text-sm leading-relaxed">
               Authentic, handmade pasta (uncooked) &nbsp;|&nbsp; Where every bite tells a story &nbsp;|&nbsp; Taste the Italian tradition &nbsp;|<br/>
@@ -162,7 +162,7 @@ const SimpleFooter = () => (
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-start gap-10">
         {/* Brand */}
         <div className="flex-1 flex flex-col items-center md:items-start mb-8 md:mb-0">
-          <span className="text-white text-4xl font-bold mb-2" style={{ fontFamily: 'cursive' }}>Bon Appetite</span>
+          <span className="text-white text-4xl font-light mb-2" style={{ fontFamily: 'var(--font-display)' }}>Bon Appetite</span>
           <div className="mt-4 text-center md:text-left">
             <p className="text-white text-sm leading-relaxed">
               Authentic, handmade pasta (uncooked) &nbsp;|&nbsp; Where every bite tells a story &nbsp;|&nbsp; Taste the Italian tradition &nbsp;|<br/>

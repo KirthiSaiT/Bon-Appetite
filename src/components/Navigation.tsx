@@ -1,11 +1,6 @@
+/* Hallmark · N9 edge-aligned minimal nav */
 import { Link, useLocation } from "react-router-dom";
 import { Menu } from "lucide-react";
-import {
-  NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
 import {
   Sheet,
   SheetContent,
@@ -34,71 +29,68 @@ const Navigation = () => {
   const location = useLocation();
 
   return (
-    <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center h-20">
-          {/* Logo — normal-flow, vertically centred */}
-          <div className="flex-shrink-0">
-            <Link to="/">
-              <img
-                src="/bonappetitlogo.jpeg"
-                alt="Bon Appetit Logo"
-                className="h-14 w-auto rounded-xl shadow-md"
-              />
-            </Link>
+    <nav className="bg-white border-b border-stone-200 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 md:px-10">
+        <div className="flex items-center h-16 gap-4">
+
+          {/* Logo */}
+          <Link to="/" className="flex-shrink-0">
+            <img
+              src="/bonappetitlogo.jpeg"
+              alt="Bon Appetit Logo"
+              className="h-10 w-auto rounded-lg"
+            />
+          </Link>
+
+          <div className="flex-1" />
+
+          {/* Desktop links — edge-aligned right */}
+          <div className="hidden 2xl:flex items-center gap-5">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  "text-[0.68rem] tracking-[0.1em] font-medium uppercase transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600 rounded-sm",
+                  location.pathname === item.path
+                    ? "text-orange-600"
+                    : "text-stone-500 hover:text-stone-900"
+                )}
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
 
-          {/* Desktop Navigation — shadcn NavigationMenu */}
-          <div className="hidden 2xl:flex flex-1 justify-center">
-            <NavigationMenu>
-              <NavigationMenuList className="gap-0 flex-wrap justify-center">
-                {navItems.map((item) => (
-                  <NavigationMenuItem key={item.path}>
-                    <NavigationMenuLink asChild>
-                      <Link
-                        to={item.path}
-                        className={cn(
-                          "inline-flex h-9 items-center justify-center rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-orange-50 hover:text-orange-600 focus:outline-none whitespace-nowrap",
-                          location.pathname === item.path
-                            ? "text-orange-600 font-semibold"
-                            : "text-gray-600"
-                        )}
-                      >
-                        {item.name}
-                      </Link>
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                ))}
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-
-          {/* Cart + Mobile trigger */}
-          <div className="flex items-center gap-2">
+          {/* Cart + mobile hamburger */}
+          <div className="flex items-center gap-1 ml-2">
             <CartDrawer />
-
-            {/* Mobile Sheet */}
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="2xl:hidden">
-                  <Menu className="h-6 w-6" />
+                  <Menu className="h-5 w-5" />
                   <span className="sr-only">Open menu</span>
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-72 pt-10">
-                <SheetHeader className="mb-4">
-                  <SheetTitle className="text-orange-600 text-lg font-bold">Menu</SheetTitle>
+                <SheetHeader className="mb-6">
+                  <SheetTitle
+                    className="text-orange-600 text-2xl font-light"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    Bon Appetit
+                  </SheetTitle>
                 </SheetHeader>
-                <nav className="flex flex-col gap-1">
+                <nav className="flex flex-col gap-0.5">
                   {navItems.map((item) => (
                     <SheetClose asChild key={item.path}>
                       <Link
                         to={item.path}
                         className={cn(
-                          "flex items-center px-4 py-3 rounded-md text-sm font-medium transition-colors hover:bg-orange-50 hover:text-orange-600",
+                          "flex items-center px-4 py-3 text-sm transition-colors hover:bg-orange-50 hover:text-orange-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600 rounded-sm",
                           location.pathname === item.path
-                            ? "bg-orange-50 text-orange-600 font-semibold"
-                            : "text-gray-600"
+                            ? "bg-orange-50 text-orange-600 font-medium"
+                            : "text-stone-600"
                         )}
                       >
                         {item.name}
@@ -109,6 +101,7 @@ const Navigation = () => {
               </SheetContent>
             </Sheet>
           </div>
+
         </div>
       </div>
     </nav>

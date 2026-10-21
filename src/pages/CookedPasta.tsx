@@ -58,7 +58,7 @@ const CookedPasta = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="min-h-screen bg-white">
       <Navigation />
       
       <section className="py-20 px-4">
@@ -71,11 +71,12 @@ const CookedPasta = () => {
             Back to Products
           </button>
           
-          <div className="text-center">
-            <h1 className="text-5xl font-bold text-gray-800 mb-6">
+          <div>
+            <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">Ready to Eat</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-6 font-display">
               Our <span className="text-orange-600">Cooked Pasta</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg text-stone-600 mb-8 max-w-2xl leading-relaxed">
               Delicious pasta dishes, cooked to perfection. Pre-order 1-2 days in advance, 2-hour shelf life.
             </p>
           </div>
@@ -89,7 +90,7 @@ const CookedPasta = () => {
               <div className="mb-6">
                 <div className="flex justify-center gap-4">
                   <button
-                    className={`flex-1 px-4 py-2 rounded-full font-semibold border transition-all duration-200 text-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 ${comboType === 'standard' ? 'bg-orange-600 text-white border-orange-600 scale-105' : 'bg-white text-orange-600 border-orange-300 hover:bg-orange-50'}`}
+                    className={`flex-1 px-4 py-2 rounded-none font-semibold border transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 ${comboType === 'standard' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white text-orange-600 border-orange-300 hover:bg-orange-50'}`}
                     onClick={() => {
                       setComboType('standard');
                       setSelectedPasta('Fettuccine');
@@ -99,7 +100,7 @@ const CookedPasta = () => {
                     Standard Combo
                   </button>
                   <button
-                    className={`flex-1 px-4 py-2 rounded-full font-semibold border transition-all duration-200 text-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400 ${comboType === 'ravioli' ? 'bg-orange-600 text-white border-orange-600 scale-105' : 'bg-white text-orange-600 border-orange-300 hover:bg-orange-50'}`}
+                    className={`flex-1 px-4 py-2 rounded-none font-semibold border transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 ${comboType === 'ravioli' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white text-orange-600 border-orange-300 hover:bg-orange-50'}`}
                     onClick={() => {
                       setComboType('ravioli');
                       setSelectedRavioli('Ricotta Spinach');
@@ -208,7 +209,7 @@ const CookedPasta = () => {
                       checked={extraSauce}
                       onChange={e => setExtraSauce(e.target.checked)}
                     />
-                    <span className="ml-2 text-gray-700">Extra Sauce <span className="text-xs text-orange-500">(+₹70)</span></span>
+                    <span className="ml-2 text-stone-700">Extra Sauce <span className="text-xs text-orange-500">(+₹70)</span></span>
                   </label>
                   <label className="flex items-center cursor-pointer select-none">
                     <input
@@ -217,14 +218,14 @@ const CookedPasta = () => {
                       checked={extraCheese}
                       onChange={e => setExtraCheese(e.target.checked)}
                     />
-                    <span className="ml-2 text-gray-700">Extra Cheese <span className="text-xs text-orange-500">(+₹50)</span></span>
+                    <span className="ml-2 text-stone-700">Extra Cheese <span className="text-xs text-orange-500">(+₹50)</span></span>
                   </label>
                     </div>
                   </div>
                   
               {/* Step 5: Summary & Add to Cart */}
               <div className="bg-orange-50 rounded-2xl p-4 mb-4 shadow-inner">
-                <div className="flex flex-col gap-1 text-sm text-gray-700">
+                <div className="flex flex-col gap-1 text-sm text-stone-700">
                   <div><span className="font-semibold text-orange-700">Combo:</span> {comboType === 'standard' ? 'Standard' : 'Ravioli'}</div>
                   <div>
                     <span className="font-semibold text-orange-700">{comboType === 'standard' ? 'Pasta' : 'Ravioli'}:</span> {comboType === 'standard' ? selectedPasta : selectedRavioli} ({selectedVariant})
@@ -238,7 +239,7 @@ const CookedPasta = () => {
                   <span className="text-xl font-bold text-orange-600">Total: ₹{getComboPrice()}</span>
                   <button
                     onClick={handleComboAddToCart}
-                    className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-full font-semibold transition-all flex items-center gap-2 shadow-lg focus:outline-none focus:ring-2 focus:ring-orange-400"
+                    className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-none font-semibold transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
                   >
                     <ShoppingCart className="w-5 h-5" />
                     Add Combo to Cart

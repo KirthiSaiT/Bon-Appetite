@@ -6,6 +6,24 @@
     "theme_axes": "light / classical-serif / warm-orange",
     "vibe": "artisan pasta, Italian craft, warm editorial",
     "enrichment": "photographic",
+    "brief": "Bon Appetit · Gallery + Our Pasta Brand + Recipes refined; invented stats + highlights strip removed"
+  },
+  {
+    "date": "2026-10-21",
+    "macrostructure": "Split Studio",
+    "theme": "custom",
+    "theme_axes": "light / classical-serif / warm-orange",
+    "vibe": "artisan pasta, Italian craft, warm editorial",
+    "enrichment": "photographic",
+    "brief": "Bon Appetit · site-wide editorial system applied to all 19 pages + nav xl-breakpoint fix"
+  },
+  {
+    "date": "2026-10-21",
+    "macrostructure": "Split Studio",
+    "theme": "custom",
+    "theme_axes": "light / classical-serif / warm-orange",
+    "vibe": "artisan pasta, Italian craft, warm editorial",
+    "enrichment": "photographic",
     "brief": "Bon Appetit Cafe · artisan pasta cloud kitchen homepage redesign"
   }
 ]

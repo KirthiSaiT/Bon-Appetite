@@ -123,7 +123,7 @@ const DryPasta = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="min-h-screen bg-white">
       <Navigation />
       
       {/* Hero Section */}
@@ -137,16 +137,17 @@ const DryPasta = () => {
             Back to Products
           </button>
           
-          <div className="text-center">
-            <h1 className="text-5xl font-bold text-gray-800 mb-6">
+          <div>
+            <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">Ready to Cook</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-6 font-display">
               Our <span className="text-orange-600">Dry Pasta</span> Collection
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg text-stone-600 mb-8 max-w-2xl leading-relaxed">
               Premium quality dry pasta made with traditional Italian methods. No preservatives, 3 months shelf life.
             </p>
-            <div className="bg-orange-100 rounded-lg p-4 max-w-2xl mx-auto">
-              <p className="text-orange-800 font-semibold">
-                🍝 All our dry pasta is made fresh in-house using traditional Italian recipes
+            <div className="border-l-2 border-orange-600 pl-4 max-w-2xl">
+              <p className="text-stone-600 text-sm">
+                All our dry pasta is made fresh in-house using traditional Italian recipes
               </p>
             </div>
           </div>
@@ -173,12 +174,12 @@ const DryPasta = () => {
                     />
                   )}
                   <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{item.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{item.description}</p>
+                    <h3 className="text-xl font-bold text-stone-900 mb-2">{item.name}</h3>
+                    <p className="text-stone-600 text-sm mb-4 leading-relaxed flex-grow">{item.description}</p>
                     
                     {/* Quantity Selector */}
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Select Quantity</label>
+                      <label className="block text-sm font-medium text-stone-700 mb-2">Select Quantity</label>
                       <select 
                         value={selectedQuantity}
                         onChange={(e) => setSelectedQuantity(Number(e.target.value))}
@@ -216,28 +217,28 @@ const DryPasta = () => {
       {/* Info Section */}
       <section className="py-16 px-4 bg-white">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">Why Choose Our Dry Pasta?</h2>
+          <h2 className="text-3xl font-bold text-center text-stone-900 mb-8">Why Choose Our Dry Pasta?</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🍝</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Traditional Recipe</h3>
-              <p className="text-gray-600">Made using authentic Italian methods passed down through generations</p>
+              <h3 className="text-xl font-semibold text-stone-900 mb-2">Traditional Recipe</h3>
+              <p className="text-stone-600">Made using authentic Italian methods passed down through generations</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🌾</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">Premium Ingredients</h3>
-              <p className="text-gray-600">Only the finest durum wheat semolina and pure water used</p>
+              <h3 className="text-xl font-semibold text-stone-900 mb-2">Premium Ingredients</h3>
+              <p className="text-stone-600">Only the finest durum wheat semolina and pure water used</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🚫</span>
               </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Preservatives</h3>
-              <p className="text-gray-600">100% natural with no artificial additives or preservatives</p>
+              <h3 className="text-xl font-semibold text-stone-900 mb-2">No Preservatives</h3>
+              <p className="text-stone-600">100% natural with no artificial additives or preservatives</p>
             </div>
           </div>
         </div>

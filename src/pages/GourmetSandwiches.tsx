@@ -37,7 +37,7 @@ const GourmetSandwiches = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="min-h-screen bg-white">
       <Navigation />
       <section className="py-20 px-4">
         <div className="max-w-6xl mx-auto">
@@ -48,11 +48,12 @@ const GourmetSandwiches = () => {
             <ChevronLeft className="w-5 h-5 mr-2" />
             Back to Products
           </button>
-          <div className="text-center">
-            <h1 className="text-5xl font-bold text-gray-800 mb-6">
+          <div>
+            <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">Ready to Eat</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-6 font-display">
               Our <span className="text-orange-600">Gourmet Sandwiches</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg text-stone-600 mb-8 max-w-2xl leading-relaxed">
               Freshly made daily with premium ingredients. Find your favorite from our delicious sandwich menu!
             </p>
           </div>
@@ -75,12 +76,12 @@ const GourmetSandwiches = () => {
                     />
                   </div>
                   <div className="p-6 flex-grow flex flex-col">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{sandwich.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{sandwich.description}</p>
+                    <h3 className="text-xl font-bold text-stone-900 mb-2">{sandwich.name}</h3>
+                    <p className="text-stone-600 text-sm mb-4 leading-relaxed flex-grow">{sandwich.description}</p>
                     
                     {/* Quantity Selector */}
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Select Quantity</label>
+                      <label className="block text-sm font-medium text-stone-700 mb-2">Select Quantity</label>
                       <select 
                         value={selectedQuantity}
                         onChange={(e) => setSelectedQuantity(Number(e.target.value))}

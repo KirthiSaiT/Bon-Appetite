@@ -35,7 +35,7 @@ const SeasonalSauces = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="min-h-screen bg-white">
       <Navigation />
       
       <section className="py-20 px-4">
@@ -48,11 +48,12 @@ const SeasonalSauces = () => {
             Back to Products
           </button>
           
-          <div className="text-center">
-            <h1 className="text-5xl font-bold text-gray-800 mb-6">
+          <div>
+            <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">Ready to Cook</span>
+            <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-6 font-display">
               Our <span className="text-orange-600">Seasonal Sauces</span>
             </h1>
-            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg text-stone-600 mb-8 max-w-2xl leading-relaxed">
               Freshly made sauces to complement your pasta. Pre-order 1-2 days in advance. 1-month shelf life.
             </p>
           </div>
@@ -77,12 +78,12 @@ const SeasonalSauces = () => {
                   </div>
                   
                   <div className="p-6 flex-grow flex flex-col">
-                    <h3 className="text-xl font-bold text-gray-800 mb-2">{sauce.name}</h3>
-                    <p className="text-gray-600 text-sm mb-4 leading-relaxed flex-grow">{sauce.description}</p>
+                    <h3 className="text-xl font-bold text-stone-900 mb-2">{sauce.name}</h3>
+                    <p className="text-stone-600 text-sm mb-4 leading-relaxed flex-grow">{sauce.description}</p>
                     
                     {/* Quantity Selector */}
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Select Quantity</label>
+                      <label className="block text-sm font-medium text-stone-700 mb-2">Select Quantity</label>
                       <select 
                         value={selectedQuantity}
                         onChange={(e) => setSelectedQuantity(Number(e.target.value))}

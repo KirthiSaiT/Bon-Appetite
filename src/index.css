@@ -57,6 +57,11 @@
     --color-amber: oklch(87% 0.12 85);
     --color-ink-muted: oklch(45% 0.03 80);
     --color-rule: oklch(88% 0.01 80);
+    --flavour-plain: oklch(89% 0.03 85);
+    --flavour-spinach: oklch(58% 0.10 140);
+    --flavour-paprika: oklch(55% 0.17 35);
+    --flavour-beetroot: oklch(45% 0.13 350);
+    --flavour-wheat: oklch(66% 0.08 70);
     --dur-fast: 150ms;
     --dur-base: 250ms;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -103,7 +108,7 @@
 
 @layer base {
   html {
-    font-size: 112.5%;
+    font-size: 100%; /* standard 16px base — predictable across environments */
     overflow-x: clip;
   }
 
@@ -115,5 +120,12 @@
 
   * {
     @apply border-border;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-body {
+    font-family: var(--font-body);
   }
 }

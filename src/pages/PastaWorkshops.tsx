@@ -56,21 +56,25 @@ const PastaWorkshops = () => {
   const [detailOpen, setDetailOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
+    <div className="min-h-screen bg-white overflow-x-clip">
       <Navigation />
 
-      {/* Hero */}
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
+      {/* ── Hero ── */}
+      <section className="px-8 md:px-14 xl:px-20 pt-16 pb-12 bg-white">
+        <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <Badge className="bg-orange-100 text-orange-700 hover:bg-orange-100 mb-4 text-sm font-medium">
-                Online & Offline
-              </Badge>
-              <h1 className="text-5xl font-bold text-gray-800 mb-6">
-                Bon Appetit <span className="text-orange-600">Pasta Workshops</span>
+              <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">
+                Online & Offline · Every Month
+              </span>
+              <h1
+                className="text-[2.8rem] md:text-[4rem] font-bold leading-[1.05] text-stone-900 mb-6"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                Pasta <span className="text-orange-600">Workshops.</span>
               </h1>
-              <p className="text-lg text-gray-600 mb-8 leading-relaxed">
+              <div className="w-10 h-px bg-orange-600 mb-6" />
+              <p className="text-lg text-stone-600 mb-8 leading-relaxed">
                 Discover the joy of making pasta entirely from scratch. Our workshops are designed
                 for complete beginners — no culinary experience required. Just bring your curiosity
                 and we'll handle the rest.
@@ -105,10 +109,15 @@ const PastaWorkshops = () => {
       </section>
 
       {/* What's included */}
-      <section className="py-16 px-4 bg-white">
+      <section className="py-14 px-8 md:px-14 bg-stone-50">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-800 mb-3">What's Included</h2>
-          <p className="text-center text-gray-600 mb-10">Everything you need for a great pasta-making session</p>
+          <h2
+            className="text-2xl md:text-3xl font-bold text-stone-900 mb-3"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            What's Included
+          </h2>
+          <p className="text-stone-600 mb-10">Everything you need for a great pasta-making session.</p>
           <div className="grid sm:grid-cols-2 gap-4">
             {includes.map((item) => (
               <div key={item} className="flex items-start gap-3">
@@ -126,10 +135,15 @@ const PastaWorkshops = () => {
       </section>
 
       {/* Happening Now */}
-      <section className="py-16 px-4">
+      <section className="py-14 px-8 md:px-14 bg-white">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Happening Now</h2>
-          <p className="text-gray-600 mb-10">Upcoming workshops — grab your spot before they fill up.</p>
+          <h2
+            className="text-2xl md:text-3xl font-bold text-stone-900 mb-2"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Happening Now
+          </h2>
+          <p className="text-stone-600 mb-10">Upcoming workshops — grab your spot before they fill up.</p>
           <div className="grid md:grid-cols-2 gap-8">
             {upcomingWorkshops.map((ws) => (
               <Card key={ws.id} className="overflow-hidden hover:shadow-xl transition-shadow">
@@ -184,13 +198,16 @@ const PastaWorkshops = () => {
       </section>
 
       {/* Corporate section */}
-      <section id="corporate" className="py-16 px-4 bg-white">
+      <section id="corporate" className="py-14 px-8 md:px-14 bg-stone-50">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-10">
+          <div className="bg-white border border-stone-200 p-10">
             <div className="flex flex-col md:flex-row md:items-center gap-8">
               <Building2 className="w-16 h-16 text-orange-600 flex-shrink-0 mx-auto md:mx-0" />
               <div className="flex-1 text-center md:text-left">
-                <h2 className="text-3xl font-bold text-gray-800 mb-3">For Corporates</h2>
+                <h2
+                  className="text-3xl font-bold text-stone-900 mb-3"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >For Corporates</h2>
                 <p className="text-gray-600 mb-6 leading-relaxed">
                   Looking for a unique team-building experience? Our corporate pasta workshops are
                   a fun, hands-on way for your team to bond over food. We offer customised sessions

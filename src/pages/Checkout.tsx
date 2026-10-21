@@ -99,7 +99,7 @@ const Checkout = () => {
     return (
       <div className="container mx-auto px-4 py-8 text-center">
         <CheckCircle className="w-16 h-16 mx-auto text-green-500" />
-        <h1 className="text-3xl font-bold mt-4">Thank you for your order!</h1>
+        <h1 className="text-3xl font-bold mt-4 font-display">Thank you for your order!</h1>
         <p className="text-lg mt-2">A confirmation email has been sent.</p>
         <Button onClick={() => navigate('/')} className="mt-6">Continue Shopping</Button>
       </div>
@@ -107,22 +107,26 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-stone-50">
       <Navigation />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-gray-900">
-            Complete Your Order
+      <div className="max-w-7xl mx-auto px-8 md:px-14 py-16">
+        <div className="mb-12">
+          <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">
+            Checkout
+          </span>
+          <h1 className="text-[2.8rem] md:text-[4rem] font-bold text-stone-900 leading-[1.05] font-display">
+            Complete Your <span className="text-orange-600">Order.</span>
           </h1>
-          <p className="mt-4 text-lg text-gray-600">
+          <div className="w-10 h-px bg-orange-600 mt-6 mb-6" />
+          <p className="text-lg text-stone-600">
             You're just a few steps away from deliciousness.
           </p>
         </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
           {/* Shipping and Contact Form */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Contact & Shipping</h2>
+          <div className="bg-white p-8 border border-stone-200">
+            <h2 className="text-2xl font-bold text-stone-900 mb-6 font-display">Contact & Shipping</h2>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -155,7 +159,7 @@ const Checkout = () => {
 
               <Button 
                 type="submit" 
-                className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-lg text-lg transition-transform transform hover:scale-105 disabled:opacity-50"
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white font-bold py-4 rounded-lg text-lg disabled:opacity-50"
                 disabled={cartItems.length === 0}
               >
                 Place Order
@@ -164,8 +168,8 @@ const Checkout = () => {
           </div>
 
           {/* Order Summary */}
-          <div className="bg-white p-8 rounded-2xl shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Order</h2>
+          <div className="bg-white p-8 border border-stone-200">
+            <h2 className="text-2xl font-bold text-stone-900 mb-6 font-display">Your Order</h2>
             <div className="space-y-6">
               {cartItems.map(item => (
                 <div key={item.id} className="flex items-center space-x-4">

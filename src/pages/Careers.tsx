@@ -262,9 +262,12 @@ const Careers = () => {
           <p className="text-orange-300 text-sm font-bold uppercase tracking-[0.2em] mb-5">
             Careers at Bon Appetit
           </p>
-          <h1 className="text-5xl md:text-6xl font-extrabold text-white leading-[1.08] max-w-2xl mb-6">
+          <h1
+            className="text-5xl md:text-6xl font-bold text-white leading-[1.08] max-w-2xl mb-6"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             Come make something{" "}
-            <span className="italic text-orange-300">real.</span>
+            <span className="text-orange-300">real.</span>
           </h1>
           <p className="text-white/75 text-lg max-w-lg leading-relaxed mb-10">
             We're a small team of pasta obsessives in Hyderabad — handmaking
@@ -298,7 +301,10 @@ const Careers = () => {
       <section className="py-20 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-xl mb-12">
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
+            <h2
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-3"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               More than a job.
             </h2>
             <p className="text-gray-500 leading-relaxed">
@@ -326,7 +332,10 @@ const Careers = () => {
       <section id="openings" className="py-20 px-6 bg-orange-50">
         <div className="max-w-4xl mx-auto">
           <div className="mb-10">
-            <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+            <h2
+              className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               We're hiring right now.
             </h2>
             <p className="text-gray-500">
@@ -456,7 +465,10 @@ const Careers = () => {
         />
         <div className="absolute inset-0 bg-orange-900/40" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <p className="text-white text-2xl md:text-3xl font-extrabold italic text-center px-4">
+          <p
+            className="text-white text-2xl md:text-3xl font-bold text-center px-4"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             "Every pasta shape has a story. Come help us write more."
           </p>
         </div>
@@ -468,7 +480,10 @@ const Careers = () => {
           {isSubmitted ? (
             <div className="text-center py-20">
               <CheckCircle className="w-14 h-14 text-green-500 mx-auto mb-5" />
-              <h2 className="text-3xl font-extrabold text-gray-900 mb-3">
+              <h2
+                className="text-3xl md:text-4xl font-bold text-gray-900 mb-3"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
                 We've got your application!
               </h2>
               <p className="text-gray-500 max-w-sm mx-auto leading-relaxed">
@@ -479,7 +494,10 @@ const Careers = () => {
           ) : (
             <>
               <div className="mb-10">
-                <h2 className="text-3xl font-extrabold text-gray-900 mb-2">
+                <h2
+                  className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
                   Apply now.
                 </h2>
                 <p className="text-gray-500">

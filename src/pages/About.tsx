@@ -1,147 +1,160 @@
+/* Hallmark · genre: editorial · shared design system */
 import Navigation from "@/components/Navigation";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Award, Heart, Truck, Leaf, Star } from "lucide-react";
 import { SimpleFooter } from "@/components/Footer";
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+
+const values = [
+  {
+    title: "Authenticity",
+    description: "We honor traditional Italian techniques, ensuring every dish reflects genuine Italian heritage and craftsmanship.",
+  },
+  {
+    title: "Passion",
+    description: "Our love for Italian cuisine drives us to perfect every recipe and create memorable dining experiences.",
+  },
+  {
+    title: "Community",
+    description: "We bring people together through the universal language of exceptional food and warm hospitality.",
+  },
+  {
+    title: "Quality",
+    description: "Only the finest semolina, farm-fresh eggs, and all-natural ingredients make it into our handcrafted pasta.",
+  },
+  {
+    title: "Sustainability",
+    description: "We're committed to eco-friendly practices and responsible sourcing for a better tomorrow.",
+  },
+  {
+    title: "Exceptional Service",
+    description: "From kitchen to your table, we ensure every step of your experience exceeds expectations.",
+  },
+];
 
 const About = () => {
-  const values = [
-    {
-      icon: Heart,
-      title: "Authenticity",
-      description: "We honor traditional Italian techniques, ensuring every dish reflects genuine Italian heritage and craftsmanship."
-    },
-    {
-      icon: Star,
-      title: "Passion",
-      description: "Our love for Italian cuisine drives us to perfect every recipe and create memorable dining experiences."
-    },
-    {
-      icon: Users,
-      title: "Community",
-      description: "We bring people together through the universal language of exceptional food and warm hospitality."
-    },
-    {
-      icon: Award,
-      title: "Quality",
-      description: "Only the finest semolina, farm-fresh eggs, and all-natural ingredients make it into our handcrafted pasta."
-    },
-    {
-      icon: Leaf,
-      title: "Sustainability",
-      description: "We're committed to eco-friendly practices and responsible sourcing for a better tomorrow."
-    },
-    {
-      icon: Truck,
-      title: "Exceptional Service",
-      description: "From kitchen to your table, we ensure every step of your experience exceeds expectations."
-    }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 to-orange-50">
+    <div className="min-h-screen bg-white overflow-x-clip">
       <Navigation />
-      
-      <div className="max-w-6xl mx-auto px-4 py-16">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold text-gray-800 mb-6">BON APPETIT CAFE</h1>
-          <p className="text-xl text-gray-700 max-w-4xl mx-auto leading-relaxed">
-            Experience the richness of handcrafted pasta made using traditional Italian techniques, 
-            ensuring every bite is pure perfection. Where the rich flavors of Italy come to life.
+
+      {/* ── Page hero ── */}
+      <section className="px-8 md:px-14 xl:px-20 pt-16 pb-12 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">
+            Our Story
+          </span>
+          <h1
+            className="text-[2.8rem] md:text-[4rem] xl:text-[5rem] font-bold leading-[1.05] text-stone-900 mb-6 max-w-3xl overflow-wrap-anywhere"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Bon Appetit <span className="text-orange-600">Cafe.</span>
+          </h1>
+          <div className="w-10 h-px bg-orange-600 mb-6" />
+          <p className="text-stone-600 text-lg leading-relaxed max-w-2xl">
+            Experience the richness of handcrafted pasta made using traditional Italian techniques,
+            where the rich flavours of Italy come to life.
           </p>
         </div>
+      </section>
 
-        {/* About Us Section */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-          <div>
-            <div className="bg-amber-100 rounded-lg p-2 inline-block mb-6">
-              <h2 className="text-2xl font-bold text-amber-800 px-4 py-2">ABOUT US</h2>
-            </div>
-            <p className="text-gray-700 mb-6 text-lg leading-relaxed">
-              Our passion for authentic handmade pasta drives us to create a dining experience 
-              that transports you straight to the heart of Italy. We use only the finest semolina, 
-              farm-fresh eggs, and all-natural ingredients to craft pasta that is wholesome and flavorful.
-            </p>
-            <p className="text-gray-700 mb-6 text-lg leading-relaxed">
-              Founded with a commitment to culinary excellence, we are your trusted cloud kitchen 
-              delivering exceptional Italian dining experiences right to your doorstep. What started 
-              as a passion project has grown into a beloved destination for pasta lovers across the city.
-            </p>
-            <p className="text-gray-700 text-lg leading-relaxed">
-              Every dish we create honors traditional Italian techniques while embracing modern 
-              convenience, ensuring that authentic Italian flavors are always within reach.
-            </p>
-          </div>
-          <div className="rounded-lg overflow-hidden shadow-lg">
-            <img 
-              src="/aboutus.webp" 
-              alt="About Us - Bon Appetit Cafe"
-              className="w-full h-full object-cover"
-            />
-          </div>
+      <div className="h-px bg-stone-200" />
+
+      {/* ── About Us split ── */}
+      <section className="grid md:grid-cols-2">
+        <div className="flex flex-col justify-center px-8 md:px-14 xl:px-20 py-16 md:py-24 bg-white">
+          <span className="text-[0.63rem] tracking-[0.25em] uppercase text-stone-400 mb-6">About Us</span>
+          <h2
+            className="text-[2rem] md:text-[2.8rem] font-bold leading-tight text-stone-900 mb-8"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Authentic handmade pasta, crafted daily.
+          </h2>
+          <div className="w-8 h-px bg-orange-600 mb-8" />
+          <p className="text-stone-600 text-base leading-relaxed mb-5">
+            Our passion for authentic handmade pasta drives us to create a dining experience
+            that transports you straight to the heart of Italy. We use only the finest semolina,
+            farm-fresh eggs, and all-natural ingredients to craft pasta that is wholesome and flavorful.
+          </p>
+          <p className="text-stone-600 text-base leading-relaxed mb-5">
+            Founded with a commitment to culinary excellence, we are your trusted cloud kitchen
+            delivering exceptional Italian dining experiences right to your doorstep.
+          </p>
+          <p className="text-stone-600 text-base leading-relaxed">
+            Every dish we create honours traditional Italian techniques while embracing modern
+            convenience, ensuring authentic Italian flavours are always within reach.
+          </p>
         </div>
+        <div className="relative overflow-hidden min-h-[400px] h-[70vw] md:h-auto">
+          <img
+            src="/aboutus.webp"
+            alt="About Us — Bon Appetit Cafe"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </div>
+      </section>
 
-        {/* Values Section */}
-        <div className="mb-16">
-          <div className="text-center mb-12">
-            <div className="bg-green-100 rounded-lg p-2 inline-block mb-4">
-              <h2 className="text-2xl font-bold text-green-800 px-4 py-2">OUR VALUES</h2>
-            </div>
-            <p className="text-xl text-gray-700 max-w-4xl mx-auto">
-              We value authenticity, passion, community, quality, and sustainability, bringing you 
-              genuine flavors with dedication, eco-friendly practices, and exceptional service.
-            </p>
+      {/* ── Our Values ── */}
+      <section className="py-16 md:py-24 px-8 md:px-14 xl:px-20 bg-stone-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-12">
+            <span className="text-[0.63rem] tracking-[0.25em] uppercase text-stone-400 mb-4 block">Our Values</span>
+            <h2
+              className="text-[2rem] md:text-[2.8rem] font-bold leading-tight text-stone-900 max-w-xl"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              What we believe in.
+            </h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {values.map((value, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1 bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <value.icon className="w-12 h-12 text-amber-600 mx-auto mb-4" />
-                  <CardTitle className="text-xl text-gray-800">{value.title}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-gray-600 leading-relaxed">
-                    {value.description}
-                  </CardDescription>
-                </CardContent>
-              </Card>
+            {values.map((value) => (
+              <div key={value.title} className="border-t border-stone-200 pt-6">
+                <h3
+                  className="text-xl font-bold text-stone-900 mb-3"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {value.title}
+                </h3>
+                <p className="text-stone-600 text-sm leading-relaxed">{value.description}</p>
+              </div>
             ))}
           </div>
         </div>
+      </section>
 
-        {/* Mission Section - Redesigned like About Us */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-16">
-          <div className="rounded-lg overflow-hidden shadow-lg">
-            <img 
-              src="/aboutus2.webp" 
-              alt="Our Mission - Bon Appetit Cafe"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div>
-            <div className="bg-blue-100 rounded-lg p-2 inline-block mb-6">
-              <h2 className="text-2xl font-bold text-blue-800 px-4 py-2">OUR MISSION</h2>
-            </div>
-            <p className="text-gray-700 mb-6 text-lg leading-relaxed">
-              To make exceptional Italian cuisine accessible to everyone by combining traditional cooking 
-              techniques with modern technology, ensuring every meal we deliver exceeds expectations 
-              and creates memorable dining experiences in the comfort of your home.
-            </p>
-            <p className="text-gray-700 mb-6 text-lg leading-relaxed">
-              We believe that great food has the power to bring people together, create lasting memories, 
-              and transform ordinary moments into extraordinary experiences. Our commitment extends beyond 
-              just delivering meals – we're delivering happiness, one plate at a time.
-            </p>
-            <p className="text-gray-700 text-lg leading-relaxed">
-              Through innovation and dedication to quality, we strive to be the bridge between 
-              authentic Italian traditions and the modern world, making every bite a journey to Italy.
-            </p>
-          </div>
+      {/* ── Mission split ── */}
+      <section className="grid md:grid-cols-2">
+        <div className="relative overflow-hidden min-h-[400px] h-[70vw] md:h-auto order-2 md:order-1">
+          <img
+            src="/aboutus2.webp"
+            alt="Our Mission — Bon Appetit Cafe"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
         </div>
-
-        {/* Bottom Image */}
-       
-      </div>
+        <div className="flex flex-col justify-center px-8 md:px-14 xl:px-20 py-16 md:py-24 bg-white order-1 md:order-2">
+          <span className="text-[0.63rem] tracking-[0.25em] uppercase text-stone-400 mb-6">Our Mission</span>
+          <h2
+            className="text-[2rem] md:text-[2.8rem] font-bold leading-tight text-stone-900 mb-8"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Making great Italian food accessible to everyone.
+          </h2>
+          <div className="w-8 h-px bg-orange-600 mb-8" />
+          <p className="text-stone-600 text-base leading-relaxed mb-5">
+            To make exceptional Italian cuisine accessible to everyone by combining traditional cooking
+            techniques with modern technology, ensuring every meal we deliver exceeds expectations.
+          </p>
+          <p className="text-stone-600 text-base leading-relaxed mb-5">
+            We believe that great food has the power to bring people together, create lasting memories,
+            and transform ordinary moments into extraordinary experiences.
+          </p>
+          <Link
+            to="/products"
+            className="text-orange-600 text-sm font-semibold inline-flex items-center gap-2 group w-fit hover:opacity-75 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600 rounded-sm mt-2"
+          >
+            Explore Our Products
+            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 duration-150" />
+          </Link>
+        </div>
+      </section>
 
       <SimpleFooter />
     </div>

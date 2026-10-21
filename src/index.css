@@ -93,6 +93,10 @@
 }
 
 @layer base {
+  html {
+    font-size: 112.5%; /* 1rem = 18px — scales all rem-based sizes up proportionally */
+  }
+
   * {
     @apply border-border;
   }

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Clock, Utensils, Users, ShoppingBag, ChefHat, Package } from "lucide-react";
+import { Clock, Utensils, Users, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
@@ -28,51 +28,71 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Quick Access Tiles — prominent links to the 3 core sections */}
-      <section className="py-12 px-4 bg-white">
+      {/* Core Sections — editorial image cards */}
+      <section className="py-16 px-4 bg-white">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Food & Pre-orders */}
-            <Link to="/products" className="group">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 p-8 text-white text-center hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                <ShoppingBag className="w-14 h-14 mx-auto mb-4 opacity-90" />
-                <h3 className="text-2xl font-bold mb-2">Food & Pre-orders</h3>
-                <p className="text-orange-100 text-sm mb-5">
-                  Fresh pasta, cooked meals, sauces & more — order online for delivery.
-                </p>
-                <span className="inline-block bg-white text-orange-600 font-semibold px-5 py-2 rounded-full text-sm group-hover:bg-orange-50 transition-colors">
-                  Order Now →
-                </span>
-              </div>
-            </Link>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {[
+              {
+                to: "/products",
+                image: "/readytoeat.webp",
+                badge: "Order Online",
+                title: "Food & Pre-orders",
+                desc: "Fresh pasta, cooked meals, sauces & more — delivered to your door.",
+                cta: "Order Now",
+              },
+              {
+                to: "/pasta-workshops",
+                image: "/pastaworkshop.webp",
+                badge: "Every Month",
+                title: "Pasta Workshops",
+                desc: "Hands-on online & offline sessions for all skill levels.",
+                cta: "Book a Slot",
+              },
+              {
+                to: "/our-pasta-brand",
+                image: "/drypasta.webp",
+                badge: "30+ Stores",
+                title: "Our Pasta Brand",
+                desc: "Handmade dry pasta — 5 flavours, zero preservatives.",
+                cta: "Explore Brand",
+              },
+            ].map((item) => (
+              <Link key={item.to} to={item.to} className="group block">
+                <div className="relative h-[420px] overflow-hidden rounded-2xl shadow-lg">
+                  {/* Food photo */}
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  {/* Gradient overlay — darker at bottom for legibility */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
 
-            {/* Pasta Workshops */}
-            <Link to="/pasta-workshops" className="group">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 p-8 text-white text-center hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                <ChefHat className="w-14 h-14 mx-auto mb-4 opacity-90" />
-                <h3 className="text-2xl font-bold mb-2">Pasta Workshops</h3>
-                <p className="text-orange-100 text-sm mb-5">
-                  Hands-on online & offline workshops every month. Beginners welcome!
-                </p>
-                <span className="inline-block bg-white text-orange-600 font-semibold px-5 py-2 rounded-full text-sm group-hover:bg-orange-50 transition-colors">
-                  Book a Slot →
-                </span>
-              </div>
-            </Link>
+                  {/* Top badge */}
+                  <div className="absolute top-4 left-4">
+                    <span className="bg-orange-600 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider shadow">
+                      {item.badge}
+                    </span>
+                  </div>
 
-            {/* Our Pasta Brand */}
-            <Link to="/our-pasta-brand" className="group">
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-red-500 to-pink-600 p-8 text-white text-center hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                <Package className="w-14 h-14 mx-auto mb-4 opacity-90" />
-                <h3 className="text-2xl font-bold mb-2">Our Pasta Brand</h3>
-                <p className="text-orange-100 text-sm mb-5">
-                  Handmade dry pasta — 30+ retail stores across Hyderabad & online.
-                </p>
-                <span className="inline-block bg-white text-red-600 font-semibold px-5 py-2 rounded-full text-sm group-hover:bg-red-50 transition-colors">
-                  Explore Brand →
-                </span>
-              </div>
-            </Link>
+                  {/* Bottom content */}
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className="text-2xl font-bold text-white mb-2 leading-tight">
+                      {item.title}
+                    </h3>
+                    {/* Description slides up on hover */}
+                    <p className="text-white/80 text-sm mb-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 leading-relaxed">
+                      {item.desc}
+                    </p>
+                    <span className="inline-flex items-center gap-1.5 text-sm font-semibold text-orange-300">
+                      {item.cta}
+                      <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>

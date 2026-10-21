@@ -35,21 +35,21 @@ const Navigation = () => {
 
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex justify-between items-center h-20 pl-2">
-          {/* Logo */}
-          <div className="flex-shrink-0 relative w-20">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="flex justify-between items-center h-20">
+          {/* Logo — normal-flow, vertically centred */}
+          <div className="flex-shrink-0">
             <Link to="/">
               <img
                 src="/bonappetitlogo.jpeg"
                 alt="Bon Appetit Logo"
-                className="h-20 w-auto absolute top-0 mt-[-8px] z-50 rounded-b-xl shadow-lg"
+                className="h-14 w-auto rounded-xl shadow-md"
               />
             </Link>
           </div>
 
           {/* Desktop Navigation — shadcn NavigationMenu */}
-          <div className="hidden lg:flex flex-1 justify-center">
+          <div className="hidden 2xl:flex flex-1 justify-center">
             <NavigationMenu>
               <NavigationMenuList className="gap-0 flex-wrap justify-center">
                 {navItems.map((item) => (
@@ -58,7 +58,7 @@ const Navigation = () => {
                       <Link
                         to={item.path}
                         className={cn(
-                          "inline-flex h-9 items-center justify-center rounded-md px-2.5 py-2 text-[13px] font-medium transition-colors hover:bg-orange-50 hover:text-orange-600 focus:outline-none whitespace-nowrap",
+                          "inline-flex h-9 items-center justify-center rounded-md px-2.5 py-2 text-sm font-medium transition-colors hover:bg-orange-50 hover:text-orange-600 focus:outline-none whitespace-nowrap",
                           location.pathname === item.path
                             ? "text-orange-600 font-semibold"
                             : "text-gray-600"
@@ -80,7 +80,7 @@ const Navigation = () => {
             {/* Mobile Sheet */}
             <Sheet>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden">
+                <Button variant="ghost" size="icon" className="2xl:hidden">
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Open menu</span>
                 </Button>

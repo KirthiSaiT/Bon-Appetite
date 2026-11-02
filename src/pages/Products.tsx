@@ -1,53 +1,37 @@
+/* Hallmark · redesign · genre: editorial · macrostructure: Catalogue-index (circle-icon menu browser)
+ * theme: brand system (cream paper · Cormorant Garamond + DM Sans · orange accent)
+ * motion: circle-lift · image-zoom · cta-arrow-slide  ·  contrast: pass
+ */
 import Navigation from "@/components/Navigation";
-import { ChevronDown, ChevronUp, X, ShoppingCart, User, Mail, Phone, Calendar, Clock } from "lucide-react";
+import { X, ArrowRight } from "lucide-react";
 import { useState, useCallback } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import emailjs from '@emailjs/browser';
 import { SimpleFooter } from "@/components/Footer";
-import CategoryItem from "@/components/CategoryItem";
 
-const categories = [
-  {
-    id: "ready-to-cook",
-    title: "Ready to Cook",
-    subtitle: "Fresh ingredients, pre-prepared",
-    image: "/readytocook.webp",
-    subcategories: [
-      { name: "Dry Pasta", description: "No preservatives, 3 months shelf life", image: "/drypasta.webp" },
-      { name: "Fresh Pasta", description: "Pre-order 1-2 days, 2hours shelf life", image: "/freshpasta.webp" },
-      { name: "Seasonal Sauces", description: "Pre-order 1-2 days, 1 month shelf life", image: "/seaonal.webp" }
-    ]
-  },
-  {
-    id: "ready-to-eat",
-    title: "Ready to Eat",
-    subtitle: "Delicious meals, instantly served",
-    image: "/readytoeat.webp",
-    subcategories: [
-      { name: "Cooked Pasta", description: "Pre-order 1-2 days, 2hrs shelf life", image: "/cooked.webp" },
-      { name: "Dessert Platters", description: "Sweet treats", image: "/dessertplatter.webp" }
-    ]
-  },
-  {
-    id: "services",
-    title: "Our Services",
-    subtitle: "Professional catering & workshops",
-    image: "/services2.png",
-
-    subcategories: [
-      { name: "Catering", description: "Continental food for parties & events up to 250 pax", image: "/catering.webp" },
-      { name: "Pasta Workshop", description: "Online & offline, weekend & custom slots", image: "/pastaworkshop.webp" }
-    ]
-  }
-];
-
-type Subcategory = {
+// Circle-icon menu — each tile is a real photo in a circle with a label beneath.
+// `to` routes to a product page; `action` opens a service modal. Dry Pasta lives
+// on the Pasta Brand page, so it is intentionally absent here.
+type MenuItem = {
+  group: string;
   name: string;
-  description: string;
+  note: string;
   image: string;
+  to?: string;
+  action?: "cater" | "workshop";
 };
 
+const menu: MenuItem[] = [
+  { group: "Ready to Cook", name: "Fresh Pasta",     note: "Pre-order 1–2 days ahead",   image: "/freshpasta.webp",     to: "/fresh-pasta" },
+  { group: "Ready to Cook", name: "Seasonal Sauces", note: "Small-batch · 1-month life", image: "/seaonal.webp",        to: "/seasonal-sauces" },
+  { group: "Ready to Eat",  name: "Cooked Pasta",    note: "Hot & ready · pre-order",    image: "/cooked.webp",         to: "/cooked-pasta" },
+  { group: "Ready to Eat",  name: "Dessert Platters",note: "Sweet finishes to share",    image: "/dessertplatter.webp", to: "/dessert-platters" },
+  { group: "At Your Service", name: "Catering",      note: "Events up to 250 guests",    image: "/catering.webp",       action: "cater" },
+  { group: "At Your Service", name: "Pasta Workshop",note: "Two pastas from scratch",    image: "/pastaworkshop.webp",  action: "workshop" },
+];
+
 const Products = () => {
-  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
+  const navigate = useNavigate();
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<{category: string, item: string, description: string} | null>(null);
   const [showThankYou, setShowThankYou] = useState(false);
@@ -70,26 +54,6 @@ const Products = () => {
   const [showCateringModal, setShowCateringModal] = useState(false);
   const [showWorkshopModal, setShowWorkshopModal] = useState(false);
 
-  const toggleCategory = useCallback((category: string) => {
-    setExpandedCategory(prev => (prev === category ? null : category));
-  }, []);
-
-  const handleOrderClick = useCallback((categoryTitle: string, subcategory: Subcategory) => {
-    setSelectedItem({
-      category: categoryTitle,
-      item: subcategory.name,
-      description: subcategory.description
-    });
-    setShowOrderModal(true);
-    setOrderForm({
-      quantity: 1,
-      email: '',
-      phone: '',
-      name: '',
-      specialInstructions: ''
-    });
-  }, []);
-
   const handleFormChange = useCallback((field: string, value: string | number) => {
     setOrderForm(prev => ({
       ...prev,
@@ -102,7 +66,7 @@ const Products = () => {
       alert('Please fill in all required fields');
       return;
     }
-    
+
     const templateParams = {
       from_name: orderForm.name,
       to_name: "Bon Appetite",
@@ -138,19 +102,6 @@ const Products = () => {
     setSelectedItem(null);
   }, []);
 
-  const handleCateringClick = useCallback(() => {
-    setShowCateringModal(true);
-    setCateringForm({
-      name: '',
-      eventDate: '',
-      eventTime: '',
-      serviceType: 'Delivery',
-      people: '',
-      query: '',
-      phone: ''
-    });
-  }, []);
-
   const handleCateringFormChange = useCallback((field: string, value: string) => {
     setCateringForm(prev => ({
       ...prev,
@@ -172,7 +123,16 @@ const Products = () => {
     setShowCateringModal(false);
   }, []);
 
-  const handleBookWorkshop = useCallback(() => setShowWorkshopModal(true), []);
+  const handleTileClick = useCallback((item: MenuItem) => {
+    if (item.action === "cater") {
+      setCateringForm({ name: '', eventDate: '', eventTime: '', serviceType: 'Delivery', people: '', query: '', phone: '' });
+      setShowCateringModal(true);
+    } else if (item.action === "workshop") {
+      setShowWorkshopModal(true);
+    } else if (item.to) {
+      navigate(item.to);
+    }
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-white overflow-x-clip">
@@ -182,45 +142,146 @@ const Products = () => {
       <section className="px-8 md:px-14 xl:px-20 pt-16 pb-12 bg-white">
         <div className="max-w-7xl mx-auto">
           <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">
-            Order Online
+            Dine the Italian way
           </span>
           <h1
             className="text-[2.8rem] md:text-[4rem] xl:text-[5rem] font-bold leading-[1.05] text-stone-900 mb-6"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Our <span className="text-orange-600">Products.</span>
+            The <span className="text-orange-600">Cafe.</span>
           </h1>
           <div className="w-10 h-px bg-orange-600 mb-6" />
           <p className="text-stone-600 text-lg leading-relaxed max-w-2xl">
-            From ready-to-cook ingredients to delicious ready-to-eat meals — discover our complete range.
+            Ready-to-cook pasta kits, hot plates straight from our kitchen, catering and
+            hands-on workshops. Tap any circle below to explore the menu and order.
           </p>
         </div>
       </section>
 
       <div className="h-px bg-stone-200" />
 
-      {/* Categories Section */}
-      <section className="py-14 px-8 md:px-14 xl:px-20 bg-stone-50">
-        <div className="max-w-4xl mx-auto">
+      {/* ── Circle-icon menu browser ── */}
+      <section className="py-16 md:py-20 px-6 sm:px-8 md:px-14 xl:px-20 bg-stone-50">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-14 md:mb-16">
+            <span className="text-[0.63rem] tracking-[0.25em] uppercase text-stone-400 mb-3 block">
+              Browse the menu
+            </span>
+            <h2
+              className="text-[2rem] md:text-[2.8rem] font-bold text-stone-900 leading-tight"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Pick your plate.
+            </h2>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-12 sm:gap-x-10 lg:gap-x-14">
+            {menu.map((item) => (
+              <button
+                key={item.name}
+                type="button"
+                onClick={() => handleTileClick(item)}
+                className="group flex flex-col items-center text-center w-[9.5rem] sm:w-44 focus-visible:outline-none"
+                aria-label={item.action ? `Open ${item.name}` : `View ${item.name}`}
+              >
+                {/* The circle */}
+                <span
+                  className="relative block w-28 h-28 sm:w-36 sm:h-36 lg:w-40 lg:h-40 rounded-full overflow-hidden ring-1 ring-stone-200 shadow-sm transition-transform duration-200 ease-out group-hover:-translate-y-1.5 group-hover:ring-2 group-hover:ring-orange-500 group-focus-visible:ring-2 group-focus-visible:ring-orange-600 motion-reduce:transition-none motion-reduce:transform-none"
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    loading="lazy"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:transform-none"
+                  />
+                </span>
+
+                {/* Label block */}
+                <span className="mt-5 text-[0.58rem] tracking-[0.2em] uppercase text-orange-600 font-semibold">
+                  {item.group}
+                </span>
+                <span
+                  className="mt-1.5 text-lg md:text-xl text-stone-900"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  {item.name}
+                </span>
+                <span className="mt-1 text-xs text-stone-500 leading-snug">
+                  {item.note}
+                </span>
+                <span className="mt-3 text-[0.72rem] font-semibold text-stone-700 inline-flex items-center gap-1 group-hover:text-orange-600 transition-colors">
+                  {item.action ? "Enquire" : "Order"}
+                  <ArrowRight className="w-3 h-3 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:transform-none" />
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Dry pasta lives on the Pasta Brand page ── */}
+      <section className="px-8 md:px-14 xl:px-20 py-14 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <Link
+            to="/our-pasta-brand"
+            className="group flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-7 border border-stone-200 hover:border-orange-500 transition-colors p-5 sm:p-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
+          >
+            <span className="relative block w-20 h-20 rounded-full overflow-hidden ring-1 ring-stone-200 flex-shrink-0">
+              <img src="/drypasta.webp" alt="Handmade dry pasta" className="absolute inset-0 w-full h-full object-cover" />
+            </span>
+            <div className="flex-1">
+              <span className="text-[0.58rem] tracking-[0.2em] uppercase text-orange-600 font-semibold">
+                Looking for dry pasta?
+              </span>
+              <h3
+                className="text-xl md:text-2xl font-bold text-stone-900 mt-1"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                Our handmade dry pasta lives on the Pasta Brand page.
+              </h3>
+              <p className="text-stone-600 text-sm mt-1.5 max-w-xl">
+                Five shapes, five natural colours, three-month shelf life — shop the full
+                range and find us in 30+ stores.
+              </p>
+            </div>
+            <span className="text-stone-700 text-sm font-semibold inline-flex items-center gap-2 group-hover:text-orange-600 transition-colors whitespace-nowrap">
+              Visit Pasta Brand
+              <ArrowRight className="w-4 h-4 transition-transform duration-150 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:transform-none" />
+            </span>
+          </Link>
+        </div>
+      </section>
+
+      {/* ── Closing CTA band ── */}
+      <section className="py-16 md:py-20 px-8 md:px-14 bg-orange-600">
+        <div className="max-w-4xl mx-auto text-center text-white">
           <h2
-            className="text-2xl font-bold mb-10 text-stone-900"
+            className="text-3xl md:text-4xl font-bold mb-4"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            All Categories
+            Planning something bigger?
           </h2>
-          
-          <div className="space-y-6">
-            {categories.map((category) => (
-              <CategoryItem
-                key={category.id}
-                category={category}
-                isExpanded={expandedCategory === category.id}
-                onToggle={toggleCategory}
-                onOrderClick={handleOrderClick}
-                onBookWorkshop={handleBookWorkshop}
-                onCater={handleCateringClick}
-              />
-            ))}
+          <p className="text-orange-100 mb-8 max-w-xl mx-auto">
+            From intimate dinners to events for 250, our kitchen caters it all. Tell us
+            what you have in mind.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <button
+              type="button"
+              onClick={() => {
+                setCateringForm({ name: '', eventDate: '', eventTime: '', serviceType: 'Delivery', people: '', query: '', phone: '' });
+                setShowCateringModal(true);
+              }}
+              className="bg-white text-orange-600 hover:bg-orange-50 px-7 py-3.5 text-sm font-semibold tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Enquire about Catering
+            </button>
+            <Link
+              to="/contact"
+              className="border border-white text-white hover:bg-white/10 px-7 py-3.5 text-sm font-semibold tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              Contact Us
+            </Link>
           </div>
         </div>
       </section>
@@ -334,7 +395,7 @@ const Products = () => {
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold text-gray-800">Catering Booking</h3>
-                <button 
+                <button
                   onClick={closeCateringModal}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   title="Close catering modal"
@@ -448,7 +509,7 @@ const Products = () => {
             <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-xl font-bold text-gray-800">Pasta Workshop Details</h3>
-                <button 
+                <button
                   onClick={() => setShowWorkshopModal(false)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   title="Close workshop modal"

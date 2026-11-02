@@ -18,7 +18,7 @@ const navItems = [
   { label: "Home", full: "Home", path: "/" },
   { label: "About", full: "About Us", path: "/about" },
   { label: "Pasta Brand", full: "Our Pasta Brand", path: "/our-pasta-brand" },
-  { label: "Order", full: "Food & Pre-orders", path: "/products" },
+  { label: "Cafe", full: "The Cafe", path: "/products" },
   { label: "Workshops", full: "Pasta Workshops", path: "/pasta-workshops" },
   { label: "Gallery", full: "Community & Gallery", path: "/gallery" },
   { label: "Recipes", full: "Recipes", path: "/recipes" },

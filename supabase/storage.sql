@@ -15,6 +15,12 @@ on conflict (id) do update
       file_size_limit = excluded.file_size_limit,
       allowed_mime_types = excluded.allowed_mime_types;
 
+-- Storage needs select rights to delete or replace an object.
+drop policy if exists "workshop images readable by admin" on storage.objects;
+create policy "workshop images readable by admin" on storage.objects
+  for select to authenticated
+  using (bucket_id = 'workshop-images' and public.is_admin());
+
 drop policy if exists "workshop images uploaded by admin" on storage.objects;
 create policy "workshop images uploaded by admin" on storage.objects
   for insert to authenticated

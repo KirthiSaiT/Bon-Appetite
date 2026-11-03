@@ -30,6 +30,17 @@ const ghostBtn =
 const rlsHint =
   "Supabase rejected the change. Check that Clerk is added under Supabase → Authentication → Third-party Auth, and that setup.sql has been run.";
 
+/** Turn Supabase / PostgREST error codes into a plain next step for the admin. */
+const explain = (e: unknown): string => {
+  const err = e as { code?: string; message?: string };
+  if (err?.code === "PGRST301" || /suitable key|JWT/i.test(err?.message ?? ""))
+    return "Supabase doesn't trust Clerk sign-ins yet. Add Clerk under Supabase → Authentication → Sign In / Providers → Third-party Auth.";
+  if (err?.code === "PGRST205" || /schema cache/i.test(err?.message ?? ""))
+    return "The database tables don't exist yet. Run supabase/setup.sql in the Supabase SQL Editor.";
+  if (err?.code === "42501") return rlsHint;
+  return err?.message || rlsHint;
+};
+
 /* ── Image upload (Supabase Storage, bucket "workshop-images") ── */
 
 const IMAGE_BUCKET = "workshop-images";
@@ -60,7 +71,9 @@ const ImageUploader = ({ value, onChange }: { value: string; onChange: (url: str
       return toast.error(
         /bucket not found/i.test(error.message)
           ? "Image storage isn't set up yet. Run supabase/storage.sql in Supabase."
-          : `Upload failed: ${error.message}`
+          : /"alg"|algorithm|jwt|jws/i.test(error.message)
+            ? explain({ code: "PGRST301" })
+            : `Upload failed: ${error.message}`
       );
     }
     onChange(db.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl);
@@ -177,7 +190,7 @@ const WorkshopsTab = () => {
       setDraft(null);
       refresh();
     },
-    onError: (e: Error) => toast.error(e.message || rlsHint),
+    onError: (e: Error) => toast.error(explain(e)),
   });
 
   const remove = useMutation({
@@ -190,7 +203,7 @@ const WorkshopsTab = () => {
       toast.success("Workshop deleted");
       refresh();
     },
-    onError: (e: Error) => toast.error(e.message || rlsHint),
+    onError: (e: Error) => toast.error(explain(e)),
   });
 
   const submit = () => {
@@ -216,7 +229,7 @@ const WorkshopsTab = () => {
         </div>
 
         {isLoading && <p className="flex items-center gap-2 text-stone-500 text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>}
-        {error && <p className="text-sm text-red-600">Couldn't load workshops: {(error as Error).message}</p>}
+        {error && <p className="text-sm text-red-600">Couldn't load workshops: {explain(error)}</p>}
         {!isLoading && !error && all.length === 0 && (
           <p className="text-sm text-stone-600 bg-stone-50 rounded-lg p-4">No workshops yet. Add the first one.</p>
         )}
@@ -401,11 +414,11 @@ const PricesTab = () => {
       setEdits({});
       qc.invalidateQueries({ queryKey: PRICES_KEY });
     },
-    onError: (e: Error) => toast.error(e.message || rlsHint),
+    onError: (e: Error) => toast.error(explain(e)),
   });
 
   if (isLoading) return <p className="flex items-center gap-2 text-stone-500 text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>;
-  if (error) return <p className="text-sm text-red-600">Couldn't load prices: {(error as Error).message}</p>;
+  if (error) return <p className="text-sm text-red-600">Couldn't load prices: {explain(error)}</p>;
 
   return (
     <div className="max-w-3xl">
@@ -491,11 +504,11 @@ const BookingsTab = () => {
       if (!data?.length) throw new Error(rlsHint);
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "bookings"] }),
-    onError: (e: Error) => toast.error(e.message || rlsHint),
+    onError: (e: Error) => toast.error(explain(e)),
   });
 
   if (isLoading) return <p className="flex items-center gap-2 text-stone-500 text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>;
-  if (error) return <p className="text-sm text-red-600">Couldn't load bookings: {(error as Error).message}</p>;
+  if (error) return <p className="text-sm text-red-600">Couldn't load bookings: {explain(error)}</p>;
   if (!rows.length) return <p className="text-sm text-stone-600 bg-stone-50 rounded-lg p-4">No bookings yet.</p>;
 
   const seats = rows.filter((b) => b.status !== "cancelled").reduce((n, b) => n + b.people, 0);

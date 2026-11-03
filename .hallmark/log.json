@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-11-03",
+    "macrostructure": "Marquee Hero",
+    "theme": "custom",
+    "theme_axes": "light / classical-serif / warm-orange",
+    "vibe": "artisan pasta, Italian craft, warm editorial",
+    "enrichment": "photographic",
+    "brief": "Bon Appetit · homepage redesign: marquee hero, 30+ stores + Amazon/Meesho block, menu-card rows with flavour-tinted circle icons, craft story, kitchen map"
+  },
+  {
+    "date": "2026-11-03",
     "macrostructure": "Catalogue (masonry)",
     "theme": "custom",
     "theme_axes": "light / classical-serif / warm-orange",

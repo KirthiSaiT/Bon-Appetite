@@ -1,226 +1,265 @@
-/* Hallmark · genre: editorial · macrostructure: Split Studio · theme: custom
- * tone: artisan craft · anchor hue: warm orange · nav: N9 · footer: Ft2
- * pre-emit: P5 H5 E4 S5 R5 V5
+/* Hallmark · redesign · genre: editorial · macrostructure: Marquee Hero · theme: custom
+ * tone: warm editorial · anchor hue: warm orange · nav: shared · footer: shared (Ft2)
+ * sections: marquee hero · retail + online · menu card (flavour-tinted circle icons) · craft story · kitchen map
+ * pre-emit critique: P4 H5 E4 S5 R4 V5
  */
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Wheat,
+  Package,
+  CookingPot,
+  UtensilsCrossed,
+  CakeSlice,
+  ChefHat,
+  Store,
+  ShoppingBag,
+  MapPin,
+  type LucideIcon,
+} from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+
+// Menu card — each circle takes a pasta-flavour token so the rows read like a coloured menu
+const menu: { name: string; note: string; icon: LucideIcon; to: string; tint: string; ink: string }[] = [
+  { name: "Fresh Pasta", note: "Made fresh to order", icon: Wheat, to: "/fresh-pasta", tint: "var(--flavour-plain)", ink: "var(--color-ink)" },
+  { name: "Dry Pasta", note: "Five flavours", icon: Package, to: "/our-pasta-brand", tint: "var(--flavour-wheat)", ink: "var(--color-ink)" },
+  { name: "Sauces", note: "Small-batch, seasonal", icon: CookingPot, to: "/seasonal-sauces", tint: "var(--flavour-paprika)", ink: "var(--color-paper)" },
+  { name: "Cooked Pasta", note: "Hot and ready to eat", icon: UtensilsCrossed, to: "/cooked-pasta", tint: "var(--flavour-spinach)", ink: "var(--color-paper)" },
+  { name: "Desserts", note: "Platters to share", icon: CakeSlice, to: "/dessert-platters", tint: "var(--flavour-beetroot)", ink: "var(--color-paper)" },
+  { name: "Workshops", note: "Make pasta from scratch", icon: ChefHat, to: "/pasta-workshops", tint: "var(--color-ink)", ink: "var(--color-paper)" },
+];
+
+const shops = [
+  { name: "Amazon", href: "https://www.amazon.in" },
+  { name: "Meesho", href: "https://www.meesho.com" },
+];
+
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600";
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-white overflow-x-clip">
       <Navigation />
 
-      {/* ── Hero: Split Studio ── */}
-      <section className="grid md:grid-cols-2 min-h-[92vh]">
-
-        {/* Left: editorial text column */}
-        <div className="flex flex-col justify-center px-8 md:px-14 xl:px-20 py-16 order-2 md:order-1 bg-white">
-          <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-8">
-            Cloud Kitchen · Hyderabad
-          </span>
+      {/* ── Marquee hero: headline across the page, photo band beneath ── */}
+      <section className="px-6 md:px-14 xl:px-20 pt-14 md:pt-24">
+        <div className="max-w-7xl mx-auto">
           <h1
-            className="text-[2.6rem] md:text-[3.6rem] xl:text-[4.8rem] font-light leading-[1.05] text-stone-900 mb-8"
+            className="text-[3rem] sm:text-[4.2rem] md:text-[5.6rem] xl:text-[7rem] font-light leading-[0.98] text-stone-900 max-w-[14ch] [overflow-wrap:anywhere] min-w-0"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Handmade pasta,{" "}
-            <span className="text-orange-600">made to order.</span>
+            Handmade pasta, <span className="text-orange-600">made to order.</span>
           </h1>
-          <div className="w-10 h-px bg-orange-600 mb-8" />
-          <p className="text-stone-500 text-lg leading-relaxed mb-10 max-w-[22rem]">
-            Artisan pasta from our Hyderabad kitchen to your table — semolina,
-            '00' flour, and nothing else.
-          </p>
-          <div className="flex flex-wrap items-center gap-6">
-            <Link
-              to="/products"
-              className="bg-orange-600 hover:bg-orange-700 text-white px-7 py-3.5 text-sm font-semibold tracking-wide transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
+          <div className="mt-10 md:mt-14 grid md:grid-cols-[minmax(0,1fr)_auto] gap-8 md:items-end">
+            <p className="text-stone-600 text-base md:text-lg leading-relaxed max-w-md">
+              Artisan pasta from our Hyderabad kitchen to your table — semolina, '00' flour,
+              and nothing else.
+            </p>
+            <div className="flex flex-wrap items-center gap-6">
+              <Link
+                to="/products"
+                className={`bg-orange-600 hover:bg-orange-700 active:translate-y-px text-white px-7 py-3.5 text-sm font-semibold tracking-wide whitespace-nowrap transition-colors ${focusRing}`}
+              >
+                Order Now
+              </Link>
+              <Link
+                to="/our-pasta-brand"
+                className={`group text-stone-700 text-sm font-medium inline-flex items-center gap-2 whitespace-nowrap hover:text-orange-700 transition-colors ${focusRing}`}
+              >
+                Our Pasta Brand
+                <ArrowRight className="w-3.5 h-3.5 motion-safe:transition-transform group-hover:translate-x-1" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className="mt-12 md:mt-16 px-6 md:px-14 xl:px-20">
+        <figure className="max-w-7xl mx-auto relative overflow-hidden aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] bg-stone-100">
+          <img
+            src="/spinachpasta (1).webp"
+            alt="Bon Appetit spinach pasta with tomatoes, semolina and olive oil"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </figure>
+      </div>
+
+      {/* ── Where to buy: retail + online, per the stores sketch ── */}
+      <section className="mt-16 md:mt-24 px-6 md:px-14 xl:px-20 py-16 md:py-24 bg-stone-50 border-y border-stone-200">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-14 lg:gap-20">
+          <div className="min-w-0">
+            <span className="flex items-center justify-center w-14 h-14 rounded-full bg-orange-600 text-white mb-8">
+              <Store className="w-6 h-6" strokeWidth={1.5} />
+            </span>
+            <h2
+              className="text-[2.2rem] md:text-[3.2rem] font-light text-stone-900 leading-[1.05] max-w-[16ch]"
+              style={{ fontFamily: "var(--font-display)" }}
             >
-              Order Now
-            </Link>
+              Present in <span className="text-orange-600">30+ retail stores</span> across Hyderabad.
+            </h2>
+            <p className="mt-6 text-stone-600 leading-relaxed max-w-md">
+              Find our dry pasta at grocery stores, gourmet food halls and specialty outlets
+              around the city.
+            </p>
             <Link
               to="/our-pasta-brand"
-              className="text-stone-600 text-sm font-medium inline-flex items-center gap-2 group hover:text-orange-600 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600 rounded-sm"
+              className={`mt-8 inline-flex items-center gap-2 bg-stone-900 hover:bg-stone-800 active:translate-y-px text-white px-7 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors ${focusRing}`}
             >
-              Our Pasta Brand
-              <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 duration-150" />
+              Check our products
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-        </div>
 
-        {/* Right: food photograph */}
-        <div className="relative overflow-hidden order-1 md:order-2 h-[65vw] md:h-auto">
-          <img
-            src="/readytoeat.webp"
-            alt="Artisan pasta by Bon Appetit"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          <div className="min-w-0 lg:border-l lg:border-stone-200 lg:pl-20 flex flex-col justify-end">
+            <h3 className="text-lg font-semibold text-stone-900 mb-6">Available online</h3>
+            <ul className="space-y-3">
+              {shops.map((s) => (
+                <li key={s.name}>
+                  <a
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`group flex items-center gap-4 bg-white border border-stone-200 hover:border-orange-600 px-5 py-4 transition-colors ${focusRing}`}
+                  >
+                    <span className="flex-shrink-0 flex items-center justify-center w-11 h-11 rounded-full bg-orange-50 text-orange-700 transition-colors group-hover:bg-orange-600 group-hover:text-white">
+                      <ShoppingBag className="w-5 h-5" strokeWidth={1.6} />
+                    </span>
+                    <span className="flex-1 text-base font-semibold text-stone-900 whitespace-nowrap">
+                      Shop on {s.name}
+                    </span>
+                    <ArrowUpRight className="w-4 h-4 text-stone-400 group-hover:text-orange-700 motion-safe:transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </section>
 
-      {/* ── Hairline divider ── */}
-      <div className="h-px bg-stone-200" />
-
-      {/* ── Categories: asymmetric 3/5 + 2/5 grid ── */}
-      <section className="py-14 px-6 md:px-14 bg-stone-50">
-        <div className="max-w-7xl mx-auto">
-          <p className="text-[0.63rem] tracking-[0.25em] uppercase text-stone-400 mb-8">
-            What We Offer
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-
-            {/* Large card — 3 cols */}
+      {/* ── What we make: menu card with flavour-tinted circle icons ── */}
+      <section className="px-6 md:px-14 xl:px-20 py-20 md:py-28">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-12 lg:gap-20">
+          <div className="min-w-0 lg:sticky lg:top-28 lg:self-start">
+            <h2
+              className="text-[2.4rem] md:text-[3.4rem] font-light text-stone-900 leading-[1.02]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              What we make.
+            </h2>
+            <p className="mt-5 text-stone-600 leading-relaxed max-w-sm">
+              Fresh and dry pasta, sauces, ready meals and desserts — plus workshops if you'd
+              rather make it yourself.
+            </p>
             <Link
               to="/products"
-              className="group md:col-span-3 relative h-[420px] md:h-[560px] overflow-hidden block focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600"
+              className={`group mt-8 text-sm font-semibold text-orange-700 inline-flex items-center gap-1.5 whitespace-nowrap ${focusRing}`}
             >
-              <img
-                src="/readytoeat.webp"
-                alt="Food & Pre-orders"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/10 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-8">
-                <span className="text-orange-300 text-[0.6rem] tracking-[0.25em] uppercase font-semibold mb-3 block">
-                  Order Online
-                </span>
-                <h3
-                  className="text-white text-3xl md:text-4xl font-light leading-tight mb-3"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  Food & Pre-orders
-                </h3>
-                <p className="text-white/70 text-sm opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 leading-relaxed max-w-xs">
-                  Fresh pasta, cooked meals, sauces & more — delivered to your door.
-                </p>
-                <span className="text-orange-300 text-xs font-semibold mt-4 inline-flex items-center gap-1.5">
-                  Order Now
-                  <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1 duration-150" />
-                </span>
-              </div>
+              See the full menu
+              <ArrowRight className="w-3.5 h-3.5 motion-safe:transition-transform group-hover:translate-x-1" />
             </Link>
+          </div>
 
-            {/* Two stacked cards — 2 cols */}
-            <div className="md:col-span-2 flex flex-col gap-3">
-              {[
-                {
-                  to: "/pasta-workshops",
-                  image: "/pastaworkshop.webp",
-                  badge: "Every Month",
-                  title: "Pasta Workshops",
-                  cta: "Book a Slot",
-                },
-                {
-                  to: "/our-pasta-brand",
-                  image: "/drypasta.webp",
-                  badge: "30+ Stores",
-                  title: "Our Pasta Brand",
-                  cta: "Explore Brand",
-                },
-              ].map((item) => (
+          <ul className="min-w-0 grid sm:grid-cols-2 sm:gap-x-10 border-t border-stone-900">
+            {menu.map((m) => (
+              <li key={m.name} className="min-w-0 border-b border-stone-200">
                 <Link
-                  key={item.to}
-                  to={item.to}
-                  className="group relative h-[260px] md:flex-1 overflow-hidden block focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600"
-                  style={{ minHeight: "260px" }}
+                  to={m.to}
+                  className={`group flex items-center gap-5 py-6 md:py-7 ${focusRing} focus-visible:outline-offset-0`}
                 >
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/78 via-black/10 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <span className="text-orange-300 text-[0.6rem] tracking-[0.25em] uppercase font-semibold mb-2 block">
-                      {item.badge}
-                    </span>
-                    <h3
-                      className="text-white text-2xl md:text-3xl font-light leading-tight mb-2"
+                  <span
+                    className="flex-shrink-0 flex items-center justify-center w-16 h-16 md:w-[4.5rem] md:h-[4.5rem] rounded-full motion-safe:transition-transform motion-safe:duration-200 group-hover:scale-105"
+                    style={{ background: m.tint, color: m.ink }}
+                  >
+                    <m.icon className="w-7 h-7" strokeWidth={1.5} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span
+                      className="block text-[1.45rem] md:text-[1.65rem] font-semibold text-stone-900 leading-tight whitespace-nowrap group-hover:text-orange-700 transition-colors"
                       style={{ fontFamily: "var(--font-display)" }}
                     >
-                      {item.title}
-                    </h3>
-                    <span className="text-orange-300 text-xs font-semibold mt-1 inline-flex items-center gap-1.5">
-                      {item.cta}
-                      <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1 duration-150" />
+                      {m.name}
                     </span>
-                  </div>
+                    <span className="block mt-1 text-sm text-stone-500">{m.note}</span>
+                  </span>
+                  <ArrowRight className="flex-shrink-0 w-4 h-4 text-stone-300 group-hover:text-orange-700 motion-safe:transition-transform group-hover:translate-x-1" />
                 </Link>
-              ))}
-            </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
+      {/* ── Craft story: statement over a narrow photo column ── */}
+      <section className="px-6 md:px-14 xl:px-20 pb-20 md:pb-28">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-10 md:gap-20 md:items-center">
+          <figure className="relative overflow-hidden aspect-[4/5] bg-stone-100 order-2 md:order-1">
+            <img
+              src="/bts1.webp"
+              alt="Pasta being prepared by hand in the Bon Appetit kitchen"
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          </figure>
+          <div className="order-1 md:order-2 min-w-0">
+            <h2
+              className="text-[2.2rem] md:text-[3.4rem] xl:text-[4rem] font-light text-stone-900 leading-[1.05]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Traditional technique, <span className="text-orange-600">zero shortcuts.</span>
+            </h2>
+            <p className="mt-8 text-stone-600 text-base md:text-lg leading-relaxed max-w-lg">
+              Every strand of pasta at Bon Appetit is made by hand — semolina, '00' flour, and
+              nothing else. Artisan craft, delivered India-wide.
+            </p>
+            <Link
+              to="/about"
+              className={`group mt-8 text-sm font-semibold text-orange-700 inline-flex items-center gap-1.5 whitespace-nowrap ${focusRing}`}
+            >
+              Read our story
+              <ArrowRight className="w-3.5 h-3.5 motion-safe:transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Craft story: image | sage text split ── */}
-      <section className="grid md:grid-cols-2">
-        {/* Image */}
-        <div className="relative overflow-hidden min-h-[360px] h-[70vw] md:h-auto">
-          <img
-            src="/cmpic1.webp"
-            alt="Behind the scenes at Bon Appetit kitchen"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </div>
-
-        {/* Sage text panel */}
-        <div
-          className="flex flex-col justify-center px-8 md:px-14 xl:px-20 py-16 md:py-24"
-          style={{ background: "#7BA16D" }}
-        >
-          <span className="text-white/60 text-[0.63rem] tracking-[0.25em] uppercase mb-8">
-            Our Story
-          </span>
-          <h2
-            className="text-white text-[2rem] md:text-[2.8rem] xl:text-[3.4rem] font-light leading-[1.1] mb-8"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Traditional technique, zero shortcuts.
-          </h2>
-          <div className="w-10 h-px bg-white/30 mb-8" />
-          <p className="text-white/80 text-base leading-relaxed mb-10 max-w-sm">
-            Every strand of pasta at Bon Appetit is made by hand — semolina, '00' flour,
-            and nothing else. Artisan craft, delivered India-wide.
-          </p>
-          <Link
-            to="/about"
-            className="text-white text-sm font-semibold inline-flex items-center gap-2 group w-fit hover:opacity-75 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white rounded-sm"
-          >
-            Our Story
-            <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1 duration-150" />
-          </Link>
-        </div>
-      </section>
-
-      {/* ── Location ── */}
-      <section className="py-14 px-6 md:px-14 bg-stone-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-8 gap-4">
+      {/* ── Kitchen location ── */}
+      <section className="px-6 md:px-14 xl:px-20 pb-20 md:pb-28">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-8 md:gap-14 md:items-stretch">
+          <div className="flex flex-col justify-between gap-8 border-t border-stone-900 pt-6">
             <div>
-              <p className="text-[0.63rem] tracking-[0.25em] uppercase text-stone-400 mb-3">
-                Find Us
-              </p>
               <h2
-                className="text-stone-900 text-2xl md:text-3xl font-light"
+                className="text-[2rem] md:text-[2.6rem] font-light text-stone-900 leading-tight"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                Our Kitchen
+                Our kitchen.
               </h2>
+              <p className="mt-4 flex gap-2.5 text-stone-600 text-sm leading-relaxed">
+                <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0 text-orange-600" />
+                <span>
+                  8-1-284/OU/461, OU Colony
+                  <br />
+                  Shaikpet, Hyderabad, Telangana 500008
+                </span>
+              </p>
             </div>
-            <p className="text-stone-500 text-sm leading-relaxed md:text-right">
-              8-1-284/OU/461, OU Colony<br />
-              Shaikpet, Hyderabad, Telangana 500008
-            </p>
+            <Link
+              to="/contact"
+              className={`group text-sm font-semibold text-orange-700 inline-flex items-center gap-1.5 whitespace-nowrap w-fit ${focusRing}`}
+            >
+              Get in touch
+              <ArrowRight className="w-3.5 h-3.5 motion-safe:transition-transform group-hover:translate-x-1" />
+            </Link>
           </div>
-          <div className="w-full h-80 overflow-hidden">
+          <div className="h-80 md:h-96 overflow-hidden bg-stone-100">
             <iframe
-              title="Bon Appetit Location"
+              title="Bon Appetit kitchen location"
               src="https://www.google.com/maps?q=8-1-284/OU/461,OU+Colony,Shaikpet,Hyderabad,Telangana+500008&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}
+              loading="lazy"
               allowFullScreen
               referrerPolicy="no-referrer-when-downgrade"
             />

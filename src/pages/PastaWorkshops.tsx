@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
-import { CalendarDays, MapPin, Users, Clock, CheckCircle, Building2, Loader2 } from "lucide-react";
+import { CalendarDays, MapPin, Users, Clock, CheckCircle, Building2, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import WorkshopBookingModal from "@/components/WorkshopBookingModal";
 import { useWorkshops, parseDay } from "@/hooks/use-menu-data";
 
@@ -20,10 +20,23 @@ const includes = [
   "Attend from anywhere in the world",
 ];
 
+const PAGE_SIZE = 2;
+
 const PastaWorkshops = () => {
   const { data: upcomingWorkshops = [], isLoading } = useWorkshops();
   const [booking, setBooking] = useState<{ open: boolean; id?: string }>({ open: false });
   const openBooking = (id?: string) => setBooking({ open: true, id });
+
+  const listRef = useRef<HTMLElement>(null);
+  const [page, setPage] = useState(1);
+  const pageCount = Math.max(1, Math.ceil(upcomingWorkshops.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pageCount);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const visibleWorkshops = upcomingWorkshops.slice(start, start + PAGE_SIZE);
+  const goToPage = (next: number) => {
+    setPage(next);
+    listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <div className="min-h-screen bg-white overflow-x-clip">
@@ -105,7 +118,7 @@ const PastaWorkshops = () => {
       </section>
 
       {/* Happening Now */}
-      <section className="py-14 px-8 md:px-14 bg-white">
+      <section ref={listRef} className="py-14 px-8 md:px-14 bg-white scroll-mt-20">
         <div className="max-w-6xl mx-auto">
           <h2
             className="text-2xl md:text-3xl font-bold text-stone-900 mb-2"
@@ -121,7 +134,7 @@ const PastaWorkshops = () => {
             <p className="text-stone-600">No workshops are scheduled right now — new dates are announced every month.</p>
           )}
           <div className="grid md:grid-cols-2 gap-8">
-            {upcomingWorkshops.map((ws) => (
+            {visibleWorkshops.map((ws) => (
               <Card key={ws.id} className="overflow-hidden hover:shadow-xl transition-shadow">
                 <div className="h-48 overflow-hidden">
                   <img src={ws.image} alt={ws.title} className="w-full h-full object-cover" />
@@ -170,6 +183,53 @@ const PastaWorkshops = () => {
               </Card>
             ))}
           </div>
+
+          {pageCount > 1 && (
+            <nav aria-label="Workshop pages" className="mt-10 flex flex-col items-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="whitespace-nowrap border-stone-300 text-stone-700 hover:bg-orange-50 hover:text-orange-700"
+                  aria-label="Previous page"
+                  disabled={currentPage === 1}
+                  onClick={() => goToPage(currentPage - 1)}
+                >
+                  <ChevronLeft className="w-4 h-4" /> <span className="hidden sm:inline">Previous</span>
+                </Button>
+                {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
+                  <Button
+                    key={n}
+                    size="sm"
+                    variant={n === currentPage ? "default" : "outline"}
+                    aria-current={n === currentPage ? "page" : undefined}
+                    aria-label={`Page ${n}`}
+                    className={
+                      n === currentPage
+                        ? "w-9 bg-orange-600 hover:bg-orange-700 text-white"
+                        : "w-9 border-stone-300 text-stone-700 hover:bg-orange-50 hover:text-orange-700"
+                    }
+                    onClick={() => goToPage(n)}
+                  >
+                    {n}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="whitespace-nowrap border-stone-300 text-stone-700 hover:bg-orange-50 hover:text-orange-700"
+                  aria-label="Next page"
+                  disabled={currentPage === pageCount}
+                  onClick={() => goToPage(currentPage + 1)}
+                >
+                  <span className="hidden sm:inline">Next</span> <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+              <p className="text-sm text-stone-500">
+                Showing {start + 1}–{start + visibleWorkshops.length} of {upcomingWorkshops.length} workshops
+              </p>
+            </nav>
+          )}
         </div>
       </section>
 

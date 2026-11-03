@@ -1,13 +1,13 @@
 /* Admin panel — only for the verified admin email. The UI gate is a convenience;
  * every write is enforced again by row level security in Supabase. */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SignInButton } from "@clerk/clerk-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import {
-  CalendarDays, Plus, Pencil, Trash2, Loader2, ShieldAlert, ShieldCheck, Save, X, IndianRupee, Users,
+  CalendarDays, Plus, Pencil, Trash2, Loader2, ShieldAlert, ShieldCheck, Save, X, IndianRupee, Users, ImageUp, RotateCcw,
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
@@ -29,6 +29,89 @@ const ghostBtn =
 
 const rlsHint =
   "Supabase rejected the change. Check that Clerk is added under Supabase → Authentication → Third-party Auth, and that setup.sql has been run.";
+
+/* ── Image upload (Supabase Storage, bucket "workshop-images") ── */
+
+const IMAGE_BUCKET = "workshop-images";
+const DEFAULT_IMAGE = "/pastaworkshop.webp";
+const MAX_BYTES = 5 * 1024 * 1024;
+const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
+
+const ImageUploader = ({ value, onChange }: { value: string; onChange: (url: string) => void }) => {
+  const db = useSupabase();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  const upload = async (file: File) => {
+    if (!db) return;
+    if (!ACCEPTED.includes(file.type)) return toast.error("Use a JPG, PNG or WebP image.");
+    if (file.size > MAX_BYTES) return toast.error("Image must be 5 MB or smaller.");
+
+    setUploading(true);
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await db.storage.from(IMAGE_BUCKET).upload(path, file, {
+      cacheControl: "31536000",
+      contentType: file.type,
+    });
+    setUploading(false);
+    if (error) {
+      return toast.error(
+        /bucket not found/i.test(error.message)
+          ? "Image storage isn't set up yet. Run supabase/storage.sql in Supabase."
+          : `Upload failed: ${error.message}`
+      );
+    }
+    onChange(db.storage.from(IMAGE_BUCKET).getPublicUrl(path).data.publicUrl);
+    toast.success("Image uploaded");
+  };
+
+  const pick = (files: FileList | null) => files?.[0] && upload(files[0]);
+
+  return (
+    <div>
+      <span className={labelCls}>Image</span>
+      <div
+        onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(e) => { e.preventDefault(); setDragging(false); pick(e.dataTransfer.files); }}
+        className={`rounded-lg border-2 border-dashed p-3 flex items-center gap-4 transition-colors ${
+          dragging ? "border-orange-500 bg-orange-50" : "border-stone-300 bg-white"
+        }`}
+      >
+        <img
+          src={value || DEFAULT_IMAGE}
+          alt="Workshop preview"
+          className="w-20 h-20 rounded-md object-cover ring-1 ring-stone-200 flex-shrink-0 bg-stone-100"
+        />
+        <div className="min-w-0 flex-1 space-y-2">
+          <button type="button" className={ghostBtn} disabled={uploading} onClick={() => inputRef.current?.click()}>
+            {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageUp className="w-3.5 h-3.5" />}
+            {uploading ? "Uploading…" : "Upload image"}
+          </button>
+          <p className="text-xs text-stone-500">or drag a photo here · JPG, PNG, WebP · max 5 MB</p>
+          {value && value !== DEFAULT_IMAGE && (
+            <button
+              type="button"
+              className="inline-flex items-center gap-1 text-xs font-semibold text-stone-600 hover:text-orange-600"
+              onClick={() => onChange(DEFAULT_IMAGE)}
+            >
+              <RotateCcw className="w-3 h-3" /> Use default image
+            </button>
+          )}
+        </div>
+        <input
+          ref={inputRef}
+          type="file"
+          accept={ACCEPTED.join(",")}
+          className="hidden"
+          onChange={(e) => { pick(e.target.files); e.target.value = ""; }}
+        />
+      </div>
+    </div>
+  );
+};
 
 /* ── Workshops ─────────────────────────────────────────────── */
 
@@ -260,10 +343,7 @@ const WorkshopsTab = () => {
               <textarea id="w-desc" rows={3} className={`${inputCls} resize-none`} value={draft.description ?? ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
             </div>
 
-            <div>
-              <label htmlFor="w-image" className={labelCls}>Image path</label>
-              <input id="w-image" className={inputCls} value={draft.image} onChange={(e) => setDraft({ ...draft, image: e.target.value })} />
-            </div>
+            <ImageUploader value={draft.image} onChange={(url) => setDraft({ ...draft, image: url })} />
 
             <label className="flex items-center justify-between gap-3 text-sm text-stone-700">
               Show on the website

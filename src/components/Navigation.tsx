@@ -1,6 +1,8 @@
 /* Hallmark · N9 edge-aligned minimal nav — lg breakpoint, compact labels */
 import { Link, useLocation } from "react-router-dom";
-import { Menu } from "lucide-react";
+import { Menu, ShieldCheck, LogIn } from "lucide-react";
+import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
+import { useIsAdmin } from "@/hooks/use-admin";
 import {
   Sheet,
   SheetContent,
@@ -28,6 +30,7 @@ const navItems = [
 
 const Navigation = () => {
   const location = useLocation();
+  const { isAdmin } = useIsAdmin();
 
   return (
     <nav className="bg-white border-b border-stone-200 sticky top-0 z-50">
@@ -63,8 +66,44 @@ const Navigation = () => {
             ))}
           </div>
 
-          {/* Cart + mobile hamburger (below lg only) */}
+          {/* Account, cart + mobile hamburger (below lg only) */}
           <div className="flex items-center gap-1 ml-1">
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className={cn(
+                  "hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.72rem] font-semibold uppercase tracking-[0.04em] whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600",
+                  location.pathname.startsWith("/admin")
+                    ? "bg-orange-600 text-white"
+                    : "bg-stone-900 text-white hover:bg-orange-600"
+                )}
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Admin
+              </Link>
+            )}
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.04em] text-stone-600 hover:text-orange-600 whitespace-nowrap transition-colors rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span className="hidden sm:inline">Sign in</span>
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <span className="px-1.5 flex items-center">
+                <UserButton>
+                  {isAdmin && (
+                    <UserButton.MenuItems>
+                      <UserButton.Link label="Admin panel" labelIcon={<ShieldCheck className="w-4 h-4" />} href="/admin" />
+                    </UserButton.MenuItems>
+                  )}
+                </UserButton>
+              </span>
+            </SignedIn>
             <CartDrawer />
             <Sheet>
               <SheetTrigger asChild>
@@ -98,6 +137,17 @@ const Navigation = () => {
                       </Link>
                     </SheetClose>
                   ))}
+                  {isAdmin && (
+                    <SheetClose asChild>
+                      <Link
+                        to="/admin"
+                        className="mt-3 flex items-center gap-2 px-4 py-3 text-sm font-semibold bg-stone-900 text-white rounded-sm hover:bg-orange-600 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600"
+                      >
+                        <ShieldCheck className="w-4 h-4" />
+                        Admin panel
+                      </Link>
+                    </SheetClose>
+                  )}
                 </nav>
               </SheetContent>
             </Sheet>

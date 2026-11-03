@@ -1,220 +1,82 @@
-import React, { useState } from "react";
-import Navigation from "@/components/Navigation";
-import { ChevronLeft, ShoppingCart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { SimpleFooter } from "@/components/Footer";
+/* Hallmark · genre: editorial · macrostructure: Order Sheet · shared system (components/OrderSheet) */
+import { useState } from "react";
 import { useCart } from "@/context/CartContext";
-import ImageUpload from "@/components/ImageUpload";
-import { fileToDataUrl } from "@/lib/imageUtils";
+import { OrderPage, OrderList, OrderRow, Choice, flavourSwatch } from "@/components/OrderSheet";
+import { usePrices } from "@/hooks/use-menu-data";
 
-const FreshPasta = () => {
-  const navigate = useNavigate();
+const freshPastaTypes = [
+  { id: "fp001", name: "Ravioli", description: "Stuffed pasta with gourmet fillings.", features: ["Ricotta Spinach", "Chicken Cheese"] },
+  { id: "fp002", name: "Fettucine", description: "Flat, thick pasta ribbons ideal for creamy and hearty sauces.", features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+  { id: "fp003", name: "Farfalle", description: "Bow-tie shaped pasta, perfect for light sauces and elegant presentations.", features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+  { id: "fp004", name: "Spaghetti", description: "Long, thin cylindrical pasta, a staple for classic Italian dishes.", features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+  { id: "fp005", name: "Heart", description: "Fun heart-shaped pasta, perfect for special occasions and kids.", features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+  { id: "fp006", name: "Star", description: "Star-shaped pasta, great for soups and adding a playful touch to meals.", features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+  { id: "fp007", name: "Flower", description: "Flower-shaped pasta, brings a decorative and delightful look to your dishes.", features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+];
+
+// Defaults until the admin's prices load: 25g ₹30, 50g ₹60, 100g ₹100, 250g ₹250
+const defaultByWeight: Record<number, number> = { 25: 30, 50: 60, 100: 100, 250: 250 };
+const weights = [25, 50, 100, 250];
+
+const PastaRow = ({ pasta, index }: { pasta: (typeof freshPastaTypes)[number]; index: number }) => {
   const { addToCart } = useCart();
-
-  const parsePrice = (priceString: string) => {
-    const numericPart = priceString.match(/[\d.]+/);
-    return numericPart ? parseFloat(numericPart[0]) : 0;
-  };
-
-  const [freshPastaTypes, setFreshPastaTypes] = useState([
-    {
-      id: "fp001",
-      name: "Ravioli",
-      description: "Stuffed pasta with gourmet fillings.",
-      price: "₹250 per 250g",
-      image: "/freshpasta.webp",
-      features: ["Ricotta Spinach", "Chicken Cheese"]
-    },
-    {
-      id: "fp002",
-      name: "Fettucine",
-      description: "Flat, thick pasta ribbons ideal for creamy and hearty sauces.",
-      price: "₹180 per 250g",
-      image: "/freshpasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
-    },
-    {
-      id: "fp003",
-      name: "Farfalle",
-      description: "Bow-tie shaped pasta, perfect for light sauces and elegant presentations.",
-      price: "₹180 per 250g",
-      image: "/freshpasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
-    },
-    {
-      id: "fp004",
-      name: "Spaghetti",
-      description: "Long, thin cylindrical pasta, a staple for classic Italian dishes.",
-      price: "₹180 per 250g",
-      image: "/freshpasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
-    },
-    {
-      id: "fp005",
-      name: "Heart",
-      description: "Fun heart-shaped pasta, perfect for special occasions and kids.",
-      price: "₹180 per 250g",
-      image: "/freshpasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
-    },
-    {
-      id: "fp006",
-      name: "Star",
-      description: "Star-shaped pasta, great for soups and adding a playful touch to meals.",
-      price: "₹180 per 250g",
-      image: "/freshpasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
-    },
-    {
-      id: "fp007",
-      name: "Flower",
-      description: "Flower-shaped pasta, brings a decorative and delightful look to your dishes.",
-      price: "₹180 per 250g",
-      image: "/freshpasta.webp",
-      features: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"]
-    }
-  ]);
-
-  // Handle image upload for a specific product
-  const handleImageUpload = async (productId: string, file: File) => {
-    try {
-      const imageDataUrl = await fileToDataUrl(file);
-      
-      // Update the product with the new image
-      setFreshPastaTypes(prev => 
-        prev.map(product => 
-          product.id === productId 
-            ? { ...product, image: imageDataUrl } 
-            : product
-        )
-      );
-    } catch (error) {
-      console.error("Error uploading image:", error);
-    }
-  };
-
-  // Flattened array: each flavor is a separate item
-  const freshPastaFlavours = freshPastaTypes.flatMap((pasta) =>
-    pasta.features.map((flavour) => ({
-      id: pasta.id + '-' + flavour,
-      name: `${pasta.name} ${flavour}`,
-      description: pasta.description,
-      price: pasta.price,
-      image: pasta.image,
-      baseId: pasta.id,
-      baseName: pasta.name,
-      flavour,
-    }))
-  );
-
-  // Calculate price based on quantity (new pricing structure)
-  const calculatePrice = (quantity: number) => {
-    // New pricing structure: 25g - ₹30, 50g - ₹60, 100g - ₹100
-    switch (quantity) {
-      case 25: return "30";
-      case 50: return "60";
-      case 100: return "100";
-      case 250: return "250"; // Proportional to 100g - ₹100
-      default: return "0";
-    }
-  };
-
-  // Quantity options with correct pricing
-  const quantityOptions = [
-    { value: 25, label: "25g - ₹30" },
-    { value: 50, label: "50g - ₹60" },
-    { value: 100, label: "100g - ₹100" },
-    { value: 250, label: "250g - ₹250" }
-  ];
+  const { price: dbPrice } = usePrices();
+  const priceByWeight = (w: number) => dbPrice(`fresh.${w}`, defaultByWeight[w]);
+  const [flavour, setFlavour] = useState(pasta.features[0]);
+  const [weight, setWeight] = useState(250);
+  const price = priceByWeight(weight);
 
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation />
-      
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <button
-            onClick={() => navigate('/products')}
-            className="flex items-center text-orange-600 hover:text-orange-700 mb-6 transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 mr-2" />
-            Back to Products
-          </button>
-          
-          <div>
-            <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">Ready to Cook</span>
-            <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-6 font-display">
-              Our <span className="text-orange-600">Fresh Pasta</span> Selection
-            </h1>
-            <p className="text-lg text-stone-600 mb-8 max-w-2xl leading-relaxed">
-              Handmade fresh pasta, crafted daily. Pre-order 1-2 days in advance. 2-hour shelf life.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 px-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {freshPastaFlavours.map((item) => {
-              const [selectedQuantity, setSelectedQuantity] = useState(250);
-              const currentPrice = calculatePrice(selectedQuantity);
-              
-              // Find the base product to get the actual image
-              const baseProduct = freshPastaTypes.find(p => p.id === item.baseId);
-              
-              return (
-                <div key={item.id} className="bg-white border border-stone-200 hover:border-orange-300 transition-colors overflow-hidden flex flex-col">
-                  {baseProduct && (
-                    <ImageUpload
-                      imageUrl={baseProduct.image}
-                      onImageUpload={(file) => handleImageUpload(baseProduct.id, file)}
-                    />
-                  )}
-                  <div className="p-6 flex-grow flex flex-col">
-                    <h3 className="text-xl font-bold text-stone-900 mb-2 font-display">{item.name}</h3>
-                    <p className="text-stone-600 text-sm mb-4 leading-relaxed flex-grow">{item.description}</p>
-                    
-                    {/* Quantity Selector */}
-                    <div className="mb-4">
-                      <label className="block text-sm font-medium text-stone-700 mb-2">Select Quantity</label>
-                      <select 
-                        value={selectedQuantity}
-                        onChange={(e) => setSelectedQuantity(Number(e.target.value))}
-                        className="w-full border border-stone-300 rounded-none px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      >
-                        {quantityOptions.map(option => (
-                          <option key={option.value} value={option.value}>
-                            {option.label.split(' - ')[0]} - ₹{calculatePrice(option.value)}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    
-                    <span className="text-lg font-bold text-orange-600 mb-2">₹{currentPrice}</span>
-                    <button
-                      onClick={() => addToCart({
-                        id: item.id,
-                        name: `${item.name} (${selectedQuantity}g)`,
-                        price: parseFloat(currentPrice),
-                        image: baseProduct?.image || '/freshpasta.webp',
-                      })}
-                      className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-3 rounded-none font-semibold transition-colors flex items-center justify-center gap-2"
-                    >
-                      <ShoppingCart className="w-4 h-4" />
-                      Add to Cart
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-      
-      <SimpleFooter />
-    </div>
+    <OrderRow
+      index={index}
+      image={`/menu-photos/fresh-pasta/${pasta.name.toLowerCase()}.webp`}
+      fallbackImage="/freshpasta.webp"
+      name={pasta.name}
+      description={pasta.description}
+      tint={flavourSwatch[flavour]}
+      price={price}
+      priceNote={`${weight}g · ${flavour}`}
+      onAdd={() =>
+        addToCart({
+          id: `${pasta.id}-${flavour}-${weight}`,
+          name: `${pasta.name} ${flavour} (${weight}g)`,
+          price,
+          image: "/freshpasta.webp",
+        })
+      }
+    >
+      <Choice
+        label={pasta.id === "fp001" ? "Filling" : "Flavour"}
+        value={flavour}
+        onChange={setFlavour}
+        options={pasta.features.map((f) => ({ value: f, label: f, swatch: flavourSwatch[f] }))}
+      />
+      <Choice
+        label="Weight"
+        value={weight}
+        onChange={setWeight}
+        options={weights.map((w) => ({ value: w, label: `${w}g`, hint: `₹${priceByWeight(w)}` }))}
+      />
+    </OrderRow>
   );
 };
+
+const FreshPasta = () => (
+  <OrderPage
+    eyebrow="Ready to Cook"
+    title="Our"
+    accent="Fresh Pasta"
+    intro="Handmade fresh pasta, crafted daily. Pick a shape, a flavour and a weight."
+    leadTime="Pre-order 1–2 days ahead"
+    shelfLife="2-hour shelf life"
+    stamp="/freshpasta.webp"
+  >
+    <OrderList>
+      {freshPastaTypes.map((p, i) => (
+        <PastaRow key={p.id} pasta={p} index={i + 1} />
+      ))}
+    </OrderList>
+  </OrderPage>
+);
 
 export default FreshPasta;

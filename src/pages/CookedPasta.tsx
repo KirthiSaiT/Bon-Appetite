@@ -1,259 +1,217 @@
-import Navigation from "@/components/Navigation";
-import { ChevronLeft, ShoppingCart } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-import { SimpleFooter } from "@/components/Footer";
-import { useCart } from "@/context/CartContext";
+/* Hallmark · genre: editorial · macrostructure: Order Sheet (combo builder) · shared system (components/OrderSheet) */
 import { useState } from "react";
+import { useCart } from "@/context/CartContext";
+import { OrderPage, Choice, AddButton, Thumb, flavourSwatch } from "@/components/OrderSheet";
+import { usePrices } from "@/hooks/use-menu-data";
+
+const pastaOptions = [
+  { name: "Fettuccine", variants: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+  { name: "Farfalle", variants: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+  { name: "Spaghetti", variants: ["Plain", "Paprika", "Spinach", "Beetroot", "Wheat"] },
+];
+const ravioliOptions = [
+  { name: "Ricotta Spinach", variants: ["Beetroot"] },
+  { name: "Corn Cheese", variants: ["Wheat"] },
+  { name: "Chicken Cheese", variants: [""] },
+];
+const sauceOptions = ["Tomato Basil Sauce", "Arrabbiata", "Pesto"];
+
+type ComboType = "standard" | "ravioli";
+
+const Step = ({ n, title, children }: { n: number; title: string; children: React.ReactNode }) => (
+  <section className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-5 md:gap-x-8 py-8 border-b border-stone-200">
+    <span className="w-10 h-10 rounded-full border border-stone-900 flex items-center justify-center text-sm font-semibold text-stone-900">
+      {n}
+    </span>
+    <div className="min-w-0">
+      <h2
+        className="text-2xl md:text-[1.75rem] font-bold leading-tight text-stone-900 mb-5"
+        style={{ fontFamily: "var(--font-display)" }}
+      >
+        {title}
+      </h2>
+      <div className="flex flex-col gap-5">{children}</div>
+    </div>
+  </section>
+);
 
 const CookedPasta = () => {
-  const navigate = useNavigate();
   const { addToCart } = useCart();
 
-  const parsePrice = (priceString: string) => {
-    const numericPart = priceString.match(/[\d.]+/);
-    return numericPart ? parseFloat(numericPart[0]) : 0;
-  };
-
-  const [comboType, setComboType] = useState<'standard' | 'ravioli'>('standard');
-  const [selectedPasta, setSelectedPasta] = useState('Fettuccine');
-  const [selectedRavioli, setSelectedRavioli] = useState('Ricotta Spinach');
-  const [selectedVariant, setSelectedVariant] = useState('Plain');
-  const [selectedSauce, setSelectedSauce] = useState('Tomato Basil Sauce');
+  const [comboType, setComboType] = useState<ComboType>("standard");
+  const [selectedPasta, setSelectedPasta] = useState("Fettuccine");
+  const [selectedRavioli, setSelectedRavioli] = useState("Ricotta Spinach");
+  const [selectedVariant, setSelectedVariant] = useState("Plain");
+  const [selectedSauce, setSelectedSauce] = useState("Tomato Basil Sauce");
   const [extraSauce, setExtraSauce] = useState(false);
   const [extraCheese, setExtraCheese] = useState(false);
 
-  const pastaOptions = [
-    { name: 'Fettuccine', variants: ['Plain', 'Paprika', 'Spinach', 'Beetroot', 'Wheat'] },
-    { name: 'Farfalle', variants: ['Plain', 'Paprika', 'Spinach', 'Beetroot', 'Wheat'] },
-    { name: 'Spaghetti', variants: ['Plain', 'Paprika', 'Spinach', 'Beetroot', 'Wheat'] },
-  ];
-  const ravioliOptions = [
-    { name: 'Ricotta Spinach', variants: ['Beetroot'] },
-    { name: 'Corn Cheese', variants: ['Wheat'] },
-    { name: 'Chicken Cheese', variants: [''] },
-  ];
-  const sauceOptions = ['Tomato Basil Sauce', 'Arrabbiata', 'Pesto'];
+  const isStandard = comboType === "standard";
+  const main = isStandard ? selectedPasta : selectedRavioli;
+  const variants = isStandard
+    ? pastaOptions.find((p) => p.name === selectedPasta)?.variants ?? []
+    : ravioliOptions.find((r) => r.name === selectedRavioli)?.variants ?? [""];
 
-  const getComboPrice = () => {
-    let price = comboType === 'standard' ? 250 : 300;
-    if (extraSauce) price += 70;
-    if (extraCheese) price += 50;
-    return price;
+  const { price: dbPrice } = usePrices();
+  const cost = {
+    standard: dbPrice("combo.standard", 250),
+    ravioli: dbPrice("combo.ravioli", 300),
+    sauce: dbPrice("extra.sauce", 70),
+    cheese: dbPrice("extra.cheese", 50),
+  };
+  const price = (isStandard ? cost.standard : cost.ravioli) + (extraSauce ? cost.sauce : 0) + (extraCheese ? cost.cheese : 0);
+  const extras = [extraSauce ? "Extra Sauce" : null, extraCheese ? "Extra Cheese" : null].filter(Boolean).join(", ");
+
+  const switchCombo = (type: ComboType) => {
+    setComboType(type);
+    if (type === "standard") {
+      setSelectedPasta("Fettuccine");
+      setSelectedVariant(pastaOptions[0].variants[0]);
+    } else {
+      setSelectedRavioli("Ricotta Spinach");
+      setSelectedVariant(ravioliOptions[0].variants[0]);
+    }
   };
 
-  const handleComboAddToCart = () => {
-    const name = comboType === 'standard'
+  const handleAdd = () => {
+    const name = isStandard
       ? `${selectedPasta} (${selectedVariant}) with ${selectedSauce} Sauce [Standard Combo]`
       : `Ravioli - ${selectedRavioli} (${selectedVariant}) with ${selectedSauce} Sauce [Ravioli Combo]`;
-    const extras = [
-      extraSauce ? 'Extra Sauce' : null,
-      extraCheese ? 'Extra Cheese' : null,
-    ].filter(Boolean).join(', ');
     addToCart({
-      id: `combo-${comboType}-${selectedPasta || selectedRavioli}-${selectedVariant}-${selectedSauce}`,
+      id: `combo-${comboType}-${main}-${selectedVariant}-${selectedSauce}-${extras || "none"}`,
       name: extras ? `${name} + ${extras}` : name,
-      price: getComboPrice(),
-      image: '/assets/cooked pasta.webp',
+      price,
+      image: "/cooked.webp",
     });
   };
 
+  const toggle = (on: boolean, set: (v: boolean) => void, label: string, cost: number) => (
+    <button
+      type="button"
+      aria-pressed={on}
+      onClick={() => set(!on)}
+      className={`inline-flex items-center gap-2 px-3.5 py-2 text-sm font-semibold whitespace-nowrap border rounded-full motion-safe:transition-colors active:translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600 ${
+        on ? "bg-stone-900 border-stone-900 text-white" : "bg-white border-stone-300 text-stone-700 hover:border-stone-900"
+      }`}
+    >
+      {label}
+      <span className={on ? "text-stone-300 font-normal" : "text-stone-400 font-normal"}>+₹{cost}</span>
+    </button>
+  );
+
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation />
-      
-      <section className="py-20 px-4">
-        <div className="max-w-6xl mx-auto">
-          <button
-            onClick={() => navigate('/products')}
-            className="flex items-center text-orange-600 hover:text-orange-700 mb-6 transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5 mr-2" />
-            Back to Products
-          </button>
-          
-          <div>
-            <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">Ready to Eat</span>
-            <h1 className="text-4xl md:text-5xl font-bold text-stone-900 mb-6 font-display">
-              Our <span className="text-orange-600">Cooked Pasta</span>
-            </h1>
-            <p className="text-lg text-stone-600 mb-8 max-w-2xl leading-relaxed">
-              Delicious pasta dishes, cooked to perfection. Pre-order 1-2 days in advance, 2-hour shelf life.
-            </p>
-          </div>
+    <OrderPage
+      eyebrow="Ready to Eat"
+      title="Our"
+      accent="Cooked Pasta"
+      intro="Delicious pasta dishes, cooked to perfection. Build your combo in four steps."
+      leadTime="Pre-order 1–2 days ahead"
+      shelfLife="2-hour shelf life"
+      stamp="/cooked.webp"
+    >
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)] gap-10 lg:gap-16 items-start">
+        <div className="border-t-2 border-stone-900 min-w-0">
+          <Step n={1} title="Pick a combo">
+            <Choice
+              label="Combo"
+              value={comboType}
+              onChange={switchCombo}
+              options={[
+                { value: "standard", label: "Standard", hint: `₹${cost.standard}` },
+                { value: "ravioli", label: "Ravioli", hint: `₹${cost.ravioli}` },
+              ]}
+            />
+          </Step>
 
-          {/* Ready to Eat Combo Section - Sleek Modern UI */}
-          <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="w-full max-w-xl bg-white border border-stone-200 p-8">
-              <h2 className="text-3xl font-extrabold text-orange-700 mb-6 text-center tracking-tight">Ready to Eat Combos</h2>
+          <Step n={2} title={isStandard ? "Choose your pasta" : "Choose your ravioli"}>
+            {isStandard ? (
+              <Choice
+                label="Shape"
+                value={selectedPasta}
+                onChange={(v) => {
+                  setSelectedPasta(v);
+                  setSelectedVariant(pastaOptions.find((p) => p.name === v)?.variants[0] ?? "");
+                }}
+                options={pastaOptions.map((p) => ({ value: p.name, label: p.name }))}
+              />
+            ) : (
+              <Choice
+                label="Filling"
+                value={selectedRavioli}
+                onChange={(v) => {
+                  setSelectedRavioli(v);
+                  setSelectedVariant(ravioliOptions.find((r) => r.name === v)?.variants[0] ?? "");
+                }}
+                options={ravioliOptions.map((r) => ({ value: r.name, label: r.name, swatch: flavourSwatch[r.name] }))}
+              />
+            )}
+            <Choice
+              label="Variant"
+              value={selectedVariant}
+              onChange={setSelectedVariant}
+              options={variants.map((v) => ({ value: v, label: v || "Original", swatch: flavourSwatch[v || "Plain"] }))}
+            />
+          </Step>
 
-              {/* Step 1: Combo Type */}
-              <div className="mb-6">
-                <div className="flex justify-center gap-4">
-                  <button
-                    className={`flex-1 px-4 py-2 rounded-none font-semibold border transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 ${comboType === 'standard' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white text-orange-600 border-orange-300 hover:bg-orange-50'}`}
-                    onClick={() => {
-                      setComboType('standard');
-                      setSelectedPasta('Fettuccine');
-                      setSelectedVariant(pastaOptions.find(p => p.name === 'Fettuccine')?.variants[0] || '');
-                    }}
-                  >
-                    Standard Combo
-                  </button>
-                  <button
-                    className={`flex-1 px-4 py-2 rounded-none font-semibold border transition-colors text-lg focus:outline-none focus:ring-2 focus:ring-orange-400 ${comboType === 'ravioli' ? 'bg-orange-600 text-white border-orange-600' : 'bg-white text-orange-600 border-orange-300 hover:bg-orange-50'}`}
-                    onClick={() => {
-                      setComboType('ravioli');
-                      setSelectedRavioli('Ricotta Spinach');
-                      setSelectedVariant(ravioliOptions.find(r => r.name === 'Ricotta Spinach')?.variants[0] || '');
-                    }}
-                  >
-                    Ravioli Combo
-                  </button>
-                </div>
-                </div>
-                
-              {/* Step 2: Pasta/Ravioli & Variant */}
-              <div className="mb-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {comboType === 'standard' ? (
-                    <>
-                      <div>
-                        <label htmlFor="combo-pasta" className="text-xs text-orange-700 font-semibold mb-1 block">Step 1: Choose Pasta</label>
-                        <select
-                          id="combo-pasta"
-                          className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
-                          value={selectedPasta}
-                          onChange={e => {
-                            setSelectedPasta(e.target.value);
-                            setSelectedVariant(pastaOptions.find(p => p.name === e.target.value)?.variants[0] || '');
-                          }}
-                        >
-                          {pastaOptions.map(pasta => (
-                            <option key={pasta.name} value={pasta.name}>{pasta.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label htmlFor="combo-pasta-variant" className="text-xs text-orange-700 font-semibold mb-1 block">Step 2: Variant</label>
-                        <select
-                          id="combo-pasta-variant"
-                          className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
-                          value={selectedVariant}
-                          onChange={e => setSelectedVariant(e.target.value)}
-                        >
-                          {(pastaOptions.find(p => p.name === selectedPasta)?.variants || []).map(variant => (
-                            <option key={variant} value={variant}>{variant}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        <label htmlFor="combo-ravioli" className="text-xs text-orange-700 font-semibold mb-1 block">Step 1: Choose Ravioli</label>
-                        <select
-                          id="combo-ravioli"
-                          className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
-                          value={selectedRavioli}
-                          onChange={e => {
-                            setSelectedRavioli(e.target.value);
-                            setSelectedVariant(ravioliOptions.find(r => r.name === e.target.value)?.variants[0] || '');
-                          }}
-                        >
-                          {ravioliOptions.map(ravioli => (
-                            <option key={ravioli.name} value={ravioli.name}>{ravioli.name}</option>
-                          ))}
-                        </select>
-                      </div>
-                      <div>
-                        <label htmlFor="combo-ravioli-variant" className="text-xs text-orange-700 font-semibold mb-1 block">Step 2: Variant</label>
-                        <select
-                          id="combo-ravioli-variant"
-                          className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
-                          value={selectedVariant}
-                          onChange={e => setSelectedVariant(e.target.value)}
-                        >
-                          {(ravioliOptions.find(r => r.name === selectedRavioli)?.variants.filter(Boolean) || ['']).map(variant => (
-                            <option key={variant} value={variant}>{variant || 'Original'}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
+          <Step n={3} title="Choose a sauce">
+            <Choice
+              label="Sauce"
+              value={selectedSauce}
+              onChange={setSelectedSauce}
+              options={sauceOptions.map((s) => ({ value: s, label: s }))}
+            />
+          </Step>
 
-              {/* Step 3: Sauce */}
-              <div className="mb-6">
-                <label htmlFor="combo-sauce" className="text-xs text-orange-700 font-semibold mb-1 block">Step 3: Choose Sauce</label>
-                <select
-                  id="combo-sauce"
-                  className="w-full border border-stone-300 rounded-none px-3 py-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition"
-                  value={selectedSauce}
-                  onChange={e => setSelectedSauce(e.target.value)}
-                >
-                  {sauceOptions.map(sauce => (
-                    <option key={sauce} value={sauce}>{sauce}</option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Step 4: Extras */}
-              <div className="mb-6">
-                <div className="text-xs text-orange-700 font-semibold mb-2">Step 4: Add Extras</div>
-                <div className="flex gap-6">
-                  <label className="flex items-center cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      className="form-checkbox h-5 w-5 text-orange-600 rounded focus:ring-2 focus:ring-orange-400"
-                      checked={extraSauce}
-                      onChange={e => setExtraSauce(e.target.checked)}
-                    />
-                    <span className="ml-2 text-stone-700">Extra Sauce <span className="text-xs text-orange-500">(+₹70)</span></span>
-                  </label>
-                  <label className="flex items-center cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      className="form-checkbox h-5 w-5 text-orange-600 rounded focus:ring-2 focus:ring-orange-400"
-                      checked={extraCheese}
-                      onChange={e => setExtraCheese(e.target.checked)}
-                    />
-                    <span className="ml-2 text-stone-700">Extra Cheese <span className="text-xs text-orange-500">(+₹50)</span></span>
-                  </label>
-                    </div>
-                  </div>
-                  
-              {/* Step 5: Summary & Add to Cart */}
-              <div className="bg-stone-50 border border-stone-200 p-4 mb-4">
-                <div className="flex flex-col gap-1 text-sm text-stone-700">
-                  <div><span className="font-semibold text-orange-700">Combo:</span> {comboType === 'standard' ? 'Standard' : 'Ravioli'}</div>
-                  <div>
-                    <span className="font-semibold text-orange-700">{comboType === 'standard' ? 'Pasta' : 'Ravioli'}:</span> {comboType === 'standard' ? selectedPasta : selectedRavioli} ({selectedVariant})
-                  </div>
-                  <div><span className="font-semibold text-orange-700">Sauce:</span> {selectedSauce}</div>
-                  <div>
-                    <span className="font-semibold text-orange-700">Extras:</span> {extraSauce || extraCheese ? [extraSauce ? 'Extra Sauce' : null, extraCheese ? 'Extra Cheese' : null].filter(Boolean).join(', ') : 'None'}
-                  </div>
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-xl font-bold text-orange-600">Total: ₹{getComboPrice()}</span>
-                  <button
-                    onClick={handleComboAddToCart}
-                    className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-none font-semibold transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    Add Combo to Cart
-                  </button>
-                </div>
-              </div>
+          <Step n={4} title="Add extras">
+            <div className="flex flex-wrap gap-2">
+              {toggle(extraSauce, setExtraSauce, "Extra Sauce", cost.sauce)}
+              {toggle(extraCheese, setExtraCheese, "Extra Cheese", cost.cheese)}
             </div>
-          </div>
+          </Step>
         </div>
-      </section>
-      
-      <SimpleFooter />
-    </div>
+
+        <aside className="lg:sticky lg:top-28 bg-stone-900 text-stone-100 p-7 md:p-8">
+          <div className="flex items-center gap-4">
+            <Thumb
+              key={main}
+              src={`/menu-photos/cooked-pasta/${main.toLowerCase().replace(/[^a-z0-9]+/g, "-")}.webp`}
+              fallbackSrc="/cooked.webp"
+              alt={main}
+              tint={flavourSwatch[selectedVariant || "Plain"]}
+              index={isStandard ? 1 : 2}
+            />
+            <span className="text-[0.63rem] tracking-[0.25em] uppercase font-semibold text-orange-500">Your combo</span>
+          </div>
+          <dl className="mt-6 divide-y divide-stone-700 text-sm">
+            {[
+              ["Combo", isStandard ? "Standard" : "Ravioli"],
+              [isStandard ? "Pasta" : "Ravioli", `${main} · ${selectedVariant || "Original"}`],
+              ["Sauce", selectedSauce],
+              ["Extras", extras || "None"],
+            ].map(([k, v]) => (
+              <div key={k} className="flex justify-between gap-4 py-3">
+                <dt className="text-stone-400">{k}</dt>
+                <dd className="text-right font-semibold min-w-0 [overflow-wrap:anywhere]">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <div className="mt-6 pt-6 border-t border-stone-600 flex items-end justify-between gap-4">
+            <span className="text-stone-400 text-sm">Total</span>
+            <span
+              className="text-4xl font-bold text-white tabular-nums"
+              style={{ fontFamily: "var(--font-display)" }}
+              aria-live="polite"
+            >
+              ₹{price}
+            </span>
+          </div>
+          <div className="mt-6 [&>button]:w-full">
+            <AddButton onAdd={handleAdd} label="Add combo to cart" />
+          </div>
+        </aside>
+      </div>
+    </OrderPage>
   );
 };
 
-export default CookedPasta; 
+export default CookedPasta;

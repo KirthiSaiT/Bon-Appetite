@@ -24,6 +24,7 @@ import Checkout from "./pages/Checkout";
 import OurPastaBrand from "./pages/OurPastaBrand";
 import PastaWorkshops from "./pages/PastaWorkshops";
 import Careers from "./pages/Careers";
+import Admin from "./pages/Admin";
 import { CartProvider } from "./context/CartContext";
 
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ const App = () => (
             <Route path="/our-pasta-brand" element={<OurPastaBrand />} />
             <Route path="/pasta-workshops" element={<PastaWorkshops />} />
             <Route path="/careers" element={<Careers />} />
+            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

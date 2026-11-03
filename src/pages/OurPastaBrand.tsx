@@ -1,9 +1,8 @@
 /* Hallmark · genre: editorial · macrostructure: Split Studio · shared system */
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ShoppingBag, ArrowRight } from "lucide-react";
+import { ShoppingBag, ArrowRight, Handshake } from "lucide-react";
 
 const products = [
   {
@@ -205,24 +204,41 @@ const OurPastaBrand = () => (
       </div>
     </section>
 
-    {/* ── Retailer CTA ── */}
-    <section className="py-20 px-8 md:px-14 bg-orange-600">
-      <div className="max-w-4xl mx-auto text-center text-white">
-        <h2
-          className="text-3xl md:text-4xl font-bold mb-4"
-          style={{ fontFamily: "var(--font-display)" }}
-        >Are you a retailer or distributor?</h2>
-        <p className="text-orange-100 mb-8 max-w-xl mx-auto">
-          We're actively expanding our retail network. Get in touch with our sales team to
-          stock Bon Appetit pasta in your store.
-        </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Button asChild size="lg" className="bg-white text-orange-600 hover:bg-orange-50 font-semibold">
-            <Link to="/contact">Contact Us</Link>
-          </Button>
-          <Button asChild size="lg" variant="outline" className="border-white text-white hover:bg-white/10 font-semibold">
-            <Link to="/products">View Catalogue</Link>
-          </Button>
+    {/* ── Retailer CTA: dark split panel ── */}
+    <section className="px-6 md:px-14 xl:px-20 py-20 md:py-28 bg-stone-900">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-10 lg:gap-20 lg:items-end">
+        <div className="min-w-0">
+          <span className="flex items-center justify-center w-14 h-14 rounded-full bg-orange-600 text-white mb-8">
+            <Handshake className="w-6 h-6" strokeWidth={1.5} />
+          </span>
+          <h2
+            className="text-[2.4rem] md:text-[3.4rem] xl:text-[4rem] font-light leading-[1.02] text-stone-50 max-w-[14ch] [overflow-wrap:anywhere]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Are you a <span className="text-orange-500">retailer or distributor?</span>
+          </h2>
+        </div>
+        <div className="min-w-0 lg:border-l lg:border-stone-700 lg:pl-14">
+          <p className="text-stone-300 text-base md:text-lg leading-relaxed max-w-md">
+            We're actively expanding our retail network. Get in touch with our sales team to
+            stock Bon Appetit pasta in your store.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5">
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-500 active:translate-y-px text-white px-7 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500"
+            >
+              Talk to our sales team
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/products"
+              className="group inline-flex items-center gap-1.5 text-stone-100 hover:text-orange-400 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500"
+            >
+              View catalogue
+              <ArrowRight className="w-3.5 h-3.5 motion-safe:transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
         </div>
       </div>
     </section>

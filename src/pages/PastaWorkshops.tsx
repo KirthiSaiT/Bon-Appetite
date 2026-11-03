@@ -5,42 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { CalendarDays, MapPin, Users, Clock, CheckCircle, Building2 } from "lucide-react";
-
-const WORKSHOP_FORM_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSe_JQSN3NhIvXnQsRILcw3SOUGzbheP7px0wDNPBt5gGQnyww/viewform?usp=header";
-
-const upcomingWorkshops = [
-  {
-    id: 1,
-    title: "Fettucine & Farfalle from Scratch",
-    date: "4th Saturday — Every Month",
-    time: "11:00 AM – 1:30 PM IST",
-    venue: "Online (Zoom)",
-    venueImage: "/pastaworkshop.webp",
-    price: "₹599",
-    seats: "Limited slots",
-    tag: "Online",
-  },
-  {
-    id: 2,
-    title: "Italian Sauce Masterclass",
-    date: "2nd Sunday — Every Month",
-    time: "3:00 PM – 5:00 PM IST",
-    venue: "Online (Zoom)",
-    venueImage: "/workshop1.webp",
-    price: "₹799",
-    seats: "Limited slots",
-    tag: "Online",
-  },
-];
+import { format } from "date-fns";
+import { CalendarDays, MapPin, Users, Clock, CheckCircle, Building2, Loader2 } from "lucide-react";
+import WorkshopBookingModal from "@/components/WorkshopBookingModal";
+import { useWorkshops, parseDay } from "@/hooks/use-menu-data";
 
 const includes = [
   "Learn 2 pastas from scratch — Fettucine & Farfalle (serves 4)",
@@ -53,7 +21,9 @@ const includes = [
 ];
 
 const PastaWorkshops = () => {
-  const [detailOpen, setDetailOpen] = useState(false);
+  const { data: upcomingWorkshops = [], isLoading } = useWorkshops();
+  const [booking, setBooking] = useState<{ open: boolean; id?: string }>({ open: false });
+  const openBooking = (id?: string) => setBooking({ open: true, id });
 
   return (
     <div className="min-h-screen bg-white overflow-x-clip">
@@ -83,7 +53,7 @@ const PastaWorkshops = () => {
                 <Button
                   size="lg"
                   className="bg-orange-600 hover:bg-orange-700 text-white"
-                  onClick={() => setDetailOpen(true)}
+                  onClick={() => openBooking()}
                 >
                   Book a Workshop
                 </Button>
@@ -144,11 +114,17 @@ const PastaWorkshops = () => {
             Happening Now
           </h2>
           <p className="text-stone-600 mb-10">Upcoming workshops — grab your spot before they fill up.</p>
+          {isLoading && (
+            <p className="flex items-center gap-2 text-stone-500"><Loader2 className="w-4 h-4 animate-spin" /> Loading workshops…</p>
+          )}
+          {!isLoading && upcomingWorkshops.length === 0 && (
+            <p className="text-stone-600">No workshops are scheduled right now — new dates are announced every month.</p>
+          )}
           <div className="grid md:grid-cols-2 gap-8">
             {upcomingWorkshops.map((ws) => (
               <Card key={ws.id} className="overflow-hidden hover:shadow-xl transition-shadow">
                 <div className="h-48 overflow-hidden">
-                  <img src={ws.venueImage} alt={ws.title} className="w-full h-full object-cover" />
+                  <img src={ws.image} alt={ws.title} className="w-full h-full object-cover" />
                 </div>
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between gap-2">
@@ -162,11 +138,11 @@ const PastaWorkshops = () => {
                   <div className="space-y-2 text-sm text-gray-600 mb-4">
                     <div className="flex items-center gap-2">
                       <CalendarDays className="w-4 h-4 text-orange-500" />
-                      <span>{ws.date}</span>
+                      <span>{format(parseDay(ws.workshop_date), "EEEE, d MMMM yyyy")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-4 h-4 text-orange-500" />
-                      <span>{ws.time}</span>
+                      <span>{ws.time_label}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-4 h-4 text-orange-500" />
@@ -174,15 +150,15 @@ const PastaWorkshops = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-orange-500" />
-                      <span>{ws.seats}</span>
+                      <span>{ws.seats ? `${ws.seats} seats` : "Limited slots"}</span>
                     </div>
                   </div>
                   <Separator className="mb-4" />
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-orange-600">{ws.price}</span>
+                    <span className="text-2xl font-bold text-orange-600">₹{ws.price}</span>
                     <Button
                       className="bg-orange-600 hover:bg-orange-700 text-white"
-                      onClick={() => setDetailOpen(true)}
+                      onClick={() => openBooking(ws.id)}
                     >
                       Book Now
                     </Button>
@@ -217,7 +193,7 @@ const PastaWorkshops = () => {
                   <Button
                     size="lg"
                     className="bg-orange-600 hover:bg-orange-700 text-white"
-                    onClick={() => setDetailOpen(true)}
+                    onClick={() => openBooking()}
                   >
                     Book Now
                   </Button>
@@ -236,46 +212,11 @@ const PastaWorkshops = () => {
         </div>
       </section>
 
-      {/* Workshop booking dialog */}
-      <Dialog open={detailOpen} onOpenChange={setDetailOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-800">
-              Pasta Workshop Details
-            </DialogTitle>
-            <DialogDescription className="text-gray-600">
-              Everything you need to know before booking.
-            </DialogDescription>
-          </DialogHeader>
-          <ul className="text-left text-sm text-gray-700 space-y-2 my-2">
-            {includes.map((item) => (
-              <li key={item} className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-orange-600 flex-shrink-0 mt-0.5" />
-                {item}
-              </li>
-            ))}
-            <li className="flex items-start gap-2">
-              <span className="text-orange-700 font-bold">Early bird offer at only ₹599</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-red-600 font-bold">Limited slots — every month's 4th Saturday</span>
-            </li>
-          </ul>
-          <p className="text-xs text-red-700 font-semibold text-center mb-4">
-            Payment is non-refundable
-          </p>
-          <a
-            href={WORKSHOP_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full"
-          >
-            <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white text-base py-6">
-              Continue Booking
-            </Button>
-          </a>
-        </DialogContent>
-      </Dialog>
+      <WorkshopBookingModal
+        open={booking.open}
+        workshopId={booking.id}
+        onClose={() => setBooking({ open: false })}
+      />
 
       <SimpleFooter />
     </div>

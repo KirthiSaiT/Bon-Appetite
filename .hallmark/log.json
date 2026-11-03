@@ -1,6 +1,15 @@
 [
   {
     "date": "2026-11-03",
+    "macrostructure": "Order Sheet",
+    "theme": "custom",
+    "theme_axes": "light / classical-serif / warm-orange",
+    "vibe": "artisan pasta, Italian craft, warm editorial",
+    "enrichment": "typographic",
+    "brief": "Bon Appetit · cafe ordering pages (fresh pasta, sauces, cooked pasta combo, desserts) on one shared OrderSheet: ruled menu rows, flavour-tinted index circles, pill choices, live price, dark combo summary"
+  },
+  {
+    "date": "2026-11-03",
     "macrostructure": "Marquee Hero",
     "theme": "custom",
     "theme_axes": "light / classical-serif / warm-orange",

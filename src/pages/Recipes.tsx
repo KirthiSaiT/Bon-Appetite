@@ -1,411 +1,571 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Clock, Users, Star, X, ChefHat, Flame, Timer, BookOpen } from 'lucide-react';
-import Navigation from '@/components/Navigation';
-import { SimpleFooter } from '@/components/Footer';
+/* Hallmark · macrostructure: Recipe Index (catalogue rows) · tone: warm editorial · anchor hue: orange (project tokens)
+ * theme: custom (project tokens — Cormorant Garamond + DM Sans, flavour swatches) · enrichment: one real photo
+ * pre-emit critique: P4 H5 E4 S5 R4 V5
+ * Every recipe cooks the pasta for the times printed on the home page (fresh 5 min, dry 7–8 min).
+ */
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowRight, Check, Clock, Minus, Phone, Plus, Users } from "lucide-react";
+import Navigation from "@/components/Navigation";
+import { SimpleFooter } from "@/components/Footer";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
+
+type Flavour = "plain" | "spinach" | "paprika" | "beetroot" | "wheat";
+
+type Ingredient = { qty: number | null; unit: string; item: string };
+
+type Recipe = {
+  id: string;
+  title: string;
+  blurb: string;
+  flavour: Flavour;
+  pasta: "Fresh" | "Dry";
+  minutes: number;
+  serves: number;
+  ingredients: Ingredient[];
+  steps: string[];
+  tip: string;
+};
+
+const flavourLabel: Record<Flavour, string> = {
+  plain: "Plain",
+  spinach: "Spinach",
+  paprika: "Paprika",
+  beetroot: "Beetroot",
+  wheat: "Wheat",
+};
+
+const swatch = (f: Flavour) => `var(--flavour-${f})`;
+const tint = (f: Flavour) => `color-mix(in oklch, var(--flavour-${f}) 22%, white)`;
+
+const recipes: Recipe[] = [
+  {
+    id: "spinach-garlic-butter",
+    title: "Spinach pasta in garlic butter",
+    blurb: "Butter, garlic and parmesan. Done before the table is set.",
+    flavour: "spinach",
+    pasta: "Fresh",
+    minutes: 15,
+    serves: 2,
+    ingredients: [
+      { qty: 250, unit: "g", item: "fresh spinach pasta" },
+      { qty: 3, unit: "tbsp", item: "butter" },
+      { qty: 4, unit: "", item: "garlic cloves, sliced" },
+      { qty: 40, unit: "g", item: "parmesan, grated" },
+      { qty: 0.5, unit: "tsp", item: "chilli flakes" },
+      { qty: null, unit: "", item: "salt & black pepper, to taste" },
+    ],
+    steps: [
+      "Bring a big pot of water to a rolling boil and add a good pinch of salt.",
+      "Melt the butter in a wide pan on low heat. Add the garlic and cook until just golden, about 2 minutes.",
+      "Cook the pasta for 5 minutes. Save a cup of the pasta water, then drain.",
+      "Toss the pasta into the butter with a splash of pasta water and the chilli flakes.",
+      "Take the pan off the heat, add the parmesan and toss until glossy. Season and serve.",
+    ],
+    tip: "Add the cheese off the heat so it melts into the sauce instead of clumping.",
+  },
+  {
+    id: "beetroot-brown-butter",
+    title: "Beetroot pasta with brown butter & walnuts",
+    blurb: "Nutty butter, crunchy walnuts and lemon over a ruby-red dough.",
+    flavour: "beetroot",
+    pasta: "Fresh",
+    minutes: 15,
+    serves: 2,
+    ingredients: [
+      { qty: 250, unit: "g", item: "fresh beetroot pasta" },
+      { qty: 3, unit: "tbsp", item: "butter" },
+      { qty: 30, unit: "g", item: "walnuts, roughly chopped" },
+      { qty: 1, unit: "", item: "lemon, zest and a squeeze of juice" },
+      { qty: 40, unit: "g", item: "feta or paneer, crumbled" },
+      { qty: null, unit: "", item: "salt, to taste" },
+    ],
+    steps: [
+      "Bring a big pot of salted water to a rolling boil.",
+      "Toast the walnuts in a dry pan for 2 minutes, then tip them out.",
+      "In the same pan, melt the butter on medium heat until it foams and smells nutty.",
+      "Cook the pasta for 5 minutes, drain, and toss it straight into the butter.",
+      "Finish with the lemon, walnuts and crumbled cheese.",
+    ],
+    tip: "Pull the butter off the heat the moment it smells nutty. It burns quickly after that.",
+  },
+  {
+    id: "paprika-aglio-olio",
+    title: "Paprika pasta aglio e olio",
+    blurb: "Garlic, olive oil and chilli. The fastest dinner on this page.",
+    flavour: "paprika",
+    pasta: "Fresh",
+    minutes: 12,
+    serves: 2,
+    ingredients: [
+      { qty: 250, unit: "g", item: "fresh paprika pasta" },
+      { qty: 4, unit: "tbsp", item: "olive oil" },
+      { qty: 5, unit: "", item: "garlic cloves, thinly sliced" },
+      { qty: 1, unit: "tsp", item: "chilli flakes" },
+      { qty: 2, unit: "tbsp", item: "parsley or coriander, chopped" },
+      { qty: null, unit: "", item: "salt, to taste" },
+    ],
+    steps: [
+      "Bring a big pot of salted water to a rolling boil.",
+      "Put the oil and garlic in a cold pan, then warm it on low heat until the garlic turns pale gold.",
+      "Cook the pasta for 5 minutes. Save a cup of pasta water and drain.",
+      "Add the chilli flakes to the oil, then the pasta and a splash of pasta water. Toss for a minute.",
+      "Scatter over the herbs and serve.",
+    ],
+    tip: "Starting the garlic in cold oil keeps it sweet instead of bitter.",
+  },
+  {
+    id: "tomato-basil-pomodoro",
+    title: "Tomato & basil pomodoro",
+    blurb: "A slow, simple tomato sauce that lets the plain dough shine.",
+    flavour: "plain",
+    pasta: "Fresh",
+    minutes: 25,
+    serves: 2,
+    ingredients: [
+      { qty: 250, unit: "g", item: "fresh plain pasta" },
+      { qty: 500, unit: "g", item: "ripe tomatoes, chopped" },
+      { qty: 3, unit: "tbsp", item: "olive oil" },
+      { qty: 1, unit: "", item: "small onion, finely chopped" },
+      { qty: 3, unit: "", item: "garlic cloves, crushed" },
+      { qty: 10, unit: "", item: "basil leaves" },
+      { qty: 0.5, unit: "tsp", item: "sugar" },
+      { qty: null, unit: "", item: "salt, to taste" },
+    ],
+    steps: [
+      "Warm the oil in a pan and soften the onion for 5 minutes.",
+      "Add the garlic for a minute, then the tomatoes, sugar and a pinch of salt.",
+      "Simmer for 15 minutes, stirring now and then, until thick.",
+      "Meanwhile boil salted water and cook the pasta for 5 minutes. Drain.",
+      "Tear in the basil, toss the pasta through the sauce and serve.",
+    ],
+    tip: "The pinch of sugar balances sour tomatoes. Skip it if yours are very ripe.",
+  },
+  {
+    id: "wheat-mushroom-cream",
+    title: "Creamy mushroom wheat pasta",
+    blurb: "Golden mushrooms and a light cream sauce on our wheat dough.",
+    flavour: "wheat",
+    pasta: "Fresh",
+    minutes: 20,
+    serves: 2,
+    ingredients: [
+      { qty: 250, unit: "g", item: "fresh wheat pasta" },
+      { qty: 200, unit: "g", item: "mushrooms, sliced" },
+      { qty: 150, unit: "ml", item: "fresh cream" },
+      { qty: 1, unit: "tbsp", item: "butter" },
+      { qty: 2, unit: "", item: "garlic cloves, minced" },
+      { qty: 30, unit: "g", item: "parmesan, grated" },
+      { qty: null, unit: "", item: "salt & black pepper, to taste" },
+    ],
+    steps: [
+      "Bring a big pot of salted water to a rolling boil.",
+      "Brown the mushrooms in the butter on high heat for 5–6 minutes. Don't stir too often.",
+      "Add the garlic for a minute, then pour in the cream and simmer for 2 minutes.",
+      "Cook the pasta for 5 minutes, drain, and toss it into the sauce.",
+      "Stir in the parmesan, season well with pepper and serve.",
+    ],
+    tip: "Give the mushrooms room in the pan. Crowded mushrooms steam instead of browning.",
+  },
+  {
+    id: "dry-pasta-salad",
+    title: "Cold pasta salad",
+    blurb: "Dry pasta, crisp vegetables and a lemon dressing. Good for lunch boxes.",
+    flavour: "plain",
+    pasta: "Dry",
+    minutes: 20,
+    serves: 2,
+    ingredients: [
+      { qty: 150, unit: "g", item: "Bon Appetit dry pasta" },
+      { qty: 1, unit: "", item: "cucumber, diced" },
+      { qty: 10, unit: "", item: "cherry tomatoes, halved" },
+      { qty: 0.5, unit: "", item: "red onion, finely sliced" },
+      { qty: 3, unit: "tbsp", item: "olive oil" },
+      { qty: 1, unit: "tbsp", item: "lemon juice" },
+      { qty: 1, unit: "tsp", item: "dried oregano" },
+      { qty: null, unit: "", item: "salt & pepper, to taste" },
+    ],
+    steps: [
+      "Boil salted water and cook the dry pasta for 7–8 minutes.",
+      "Drain and rinse under cold water so it stops cooking.",
+      "Whisk the oil, lemon juice, oregano, salt and pepper together.",
+      "Toss the pasta with the vegetables and the dressing.",
+      "Chill for 10 minutes before serving, or pack it straight away.",
+    ],
+    tip: "Dress the pasta while it's still slightly damp so it soaks up the flavour.",
+  },
+];
+
+/* ---------- servings scaling ---------- */
+
+const fractions: Record<number, string> = { 0.25: "¼", 0.5: "½", 0.75: "¾" };
+
+const formatQty = (qty: number, unit: string) => {
+  if (unit === "g" || unit === "ml") {
+    const rounded = qty >= 100 ? Math.round(qty / 10) * 10 : Math.round(qty / 5) * 5;
+    return `${Math.max(rounded, 5)} ${unit}`;
+  }
+  // spoons and whole items: round to the nearest quarter, show as a fraction
+  const q = Math.max(Math.round(qty * 4) / 4, 0.25);
+  const whole = Math.floor(q);
+  const part = fractions[+(q - whole).toFixed(2)] ?? "";
+  const text = whole === 0 ? part : `${whole}${part}`;
+  return unit ? `${text} ${unit}` : text;
+};
+
+const focusRing =
+  "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600";
+
+/* ---------- recipe dialog ---------- */
+
+const RecipeSheet = ({ recipe }: { recipe: Recipe }) => {
+  const [serves, setServes] = useState(recipe.serves);
+  const [done, setDone] = useState<number[]>([]);
+  const scale = serves / recipe.serves;
+
+  const toggle = (i: number) =>
+    setDone((d) => (d.includes(i) ? d.filter((x) => x !== i) : [...d, i]));
+
+  return (
+    <>
+      <div className="px-6 sm:px-8 pt-8 pb-6 pr-14" style={{ background: tint(recipe.flavour) }}>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-700">
+          {flavourLabel[recipe.flavour]} · {recipe.pasta} pasta
+        </p>
+        <DialogTitle
+          className="mt-3 text-3xl sm:text-4xl font-semibold leading-tight text-stone-900 [overflow-wrap:anywhere]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {recipe.title}
+        </DialogTitle>
+        <DialogDescription className="mt-2 text-stone-700">{recipe.blurb}</DialogDescription>
+        <p className="mt-4 flex items-center gap-2 text-sm text-stone-700">
+          <Clock className="w-4 h-4" /> {recipe.minutes} min, start to finish
+        </p>
+      </div>
+
+      <div className="px-6 sm:px-8 py-7 grid md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-10">
+        {/* Ingredients + servings */}
+        <section aria-labelledby="ingredients-heading" className="min-w-0">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+            <h3
+              id="ingredients-heading"
+              className="text-2xl font-semibold text-stone-900"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Ingredients
+            </h3>
+            <div className="flex items-center gap-1 rounded-full border border-stone-300 p-1">
+              <button
+                type="button"
+                onClick={() => setServes((s) => Math.max(1, s - 1))}
+                disabled={serves <= 1}
+                aria-label="Fewer servings"
+                className={`w-8 h-8 flex items-center justify-center rounded-full text-stone-700 hover:bg-stone-100 active:bg-stone-200 disabled:opacity-35 disabled:hover:bg-transparent ${focusRing}`}
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+              <span className="min-w-[4.5rem] text-center text-sm font-medium text-stone-800 whitespace-nowrap" aria-live="polite">
+                Serves {serves}
+              </span>
+              <button
+                type="button"
+                onClick={() => setServes((s) => Math.min(8, s + 1))}
+                disabled={serves >= 8}
+                aria-label="More servings"
+                className={`w-8 h-8 flex items-center justify-center rounded-full text-stone-700 hover:bg-stone-100 active:bg-stone-200 disabled:opacity-35 disabled:hover:bg-transparent ${focusRing}`}
+              >
+                <Plus className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          <ul className="mt-5 divide-y divide-stone-200 border-y border-stone-200">
+            {recipe.ingredients.map((ing) => (
+              <li key={ing.item} className="flex items-baseline gap-4 py-2.5 text-sm">
+                <span className="w-16 shrink-0 font-semibold text-orange-700 tabular-nums">
+                  {ing.qty === null ? "—" : formatQty(ing.qty * scale, ing.unit)}
+                </span>
+                <span className="text-stone-700 min-w-0">{ing.item}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Method */}
+        <section aria-labelledby="method-heading" className="min-w-0">
+          <div className="flex items-baseline justify-between gap-4">
+            <h3
+              id="method-heading"
+              className="text-2xl font-semibold text-stone-900"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Method
+            </h3>
+            <p className="text-xs text-stone-500 whitespace-nowrap" aria-live="polite">
+              {done.length} of {recipe.steps.length} done
+            </p>
+          </div>
+          <p className="mt-1 text-xs text-stone-500">Tap a step to tick it off as you cook.</p>
+
+          <ol className="mt-4 space-y-2">
+            {recipe.steps.map((step, i) => {
+              const isDone = done.includes(i);
+              return (
+                <li key={step}>
+                  <button
+                    type="button"
+                    onClick={() => toggle(i)}
+                    aria-pressed={isDone}
+                    className={`w-full text-left flex gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-stone-50 active:bg-stone-100 ${focusRing}`}
+                  >
+                    <span
+                      className={`mt-0.5 flex items-center justify-center w-7 h-7 shrink-0 rounded-full text-xs font-semibold transition-colors ${
+                        isDone ? "bg-orange-600 text-white" : "border border-stone-300 text-stone-600"
+                      }`}
+                    >
+                      {isDone ? <Check className="w-4 h-4" /> : i + 1}
+                    </span>
+                    <span
+                      className={`text-sm leading-relaxed transition-colors ${
+                        isDone ? "text-stone-400 line-through" : "text-stone-700"
+                      }`}
+                    >
+                      {step}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+
+          <p className="mt-6 rounded-xl bg-orange-50 px-4 py-3 text-sm leading-relaxed text-stone-700">
+            <span className="font-semibold text-orange-800">Tip · </span>
+            {recipe.tip}
+          </p>
+
+          <Link
+            to="/products"
+            className={`mt-6 inline-flex items-center gap-2 rounded-full bg-orange-600 hover:bg-orange-700 active:translate-y-px px-6 py-3 text-sm font-semibold text-white whitespace-nowrap transition-colors ${focusRing}`}
+          >
+            Order the {flavourLabel[recipe.flavour].toLowerCase()} pasta <ArrowRight className="w-4 h-4" />
+          </Link>
+        </section>
+      </div>
+    </>
+  );
+};
+
+/* ---------- page ---------- */
+
+const filters: ("all" | Flavour)[] = ["all", "spinach", "beetroot", "paprika", "plain", "wheat"];
 
 const Recipes = () => {
-  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [flavour, setFlavour] = useState<"all" | Flavour>("all");
+  const [quick, setQuick] = useState(false);
+  const [openId, setOpenId] = useState<string | null>(null);
 
-  const recipes = [
-    {
-      id: 1,
-      title: "Creamy Chicken Alfredo",
-      description: "Rich and creamy pasta dish with tender chicken and fresh herbs",
-      image: "https://images.unsplash.com/photo-1621996346565-e3dbc353d130?w=400&h=300&fit=crop",
-      cookTime: "25 mins",
-      prepTime: "10 mins",
-      servings: 4,
-      rating: 4.8,
-      difficulty: "Medium",
-      cuisine: "Italian",
-      calories: 520,
-      ingredients: [
-        { item: "Fettuccine pasta", amount: "400g" },
-        { item: "Chicken breast", amount: "500g" },
-        { item: "Heavy cream", amount: "200ml" },
-        { item: "Parmesan cheese", amount: "100g" },
-        { item: "Garlic cloves", amount: "3" },
-        { item: "Fresh parsley", amount: "2 tbsp" },
-        { item: "Butter", amount: "2 tbsp" },
-        { item: "Salt & pepper", amount: "To taste" }
-      ],
-      instructions: [
-        "Cook fettuccine pasta according to package directions until al dente. Drain and set aside.",
-        "Season chicken breast with salt and pepper. Cut into bite-sized pieces.",
-        "Heat butter in a large skillet over medium-high heat. Add chicken and cook until golden brown and cooked through, about 6-8 minutes.",
-        "Add minced garlic and cook for 1 minute until fragrant.",
-        "Pour in heavy cream and bring to a gentle simmer. Let it reduce slightly for 3-4 minutes.",
-        "Add grated Parmesan cheese and stir until melted and smooth.",
-        "Toss the cooked pasta with the creamy sauce until well coated.",
-        "Garnish with fresh parsley and serve immediately."
-      ]
-    },
-    {
-      id: 2,
-      title: "Mediterranean Quinoa Bowl",
-      description: "Healthy and nutritious bowl packed with fresh vegetables and quinoa",
-      image: "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop",
-      cookTime: "20 mins",
-      prepTime: "15 mins",
-      servings: 2,
-      rating: 4.6,
-      difficulty: "Easy",
-      cuisine: "Mediterranean",
-      calories: 385,
-      ingredients: [
-        { item: "Quinoa", amount: "200g" },
-        { item: "Cherry tomatoes", amount: "200g" },
-        { item: "Cucumber", amount: "1 large" },
-        { item: "Red onion", amount: "1/2 medium" },
-        { item: "Feta cheese", amount: "100g" },
-        { item: "Extra virgin olive oil", amount: "3 tbsp" },
-        { item: "Fresh lemon juice", amount: "2 tbsp" },
-        { item: "Fresh herbs (mint, parsley)", amount: "1/4 cup" }
-      ],
-      instructions: [
-        "Rinse quinoa under cold water until water runs clear.",
-        "Cook quinoa in boiling salted water for 15 minutes until tender. Drain and let cool.",
-        "Halve cherry tomatoes and dice cucumber into small cubes.",
-        "Thinly slice red onion and crumble feta cheese.",
-        "Whisk together olive oil, lemon juice, salt, and pepper for dressing.",
-        "Combine cooled quinoa with vegetables and herbs in a large bowl.",
-        "Drizzle with dressing and toss gently to combine.",
-        "Top with crumbled feta and serve chilled or at room temperature."
-      ]
-    },
-    {
-      id: 3,
-      title: "Spicy Thai Green Curry",
-      description: "Authentic Thai curry with coconut milk and fresh vegetables",
-      image: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?w=400&h=300&fit=crop",
-      cookTime: "30 mins",
-      prepTime: "20 mins",
-      servings: 4,
-      rating: 4.9,
-      difficulty: "Hard",
-      cuisine: "Thai",
-      calories: 445,
-      ingredients: [
-        { item: "Green curry paste", amount: "3 tbsp" },
-        { item: "Coconut milk", amount: "400ml" },
-        { item: "Chicken thighs", amount: "500g" },
-        { item: "Thai basil", amount: "1/2 cup" },
-        { item: "Bell peppers", amount: "2 large" },
-        { item: "Thai eggplant", amount: "200g" },
-        { item: "Fish sauce", amount: "2 tbsp" },
-        { item: "Palm sugar", amount: "1 tbsp" }
-      ],
-      instructions: [
-        "Cut chicken thighs into bite-sized pieces and season with salt.",
-        "Slice bell peppers and quarter the Thai eggplants.",
-        "Heat 2 tbsp of thick coconut cream in a wok over medium heat.",
-        "Add green curry paste and fry until fragrant, about 2-3 minutes.",
-        "Add chicken pieces and cook until they change color.",
-        "Pour in remaining coconut milk and bring to a gentle boil.",
-        "Add vegetables and simmer for 10-15 minutes until tender.",
-        "Season with fish sauce and palm sugar. Garnish with Thai basil leaves."
-      ]
-    },
-    {
-      id: 4,
-      title: "Classic Beef Burger",
-      description: "Juicy beef patty with fresh toppings and homemade sauce",
-      image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop",
-      cookTime: "15 mins",
-      prepTime: "10 mins",
-      servings: 2,
-      rating: 4.7,
-      difficulty: "Easy",
-      cuisine: "American",
-      calories: 620,
-      ingredients: [
-        { item: "Ground beef (80/20)", amount: "500g" },
-        { item: "Burger buns", amount: "2" },
-        { item: "Lettuce leaves", amount: "4" },
-        { item: "Tomato", amount: "1 large" },
-        { item: "Red onion", amount: "1/2 medium" },
-        { item: "Cheese slices", amount: "2" },
-        { item: "Mayonnaise", amount: "2 tbsp" },
-        { item: "Ketchup", amount: "2 tbsp" }
-      ],
-      instructions: [
-        "Divide ground beef into 2 equal portions and form into patties.",
-        "Season both sides of patties with salt and pepper.",
-        "Heat a grill pan or skillet over medium-high heat.",
-        "Cook patties for 4-5 minutes per side for medium doneness.",
-        "Add cheese slices in the last minute of cooking.",
-        "Toast burger buns lightly on the grill.",
-        "Assemble burgers with lettuce, tomato, onion, and sauces.",
-        "Serve immediately with your favorite sides."
-      ]
-    },
-    {
-      id: 5,
-      title: "Vegetable Stir Fry",
-      description: "Quick and healthy mix of fresh seasonal vegetables",
-      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
-      cookTime: "12 mins",
-      prepTime: "8 mins",
-      servings: 3,
-      rating: 4.5,
-      difficulty: "Easy",
-      cuisine: "Asian",
-      calories: 180,
-      ingredients: [
-        { item: "Mixed vegetables (broccoli, carrots, snap peas)", amount: "500g" },
-        { item: "Soy sauce", amount: "3 tbsp" },
-        { item: "Garlic", amount: "3 cloves" },
-        { item: "Fresh ginger", amount: "1 inch piece" },
-        { item: "Sesame oil", amount: "2 tbsp" },
-        { item: "Green onions", amount: "2" },
-        { item: "Sesame seeds", amount: "1 tbsp" },
-        { item: "Vegetable oil", amount: "2 tbsp" }
-      ],
-      instructions: [
-        "Prep all vegetables by cutting into uniform, bite-sized pieces.",
-        "Mince garlic and ginger, slice green onions.",
-        "Heat vegetable oil in a large wok or skillet over high heat.",
-        "Add garlic and ginger, stir-fry for 30 seconds until fragrant.",
-        "Add harder vegetables first (carrots, broccoli) and stir-fry for 2-3 minutes.",
-        "Add remaining vegetables and continue cooking for 3-4 minutes.",
-        "Pour in soy sauce and sesame oil, toss to combine.",
-        "Garnish with green onions and sesame seeds before serving."
-      ]
-    },
-    {
-      id: 6,
-      title: "Chocolate Lava Cake",
-      description: "Decadent chocolate dessert with molten center",
-      image: "https://images.unsplash.com/photo-1624353365286-3f8d62daad51?w=400&h=300&fit=crop",
-      cookTime: "18 mins",
-      prepTime: "15 mins",
-      servings: 2,
-      rating: 4.9,
-      difficulty: "Medium",
-      cuisine: "French",
-      calories: 485,
-      ingredients: [
-        { item: "Dark chocolate (70%)", amount: "100g" },
-        { item: "Unsalted butter", amount: "100g" },
-        { item: "Large eggs", amount: "2" },
-        { item: "Granulated sugar", amount: "50g" },
-        { item: "All-purpose flour", amount: "30g" },
-        { item: "Vanilla extract", amount: "1 tsp" },
-        { item: "Powdered sugar", amount: "For dusting" },
-        { item: "Butter for ramekins", amount: "Extra" }
-      ],
-      instructions: [
-        "Preheat oven to 200°C (400°F). Butter two 6oz ramekins and dust with cocoa powder.",
-        "Melt chocolate and butter together in a double boiler until smooth.",
-        "In a separate bowl, whisk eggs and sugar until pale and thick.",
-        "Gradually add the melted chocolate mixture to the egg mixture.",
-        "Fold in flour and vanilla extract until just combined.",
-        "Divide batter between prepared ramekins.",
-        "Bake for 12-14 minutes until edges are firm but center jiggles slightly.",
-        "Let cool for 1 minute, then run a knife around edges and invert onto plates."
-      ]
-    }
-  ];
-
-  const getDifficultyColor = (difficulty) => {
-    switch (difficulty) {
-      case 'Easy': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      case 'Medium': return 'bg-amber-100 text-amber-700 border-amber-200';
-      case 'Hard': return 'bg-rose-100 text-rose-700 border-rose-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
-    }
-  };
-
-  const RecipeModal = ({ recipe, onClose }) => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden shadow-2xl">
-        <div className="relative">
-          <img 
-            src={recipe.image} 
-            alt={recipe.title}
-            className="w-full h-56 object-cover"
-          />
-          <button 
-            onClick={onClose}
-            className="absolute top-3 right-3 bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 transition-all duration-200"
-            title="Close recipe modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-          <div className="absolute bottom-3 left-3 bg-black bg-opacity-60 text-white px-2 py-0.5 rounded-full text-xs">
-            {recipe.cuisine}
-          </div>
-        </div>
-        <div className="p-4 overflow-y-auto max-h-[calc(90vh-14rem)]">
-          <div className="flex justify-between items-start mb-3">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-800 mb-1 font-display">{recipe.title}</h2>
-              <p className="text-gray-600 text-base">{recipe.description}</p>
-            </div>
-            <div className="flex items-center bg-yellow-50 px-2 py-0.5 rounded-full">
-              <Star className="w-3 h-3 text-yellow-400 fill-current mr-1" />
-              <span className="font-semibold text-yellow-700 text-sm">{recipe.rating}</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-            <div className="flex items-center justify-center bg-blue-50 p-2 rounded-lg">
-              <Timer className="w-4 h-4 text-blue-600 mr-1" />
-              <div>
-                <div className="text-xs text-blue-600 font-medium">Prep</div>
-                <div className="text-blue-800 font-semibold text-sm">{recipe.prepTime}</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center bg-orange-50 p-2 rounded-lg">
-              <Clock className="w-4 h-4 text-orange-600 mr-1" />
-              <div>
-                <div className="text-xs text-orange-600 font-medium">Cook</div>
-                <div className="text-orange-800 font-semibold text-sm">{recipe.cookTime}</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center bg-green-50 p-2 rounded-lg">
-              <Users className="w-4 h-4 text-green-600 mr-1" />
-              <div>
-                <div className="text-xs text-green-600 font-medium">Serves</div>
-                <div className="text-green-800 font-semibold text-sm">{recipe.servings}</div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center bg-purple-50 p-2 rounded-lg">
-              <Flame className="w-4 h-4 text-purple-600 mr-1" />
-              <div>
-                <div className="text-xs text-purple-600 font-medium">Calories</div>
-                <div className="text-purple-800 font-semibold text-sm">{recipe.calories}</div>
-              </div>
-            </div>
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center">
-                <BookOpen className="w-4 h-4 mr-2 text-gray-600" />
-                Ingredients
-              </h3>
-              <div className="space-y-1">
-                {recipe.ingredients.map((ingredient, index) => (
-                  <div key={index} className="flex justify-between items-center p-1.5 bg-gray-50 rounded-lg">
-                    <span className="text-gray-700 text-sm">{ingredient.item}</span>
-                    <span className="font-semibold text-gray-800 text-sm">{ingredient.amount}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-gray-800 mb-2 flex items-center">
-                <ChefHat className="w-4 h-4 mr-2 text-gray-600" />
-                Instructions
-              </h3>
-              <div className="space-y-2">
-                {recipe.instructions.map((instruction, index) => (
-                  <div key={index} className="flex">
-                    <div className="flex-shrink-0 w-5 h-5 bg-orange-500 text-white rounded-full flex items-center justify-center text-xs font-bold mr-2 mt-1">
-                      {index + 1}
-                    </div>
-                    <p className="text-gray-700 leading-relaxed text-sm">{instruction}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+  const visible = useMemo(
+    () =>
+      recipes.filter(
+        (r) => (flavour === "all" || r.flavour === flavour) && (!quick || r.minutes <= 15)
+      ),
+    [flavour, quick]
   );
+  const open = recipes.find((r) => r.id === openId) ?? null;
 
   return (
     <div className="min-h-screen bg-white overflow-x-clip">
       <Navigation />
-      <div className="max-w-7xl mx-auto px-8 md:px-14 xl:px-20 py-16">
-        {/* Header */}
-        <div className="mb-12">
-          <span className="text-orange-600 text-[0.63rem] tracking-[0.25em] uppercase font-semibold mb-6 block">
-            From Our Kitchen
-          </span>
+
+      {/* Hero */}
+      <header className="max-w-7xl mx-auto px-6 md:px-14 xl:px-20 pt-14 md:pt-20 pb-12 grid lg:grid-cols-[minmax(0,7fr)_minmax(0,5fr)] gap-12 lg:gap-16 items-end">
+        <div className="min-w-0">
           <h1
-            className="text-[2.8rem] md:text-[4rem] xl:text-[5rem] font-bold leading-[1.05] text-stone-900 mb-6 font-display"
+            className="text-[3rem] sm:text-[4rem] xl:text-[5.2rem] font-semibold leading-[1.02] text-stone-900 [overflow-wrap:anywhere]"
+            style={{ fontFamily: "var(--font-display)" }}
           >
-            Signature <span className="text-orange-600">Recipes.</span>
+            Pasta for <span className="text-orange-600">tonight.</span>
           </h1>
-          <div className="w-10 h-px bg-orange-600 mb-6" />
-          <p className="text-lg text-stone-600 max-w-2xl leading-relaxed">
-            Culinary masterpieces crafted by our expert chefs — each recipe tells a story of
-            passion, tradition, and innovation you can recreate in your own kitchen.
+          <p className="mt-6 max-w-xl text-lg leading-relaxed text-stone-600">
+            Six easy recipes written for our handmade pasta. Pick a flavour, scale it to your table, and tick
+            off each step as you cook.
           </p>
-          <p className="text-xs text-stone-400 mt-4">Photography shown is for serving suggestion.</p>
+          <ul className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm text-stone-700">
+            <li className="flex items-center gap-2 whitespace-nowrap">
+              <Clock className="w-4 h-4 text-orange-600" /> Fresh pasta cooks in 5 minutes
+            </li>
+            <li className="flex items-center gap-2 whitespace-nowrap">
+              <Users className="w-4 h-4 text-orange-600" /> Scales from 1 to 8 servings
+            </li>
+          </ul>
         </div>
 
-        {/* Recipes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {recipes.map((recipe) => (
-            <button
-              key={recipe.id}
-              onClick={() => setSelectedRecipe(recipe)}
-              className="group text-left flex flex-col bg-white border border-stone-200 hover:border-orange-300 transition-colors overflow-hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden">
-                <img
-                  src={recipe.image}
-                  alt={recipe.title}
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute top-3 left-3">
-                  <span className="bg-white/95 text-stone-700 text-[0.6rem] font-semibold uppercase tracking-wider px-2.5 py-1">
-                    {recipe.difficulty}
-                  </span>
-                </div>
-              </div>
+        <figure className="min-w-0">
+          <button
+            type="button"
+            onClick={() => setOpenId("spinach-garlic-butter")}
+            className={`group block w-full overflow-hidden rounded-[2rem] ${focusRing}`}
+          >
+            <img
+              src="/spinachpasta (1).webp"
+              alt="A pack of Bon Appetit spinach pasta with fresh tomatoes, garlic and spices"
+              className="w-full aspect-[4/3] object-cover motion-safe:transition-transform motion-safe:duration-700 group-hover:scale-[1.03]"
+            />
+          </button>
+          <figcaption className="mt-3 flex items-center justify-between gap-4 text-sm text-stone-500">
+            <span>Our spinach pasta: try it in garlic butter</span>
+            <span className="whitespace-nowrap text-orange-700 font-medium">15 min</span>
+          </figcaption>
+        </figure>
+      </header>
 
-              <div className="p-6 flex flex-col flex-grow">
-                <h3
-                  className="text-xl font-bold text-stone-900 mb-2 group-hover:text-orange-600 transition-colors leading-snug"
-                  style={{ fontFamily: "var(--font-display)" }}
+      {/* Filters */}
+      <div className="sticky top-0 z-20 bg-white/95 backdrop-blur border-y border-stone-200">
+        <div className="max-w-7xl mx-auto px-6 md:px-14 xl:px-20 py-3 flex items-center gap-3 overflow-x-auto no-scrollbar">
+          <div role="group" aria-label="Filter by pasta flavour" className="flex items-center gap-2">
+            {filters.map((f) => {
+              const active = flavour === f;
+              return (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setFlavour(f)}
+                  aria-pressed={active}
+                  className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${focusRing} ${
+                    active
+                      ? "border-stone-900 bg-stone-900 text-white"
+                      : "border-stone-300 text-stone-700 hover:border-stone-500 active:bg-stone-100"
+                  }`}
                 >
-                  {recipe.title}
-                </h3>
-                <p className="text-stone-600 text-sm leading-relaxed mb-5 flex-grow">
-                  {recipe.description}
-                </p>
-                <div className="flex items-center gap-4 text-xs text-stone-500 font-medium border-t border-stone-100 pt-4">
-                  <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-orange-500" />{recipe.cookTime}</span>
-                  <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5 text-orange-500" />{recipe.servings} servings</span>
-                  <span className="ml-auto text-orange-600 font-semibold">{recipe.calories} cal</span>
-                </div>
-              </div>
-            </button>
-          ))}
+                  {f !== "all" && (
+                    <span
+                      aria-hidden="true"
+                      className="w-3 h-3 rounded-full ring-1 ring-black/10"
+                      style={{ background: swatch(f) }}
+                    />
+                  )}
+                  {f === "all" ? "All recipes" : flavourLabel[f]}
+                </button>
+              );
+            })}
+          </div>
+          <span aria-hidden="true" className="h-6 w-px bg-stone-200 shrink-0" />
+          <button
+            type="button"
+            onClick={() => setQuick((q) => !q)}
+            aria-pressed={quick}
+            className={`flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors ${focusRing} ${
+              quick
+                ? "border-orange-600 bg-orange-600 text-white"
+                : "border-stone-300 text-stone-700 hover:border-stone-500 active:bg-stone-100"
+            }`}
+          >
+            <Clock className="w-4 h-4" /> 15 min or less
+          </button>
         </div>
       </div>
 
-      {/* Call to Action */}
-      <section className="py-20 px-8 md:px-14 bg-stone-50 border-t border-stone-200">
-        <div className="max-w-3xl mx-auto text-center">
-          <h2
-            className="text-3xl md:text-4xl font-bold text-stone-900 mb-4"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Ready to start cooking?
-          </h2>
-          <p className="text-stone-600 mb-8 leading-relaxed max-w-xl mx-auto">
-            Every recipe here is tested and perfected in our kitchen. Pair them with our handmade
-            pasta for results worth sharing.
-          </p>
-          <Button asChild className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-8 rounded-none">
-            <a href="/products">Shop the Pasta</a>
-          </Button>
+      {/* Recipe index */}
+      <main className="max-w-7xl mx-auto px-6 md:px-14 xl:px-20 py-10 md:py-14">
+        <p className="text-sm text-stone-500" aria-live="polite">
+          {visible.length} {visible.length === 1 ? "recipe" : "recipes"}
+        </p>
+
+        {visible.length === 0 ? (
+          <div className="mt-6 rounded-3xl border border-dashed border-stone-300 px-6 py-14 text-center">
+            <p className="text-2xl text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
+              Nothing that quick for this flavour yet.
+            </p>
+            <button
+              type="button"
+              onClick={() => setQuick(false)}
+              className={`mt-5 rounded-full border border-stone-300 px-5 py-2 text-sm font-medium text-stone-700 hover:border-stone-500 whitespace-nowrap ${focusRing}`}
+            >
+              Show all cooking times
+            </button>
+          </div>
+        ) : (
+          <ul className="mt-4 border-t border-stone-200">
+            {visible.map((r) => (
+              <li key={r.id} className="border-b border-stone-200">
+                <button
+                  type="button"
+                  onClick={() => setOpenId(r.id)}
+                  className={`group w-full text-left grid grid-cols-[auto_minmax(0,1fr)] md:grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-5 md:gap-x-8 gap-y-3 py-6 md:py-7 ${focusRing}`}
+                >
+                  <span
+                    aria-hidden="true"
+                    className="w-14 h-14 md:w-20 md:h-20 rounded-full ring-1 ring-black/10 motion-safe:transition-transform group-hover:scale-105"
+                    style={{ background: swatch(r.flavour) }}
+                  />
+                  <span className="min-w-0">
+                    <span className="block text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">
+                      {flavourLabel[r.flavour]} · {r.pasta}
+                    </span>
+                    <span
+                      className="mt-1 block text-2xl md:text-[2rem] font-semibold leading-tight text-stone-900 group-hover:text-orange-700 transition-colors [overflow-wrap:anywhere]"
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
+                      {r.title}
+                    </span>
+                    <span className="mt-1 block text-sm text-stone-600">{r.blurb}</span>
+                  </span>
+                  <span className="col-start-2 md:col-start-auto flex items-center gap-5 text-sm text-stone-600">
+                    <span className="flex items-center gap-1.5 whitespace-nowrap">
+                      <Clock className="w-4 h-4 text-orange-600" /> {r.minutes} min
+                    </span>
+                    <span className="flex items-center gap-1.5 whitespace-nowrap">
+                      <Users className="w-4 h-4 text-orange-600" /> Serves {r.serves}
+                    </span>
+                  </span>
+                  <span className="hidden md:flex items-center gap-2 rounded-full border border-stone-300 px-5 py-2.5 text-sm font-medium text-stone-800 whitespace-nowrap transition-colors group-hover:border-orange-600 group-hover:bg-orange-600 group-hover:text-white">
+                    Cook this <ArrowRight className="w-4 h-4" />
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </main>
+
+      {/* Order band */}
+      <section className="bg-stone-900 text-stone-300">
+        <div className="max-w-7xl mx-auto px-6 md:px-14 xl:px-20 py-16 md:py-20 grid md:grid-cols-[minmax(0,1fr)_auto] gap-8 items-center">
+          <div className="min-w-0">
+            <h2
+              className="text-4xl md:text-5xl font-semibold leading-tight text-white"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Out of pasta?
+            </h2>
+            <p className="mt-3 max-w-lg leading-relaxed">
+              We roll it by hand in Hyderabad when you order. Pick your flavour and it's on its way.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 rounded-full bg-orange-600 hover:bg-orange-700 active:translate-y-px px-7 py-3.5 font-semibold text-white whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-400"
+            >
+              Order now <ArrowRight className="w-4 h-4" />
+            </Link>
+            <a
+              href="tel:+919390105767"
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 hover:bg-white/10 px-7 py-3.5 font-semibold text-white whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-400"
+            >
+              <Phone className="w-4 h-4" /> 93901 05767
+            </a>
+          </div>
         </div>
       </section>
 
-      {/* Recipe Modal */}
-      {selectedRecipe && (
-        <RecipeModal 
-          recipe={selectedRecipe} 
-          onClose={() => setSelectedRecipe(null)} 
-        />
-      )}
+      <Dialog open={open !== null} onOpenChange={(o) => !o && setOpenId(null)}>
+        <DialogContent className="max-w-3xl w-[calc(100%-2rem)] p-0 gap-0 overflow-y-auto max-h-[90vh] rounded-3xl sm:rounded-3xl border-0">
+          {open && <RecipeSheet key={open.id} recipe={open} />}
+        </DialogContent>
+      </Dialog>
+
       <SimpleFooter />
     </div>
   );

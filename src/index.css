@@ -129,3 +129,35 @@
     font-family: var(--font-body);
   }
 }
+
+@layer components {
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 32s linear infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track { animation: none; }
+  }
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* Torn-paper bottom edge for the note-card headers */
+  .torn-edge {
+    clip-path: polygon(0 0, 100% 0, 100% 86%, 96% 100%, 91% 88%, 86% 98%, 80% 87%, 74% 99%, 68% 88%, 62% 97%,
+      56% 86%, 50% 99%, 44% 88%, 38% 98%, 32% 86%, 26% 97%, 20% 88%, 14% 99%, 8% 87%, 3% 97%, 0 88%);
+  }
+
+  /* Masking-tape corner */
+  .tape {
+    position: absolute;
+    width: 2.4rem;
+    height: 1rem;
+    background: color-mix(in oklch, var(--color-amber) 80%, transparent);
+    box-shadow: 0 1px 2px oklch(0% 0 0 / 0.12);
+  }
+}

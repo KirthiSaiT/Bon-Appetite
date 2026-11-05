@@ -28,3 +28,8 @@ dist-ssr
 .env.local
 .env.*.local
 !.env.example
+
+# AI tool skills (local only)
+.agents/
+.claude/
+skills-lock.json

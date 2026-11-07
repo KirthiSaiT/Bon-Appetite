@@ -168,7 +168,10 @@ const PastaWorkshops = () => {
                   </div>
                   <Separator className="mb-4" />
                   <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-orange-600">₹{ws.price}</span>
+                    <span className="text-2xl font-bold text-orange-600">
+                      ₹{ws.price}
+                      <span className="block text-xs font-normal text-stone-500">+18% GST</span>
+                    </span>
                     <Button
                       className="bg-orange-600 hover:bg-orange-700 text-white"
                       onClick={() => openBooking(ws.id)}

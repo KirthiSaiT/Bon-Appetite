@@ -89,3 +89,21 @@ export const parseDay = (iso: string) => {
 /** Local Date → "YYYY-MM-DD". */
 export const toDay = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+/** GST charged on workshop bookings. */
+export const GST_RATE = 0.18;
+
+/** Rupees, rounded to 2dp (paise). */
+const round2 = (n: number) => Math.round(n * 100) / 100;
+
+/** Base/GST/total (all in rupees) for a per-person price × headcount. */
+export const workshopTotals = (pricePerPerson: number, people: number) => {
+  const base = round2(pricePerPerson * people);
+  const gst = round2(base * GST_RATE);
+  const total = round2(base + gst);
+  return { base, gst, total };
+};
+
+/** Indian-format money, always 2 decimals: 1178.82 → "1,178.82". */
+export const inr = (n: number) =>
+  n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });

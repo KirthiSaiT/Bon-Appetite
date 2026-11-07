@@ -5,7 +5,15 @@ import { X, CalendarDays, Clock, MapPin, CheckCircle2, Loader2 } from "lucide-re
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { supabase } from "@/lib/supabase";
-import { useWorkshops, parseDay, toDay, Workshop } from "@/hooks/use-menu-data";
+import { useWorkshops, parseDay, toDay, Workshop, workshopTotals, inr, GST_RATE } from "@/hooks/use-menu-data";
+import {
+  razorpayConfigured,
+  loadRazorpayScript,
+  createOrder,
+  openCheckout,
+  verifyPayment,
+  PaymentCancelled,
+} from "@/lib/razorpay";
 
 const inputCls =
   "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none";
@@ -24,7 +32,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
   const [day, setDay] = useState<string | undefined>();
   const [chosenId, setChosenId] = useState<string | undefined>();
   const [form, setForm] = useState(emptyForm);
-  const [state, setState] = useState<"idle" | "saving" | "done">("idle");
+  const [state, setState] = useState<"idle" | "paying" | "saving" | "done">("idle");
   const [error, setError] = useState("");
 
   // Reset each time the box opens; jump to the requested (or soonest) workshop.
@@ -51,6 +59,9 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
 
   if (!open) return null;
 
+  const busy = state === "paying" || state === "saving";
+  const peopleCount = Math.min(20, Math.max(1, Number(form.people) || 1));
+  const totals = chosen ? workshopTotals(chosen.price, peopleCount) : null;
   const set = (field: keyof typeof emptyForm, value: string) => setForm((f) => ({ ...f, [field]: value }));
 
   const submit = async () => {
@@ -62,7 +73,44 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
     if (!supabase || chosen.id.startsWith("fallback")) {
       return setError("Bookings are not open online yet. Please contact us to book this workshop.");
     }
+    if (!razorpayConfigured) {
+      return setError("Online payment isn't available right now. Please contact us to book this workshop.");
+    }
 
+    // Charge the GST-inclusive total (base × people + 18% GST).
+    const { total: amountRupees } = workshopTotals(chosen.price, people);
+    const amountPaise = Math.round(amountRupees * 100);
+    if (amountPaise < 100) {
+      return setError("This workshop's price is not set correctly. Please contact us to book.");
+    }
+
+    // 1) Take payment first — a booking is only created once payment is verified.
+    setState("paying");
+    let payment: { razorpay_payment_id: string; razorpay_order_id: string };
+    try {
+      await loadRazorpayScript();
+      const order = await createOrder(amountPaise, `ws_${chosen.id.slice(0, 8)}_${Date.now()}`.slice(0, 40));
+      const success = await openCheckout({
+        order,
+        name: "Bon Appetit · Pasta Workshop",
+        description: `${chosen.title} · ${people} ${people === 1 ? "seat" : "seats"}`,
+        prefill: { name: form.name.trim(), email: form.email.trim() || undefined, contact: form.phone.trim() },
+      });
+      const verified = await verifyPayment(success);
+      if (!verified) {
+        setState("idle");
+        return setError("We couldn't verify your payment. If money was deducted, please contact us — you won't be charged twice.");
+      }
+      payment = { razorpay_payment_id: success.razorpay_payment_id, razorpay_order_id: success.razorpay_order_id };
+    } catch (err) {
+      setState("idle");
+      if (err instanceof PaymentCancelled) {
+        return setError("Payment cancelled. Your spot isn't booked yet — you can try again.");
+      }
+      return setError(err instanceof Error ? err.message : "Payment couldn't be completed. Please try again.");
+    }
+
+    // 2) Record the paid booking.
     setState("saving");
     const { error: dbError } = await supabase.from("workshop_bookings").insert({
       workshop_id: chosen.id,
@@ -73,10 +121,17 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
       email: form.email.trim() || null,
       people,
       notes: form.notes.trim() || null,
+      amount: amountRupees,
+      paid: true,
+      razorpay_order_id: payment.razorpay_order_id,
+      razorpay_payment_id: payment.razorpay_payment_id,
     });
     if (dbError) {
+      // Payment succeeded but we couldn't save the booking — make sure the user can reach us.
       setState("idle");
-      return setError("Couldn't save your booking. Please try again, or contact us.");
+      return setError(
+        `Payment received (ref ${payment.razorpay_payment_id}), but we couldn't save your booking automatically. Please contact us with this reference and we'll confirm your seat.`,
+      );
     }
     setState("done");
   };
@@ -108,10 +163,10 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
         {state === "done" && chosen ? (
           <div className="p-6 text-center">
             <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
-            <h4 className="text-lg font-bold text-gray-800 mb-2">You're booked in!</h4>
+            <h4 className="text-lg font-bold text-gray-800 mb-2">Payment received — you're booked in!</h4>
             <p className="text-sm text-gray-600 mb-6">
               {chosen.title} on {format(parseDay(chosen.workshop_date), "EEEE, d MMMM yyyy")}. We'll contact you on{" "}
-              {form.phone} with payment and joining details.
+              {form.phone} with the joining details.
             </p>
             <button
               type="button"
@@ -171,7 +226,22 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
                 <p className="flex items-center gap-2"><CalendarDays className="w-4 h-4 text-orange-600" />{format(parseDay(chosen.workshop_date), "EEEE, d MMMM yyyy")}</p>
                 <p className="flex items-center gap-2"><Clock className="w-4 h-4 text-orange-600" />{chosen.time_label}</p>
                 <p className="flex items-center gap-2"><MapPin className="w-4 h-4 text-orange-600" />{chosen.venue}</p>
-                <p className="pt-1 font-bold text-orange-700">₹{chosen.price} per person</p>
+                {totals && (
+                  <div className="pt-2 mt-1 border-t border-orange-200 space-y-1">
+                    <div className="flex justify-between">
+                      <span>₹{chosen.price} × {peopleCount} {peopleCount === 1 ? "person" : "people"}</span>
+                      <span>₹{inr(totals.base)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span>GST ({Math.round(GST_RATE * 100)}%)</span>
+                      <span>₹{inr(totals.gst)}</span>
+                    </div>
+                    <div className="flex justify-between font-bold text-orange-700 pt-1">
+                      <span>Total payable</span>
+                      <span>₹{inr(totals.total)}</span>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -203,18 +273,19 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                disabled={busy}
+                className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-60 transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={submit}
-                disabled={state === "saving"}
+                disabled={busy}
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 text-white rounded-lg font-semibold transition-colors"
               >
-                {state === "saving" && <Loader2 className="w-4 h-4 animate-spin" />}
-                {state === "saving" ? "Booking…" : "Book"}
+                {busy && <Loader2 className="w-4 h-4 animate-spin" />}
+                {state === "paying" ? "Opening payment…" : state === "saving" ? "Confirming…" : totals ? `Pay ₹${inr(totals.total)}` : "Pay"}
               </button>
             </div>
           </div>

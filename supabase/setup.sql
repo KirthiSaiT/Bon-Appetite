@@ -53,6 +53,12 @@ create table if not exists public.workshop_bookings (
   created_at     timestamptz not null default now()
 );
 
+-- Razorpay payment fields (added after the initial release; safe to re-run).
+alter table public.workshop_bookings add column if not exists amount              numeric(10,2);
+alter table public.workshop_bookings add column if not exists paid                boolean not null default false;
+alter table public.workshop_bookings add column if not exists razorpay_order_id   text;
+alter table public.workshop_bookings add column if not exists razorpay_payment_id text;
+
 -- ── Row level security ──────────────────────────────────────
 alter table public.prices            enable row level security;
 alter table public.workshops         enable row level security;
@@ -128,4 +134,19 @@ select
   '/pastaworkshop.webp'
 where not exists (
   select 1 from public.workshops where workshop_date = date '2026-11-28'
+);
+
+-- ── Seed: the 21 November in-person workshop (Hyderabad) ─────
+insert into public.workshops (title, description, workshop_date, time_label, venue, price, tag, image)
+select
+  'Fettuccine & Spaghetti from Scratch',
+  'A fun, hands-on session — make fresh Fettuccine & Spaghetti yourself, plus a homemade Marinara sauce.',
+  date '2026-11-21',
+  '3:00 PM – 5:00 PM IST',
+  'Urban Sprout, Kondapur, Hyderabad',
+  999,
+  'In-person',
+  '/pastaworkshop.webp'
+where not exists (
+  select 1 from public.workshops where workshop_date = date '2026-11-21'
 );

@@ -474,6 +474,9 @@ interface Booking {
   people: number;
   notes: string | null;
   status: "new" | "confirmed" | "cancelled";
+  amount: number | null;
+  paid: boolean | null;
+  razorpay_payment_id: string | null;
   created_at: string;
 }
 
@@ -532,6 +535,12 @@ const BookingsTab = () => {
               <p className="text-sm text-stone-500">
                 {b.workshop_title} · {format(parseDay(b.workshop_date), "d MMM yyyy")} · booked {format(new Date(b.created_at), "d MMM, h:mm a")}
               </p>
+              {b.paid && (
+                <p className="text-sm text-green-700 mt-1 flex flex-wrap items-center gap-x-2">
+                  <span className="font-semibold">Paid{b.amount != null ? ` · ₹${b.amount}` : ""}</span>
+                  {b.razorpay_payment_id && <span className="text-stone-500 [overflow-wrap:anywhere]">{b.razorpay_payment_id}</span>}
+                </p>
+              )}
               {b.notes && <p className="text-sm text-stone-700 mt-1 bg-stone-50 rounded px-2 py-1">{b.notes}</p>}
             </div>
             <div className="flex items-center gap-2 sm:justify-end">

@@ -14,6 +14,7 @@ import {
   verifyPayment,
   PaymentCancelled,
 } from "@/lib/razorpay";
+import { sendWorkshopBookingEmails } from "@/lib/email";
 
 const inputCls =
   "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none";
@@ -133,6 +134,27 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
         `Payment received (ref ${payment.razorpay_payment_id}), but we couldn't save your booking automatically. Please contact us with this reference and we'll confirm your seat.`,
       );
     }
+
+    // 3) Email the customer + admin. Best-effort — the booking is already paid & saved.
+    try {
+      await sendWorkshopBookingEmails({
+        workshopTitle: chosen.title,
+        dateLabel: format(parseDay(chosen.workshop_date), "EEEE, d MMMM yyyy"),
+        timeLabel: chosen.time_label,
+        venue: chosen.venue,
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        people,
+        amount: amountRupees,
+        notes: form.notes.trim(),
+        paymentId: payment.razorpay_payment_id,
+        orderId: payment.razorpay_order_id,
+      });
+    } catch {
+      // Ignore — a failed confirmation email must not block a paid booking.
+    }
+
     setState("done");
   };
 
@@ -165,8 +187,9 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
             <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
             <h4 className="text-lg font-bold text-gray-800 mb-2">Payment received — you're booked in!</h4>
             <p className="text-sm text-gray-600 mb-6">
-              {chosen.title} on {format(parseDay(chosen.workshop_date), "EEEE, d MMMM yyyy")}. We'll contact you on{" "}
-              {form.phone} with the joining details.
+              {chosen.title} on {format(parseDay(chosen.workshop_date), "EEEE, d MMMM yyyy")}.{" "}
+              {form.email ? <>A confirmation email is on its way to {form.email}. </> : null}
+              We'll contact you on {form.phone} with the joining details.
             </p>
             <button
               type="button"

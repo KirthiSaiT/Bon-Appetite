@@ -14,7 +14,7 @@ import {
   verifyPayment,
   PaymentCancelled,
 } from "@/lib/razorpay";
-import { sendWorkshopBookingEmails } from "@/lib/email";
+import { sendWorkshopBookingEmails, ticketCode } from "@/lib/email";
 
 const inputCls =
   "w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none";
@@ -35,6 +35,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
   const [form, setForm] = useState(emptyForm);
   const [state, setState] = useState<"idle" | "paying" | "saving" | "done">("idle");
   const [error, setError] = useState("");
+  const [ticket, setTicket] = useState("");
 
   // Reset each time the box opens; jump to the requested (or soonest) workshop.
   useEffect(() => {
@@ -45,6 +46,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
     setForm(emptyForm);
     setState("idle");
     setError("");
+    setTicket("");
   }, [open, workshopId, workshops]);
 
   useEffect(() => {
@@ -155,6 +157,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
       // Ignore — a failed confirmation email must not block a paid booking.
     }
 
+    setTicket(ticketCode(payment.razorpay_payment_id));
     setState("done");
   };
 
@@ -186,9 +189,15 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
           <div className="p-6 text-center">
             <CheckCircle2 className="w-12 h-12 text-green-600 mx-auto mb-4" />
             <h4 className="text-lg font-bold text-gray-800 mb-2">Payment received — you're booked in!</h4>
+            {ticket && (
+              <div className="mb-4 rounded-lg border border-dashed border-orange-300 bg-orange-50 px-4 py-3">
+                <p className="text-xs uppercase tracking-wide text-orange-700 font-semibold">Your ticket</p>
+                <p className="text-2xl font-bold text-orange-700">{ticket}</p>
+              </div>
+            )}
             <p className="text-sm text-gray-600 mb-6">
               {chosen.title} on {format(parseDay(chosen.workshop_date), "EEEE, d MMMM yyyy")}.{" "}
-              {form.email ? <>A confirmation email is on its way to {form.email}. </> : null}
+              {form.email ? <>Your ticket &amp; QR code are on their way to {form.email}. </> : null}
               We'll contact you on {form.phone} with the joining details.
             </p>
             <button

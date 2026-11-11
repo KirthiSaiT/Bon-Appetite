@@ -1,4 +1,4 @@
-/* Hallmark · genre: editorial · macrostructure: Order Sheet (combo builder) · shared system (components/OrderSheet) */
+/* Hallmark · genre: editorial · macrostructure: Logo Menu (combo builder) · shared system (components/OrderSheet) */
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { OrderPage, Choice, AddButton, Thumb, flavourSwatch } from "@/components/OrderSheet";

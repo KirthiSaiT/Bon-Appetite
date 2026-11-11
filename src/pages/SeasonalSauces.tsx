@@ -1,4 +1,4 @@
-/* Hallmark · genre: editorial · macrostructure: Order Sheet · shared system (components/OrderSheet) */
+/* Hallmark · genre: editorial · macrostructure: Logo Menu · shared system (components/OrderSheet) */
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { OrderPage, OrderList, OrderRow, Choice, formatRupees } from "@/components/OrderSheet";

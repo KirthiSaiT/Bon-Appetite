@@ -1,14 +1,14 @@
-/* Hallmark · redesign · macrostructure: Logo Index (three big logos jump to open chapters, all on one scroll)
+/* Hallmark · redesign · macrostructure: Logo Spotlight (free-standing logos, open one in colour, others greyed → one section at a time → paged fresh pasta list)
  * theme: custom (project tokens · Cormorant Garamond + DM Sans · orange accent) · enrichment: supplied logo artwork, shown whole
  * audience: Hyderabad food lovers · use: order fresh pasta, order hot food, or book a service · tone: warm editorial
  * pre-emit critique: P4 H5 E4 S5 R4 V5
  * Content (pasta items, prices, recipes, photos, ordering text, delivery links) is edited in Admin → Cafe.
  */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import { toast } from "sonner";
-import { ArrowDown, ArrowRight, ArrowUpRight, Loader2, Phone, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Loader2, Phone, X } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
@@ -17,20 +17,38 @@ import { CafePasta, DELIVERY_APPS, lines, useCafePastas, useSiteSettings } from 
 
 type ChapterId = "pasta" | "order" | "services";
 
-const chapters: { id: ChapterId; label: string; logo: string; alt: string }[] = [
-  { id: "pasta", label: "Fresh Pasta", logo: "/freshpasta.webp", alt: "Fresh Pasta" },
-  { id: "order", label: "Order from the Cafe", logo: "/readytoeat.webp", alt: "Ready to eat" },
-  { id: "services", label: "Services", logo: "/services.webp", alt: "Services" },
+const chapters: { id: ChapterId; label: string; line: string; logo: string; alt: string }[] = [
+  { id: "pasta", label: "Fresh Pasta", line: "Handmade packs, each with its price and a recipe", logo: "/freshpasta.webp", alt: "Fresh Pasta" },
+  { id: "order", label: "Order from the Cafe", line: "Hot plates on Zomato and Swiggy", logo: "/readytoeat.webp", alt: "Ready to eat" },
+  { id: "services", label: "Services", line: "Catering and corporate workshops", logo: "/services.webp", alt: "Services" },
 ];
 
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const jumpTo = (id: ChapterId) =>
-  document.getElementById(`cafe-${id}`)?.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+
+/* Previous / next step of a pager: arrow always, label from small screens up */
+const PagerStep = ({ dir, label, onClick, disabled = false }: { dir: 1 | -1; label: string; onClick: () => void; disabled?: boolean }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    aria-label={`${dir < 0 ? "Previous" : "Next"}: ${label}`}
+    className={`group inline-flex items-center gap-2.5 min-w-0 rounded-full h-11 px-3 sm:px-4 text-sm font-semibold text-stone-700 whitespace-nowrap transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent ${focusRing} ${
+      dir > 0 ? "flex-row-reverse" : ""
+    }`}
+  >
+    <span className="flex items-center justify-center w-8 h-8 shrink-0 rounded-full border border-stone-300 transition-colors group-hover:border-orange-600 group-hover:bg-orange-600 group-hover:text-white group-disabled:border-stone-300 group-disabled:bg-transparent group-disabled:text-stone-700">
+      {dir < 0 ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+    </span>
+    <span className="hidden sm:inline truncate">{label}</span>
+  </button>
+);
+
+const PASTA_PER_PAGE = 4;
 
 /* Chapter head: the chapter's logo sits beside its heading */
 const ChapterHead = ({ logo, title, children }: { logo: string; title: string; children?: React.ReactNode }) => (
-  <div className="mb-8 md:mb-12 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-5 md:gap-8">
-    <span className="block w-20 h-20 md:w-28 md:h-28 overflow-hidden rounded-full bg-white ring-1 ring-stone-200">
+  <div className="mb-8 md:mb-12 grid grid-cols-1 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center gap-4 sm:gap-5 md:gap-8">
+    <span className="block w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 overflow-hidden rounded-full bg-white ring-1 ring-stone-200">
       <img src={logo} alt="" className="w-full h-full object-contain scale-[1.45]" />
     </span>
     <div className="min-w-0">
@@ -79,6 +97,14 @@ const CafePastaCard = ({ pasta, index }: { pasta: CafePasta; index: number }) =>
 
 const PastaChapter = () => {
   const { data: pastas = [], isLoading } = useCafePastas();
+  const [page, setPage] = useState(0);
+  const pages = Math.max(1, Math.ceil(pastas.length / PASTA_PER_PAGE));
+  const current = Math.min(page, pages - 1);
+  const shown = pastas.slice(current * PASTA_PER_PAGE, (current + 1) * PASTA_PER_PAGE);
+  const go = (p: number) => {
+    setPage(p);
+    document.getElementById("cafe-pasta-list")?.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+  };
   return (
     <section id="cafe-pasta" aria-labelledby="cafe-pasta-title" className="scroll-mt-24 border-t border-stone-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 py-14 md:py-20">
@@ -93,9 +119,48 @@ const PastaChapter = () => {
         ) : pastas.length === 0 ? (
           <p className="text-stone-600 bg-stone-50 rounded-2xl p-6">Our fresh pasta menu is being updated. Check back soon.</p>
         ) : (
-          <OrderList>
-            {pastas.map((p, i) => <CafePastaCard key={p.id} pasta={p} index={i + 1} />)}
-          </OrderList>
+          <div id="cafe-pasta-list" className="scroll-mt-24">
+            <OrderList>
+              {shown.map((p, i) => <CafePastaCard key={p.id} pasta={p} index={current * PASTA_PER_PAGE + i + 1} />)}
+            </OrderList>
+            {/* Pager: always shown so it's ready as more pastas are added in Admin → Cafe */}
+            <nav
+              aria-label="Fresh pasta pages"
+              className="mt-6 md:mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-stone-200 pt-5"
+            >
+              <p className="text-sm text-stone-500 tabular-nums whitespace-nowrap" aria-live="polite">
+                Showing{" "}
+                <span className="font-semibold text-stone-900">
+                  {shown.length > 1
+                    ? `${current * PASTA_PER_PAGE + 1}–${current * PASTA_PER_PAGE + shown.length}`
+                    : current * PASTA_PER_PAGE + 1}
+                </span>{" "}
+                of{" "}
+                <span className="font-semibold text-stone-900">{pastas.length}</span> pastas
+              </p>
+              <div className="flex items-center gap-1.5">
+                <PagerStep dir={-1} label="Previous" onClick={() => go(current - 1)} disabled={current === 0} />
+                <ol className="flex items-center gap-1">
+                  {Array.from({ length: pages }, (_, p) => (
+                    <li key={p}>
+                      <button
+                        type="button"
+                        onClick={() => go(p)}
+                        aria-label={`Page ${p + 1} of ${pages}`}
+                        aria-current={p === current ? "page" : undefined}
+                        className={`h-9 min-w-9 px-2.5 rounded-full text-sm font-semibold tabular-nums transition-colors ${focusRing} ${
+                          p === current ? "bg-stone-900 text-white" : "text-stone-500 hover:bg-stone-100 hover:text-stone-900"
+                        }`}
+                      >
+                        {p + 1}
+                      </button>
+                    </li>
+                  ))}
+                </ol>
+                <PagerStep dir={1} label="Next" onClick={() => go(current + 1)} disabled={current === pages - 1} />
+              </div>
+            </nav>
+          </div>
         )}
 
         {/* The full cafe menu, each section shown by its own logo */}
@@ -337,14 +402,18 @@ const CateringModal = ({ onClose }: { onClose: () => void }) => {
 /* ── Page ── */
 
 const Products = () => {
-  const [params] = useSearchParams();
+  const [params, setParams] = useSearchParams();
   const [catering, setCatering] = useState(false);
+  const requested = params.get("tab");
+  const activeIndex = Math.max(0, chapters.findIndex((c) => c.id === requested));
+  const active = chapters[activeIndex];
 
-  // Old links like /products?tab=order still land on the right chapter
-  useEffect(() => {
-    const tab = params.get("tab");
-    if (tab && chapters.some((c) => c.id === tab)) window.setTimeout(() => jumpTo(tab as ChapterId), 50);
-  }, [params]);
+  // Switch section; ?tab= keeps old links (/products?tab=order) working
+  const show = (i: number, scroll = false) => {
+    const c = chapters[(i + chapters.length) % chapters.length];
+    setParams(c.id === "pasta" ? {} : { tab: c.id }, { replace: true });
+    if (scroll) document.getElementById("cafe-picker")?.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
+  };
 
   return (
     <div className="min-h-screen bg-white overflow-x-clip">
@@ -361,52 +430,54 @@ const Products = () => {
           Take home fresh pasta, order a hot plate, or book us for your event.
         </p>
 
-        {/* Logo index: the three logos, big, each jumps to its chapter */}
-        <nav aria-label="Cafe sections" className="mt-10 md:mt-14">
-          <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-            {chapters.map((c) => (
-              <li key={c.id} className="min-w-0">
-                <a
-                  href={`#cafe-${c.id}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    jumpTo(c.id);
-                  }}
-                  className={`group grid grid-cols-[minmax(0,6.5rem)_minmax(0,1fr)] sm:grid-cols-1 items-center h-full rounded-[2rem] border-2 border-stone-200 bg-white p-3 sm:p-5 transition-colors hover:border-orange-600 active:translate-y-px ${focusRing}`}
+        {/* Spotlight picker: the logos stand free on the page (no boxes, no rings).
+            The open section's logo is full colour and full size; the other two step back
+            in grey until hovered. A hairline track underneath marks the open one in orange. */}
+        <nav id="cafe-picker" aria-label="Cafe sections" className="mt-8 md:mt-12 scroll-mt-20">
+          <div role="tablist" className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-stone-200">
+            {chapters.map((c, i) => {
+              const selected = i === activeIndex;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  role="tab"
+                  id={`tab-${c.id}`}
+                  aria-selected={selected}
+                  aria-controls="cafe-panel"
+                  aria-label={c.label}
+                  onClick={() => show(i)}
+                  className={`group relative block min-w-0 -mb-px pb-3 md:pb-5 rounded-t-2xl ${focusRing}`}
                 >
-                  {/* The artwork files carry wide white margins; crop them so the logo itself reads big */}
-                  <span className="block w-full aspect-square overflow-hidden rounded-3xl">
+                  {/* The artwork carries wide white margins; the crop is invisible on the white page */}
+                  <span className="mx-auto block aspect-square w-full max-w-[17rem] overflow-hidden">
                     <img
                       src={c.logo}
-                      alt={c.alt}
-                      className="w-full h-full object-contain scale-[1.5] motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-[1.58]"
+                      alt=""
+                      className={`w-full h-full object-contain mix-blend-multiply motion-safe:transition-[transform,filter,opacity] motion-safe:duration-300 ${
+                        selected
+                          ? "scale-[1.6] opacity-100 brightness-[1.04]"
+                          : "scale-[1.3] opacity-50 grayscale brightness-[1.04] group-hover:grayscale-0 group-hover:opacity-90 group-hover:scale-[1.38]"
+                      }`}
                     />
                   </span>
-                  <span className="flex items-center justify-between gap-3 px-3 sm:px-1 sm:pt-2">
-                    <span
-                      className="min-w-0 text-[1.4rem] sm:text-[1.2rem] md:text-[1.4rem] lg:text-[1.75rem] font-semibold leading-tight text-stone-900 group-hover:text-orange-700 sm:whitespace-nowrap"
-                      style={{ fontFamily: "var(--font-display)" }}
-                    >
-                      {c.label}
-                    </span>
-                    <span
-                      aria-hidden="true"
-                      className="hidden lg:flex items-center justify-center w-10 h-10 shrink-0 rounded-full border border-stone-300 text-stone-600 transition-colors group-hover:border-orange-600 group-hover:bg-orange-600 group-hover:text-white"
-                    >
-                      <ArrowDown className="w-5 h-5" />
-                    </span>
-                  </span>
-                </a>
-              </li>
-            ))}
-          </ul>
+                  <span
+                    aria-hidden="true"
+                    className={`absolute inset-x-[18%] bottom-0 h-[3px] rounded-full motion-safe:transition-colors motion-safe:duration-200 ${
+                      selected ? "bg-orange-600" : "bg-transparent group-hover:bg-stone-300"
+                    }`}
+                  />
+                </button>
+              );
+            })}
+          </div>
         </nav>
       </header>
 
-      <main>
-        <PastaChapter />
-        <OrderChapter />
-        <ServicesChapter onCatering={() => setCatering(true)} />
+      <main id="cafe-panel" role="tabpanel" aria-labelledby={`tab-${active.id}`}>
+        {active.id === "pasta" && <PastaChapter />}
+        {active.id === "order" && <OrderChapter />}
+        {active.id === "services" && <ServicesChapter onCatering={() => setCatering(true)} />}
       </main>
 
       {/* Dry pasta pointer */}

@@ -1,4 +1,4 @@
-/* Hallmark · macrostructure: Logo Menu (logo-led header + logo rail + menu cards with recipe dropdowns)
+/* Hallmark · macrostructure: Logo Menu (logo-led header + logo rail + one-line menu rows with recipe dropdowns)
  * shared by the four cafe ordering pages · theme: custom (project tokens · Cormorant Garamond + DM Sans · orange)
  * audience: Hyderabad home cooks · use: pick a pack and order it · tone: warm editorial
  * pre-emit critique: P4 H5 E4 S5 R4 V5
@@ -260,7 +260,7 @@ const RecipeBody = ({ recipe }: { recipe: Recipe }) => (
     <h3 className="text-xl md:text-2xl font-semibold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
       {recipe.title}
     </h3>
-    <div className="mt-4 grid gap-6">
+    <div className="mt-4 grid gap-6 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
       {recipe.ingredients.length > 0 && (
         <div className="min-w-0">
           <p className="text-xs font-semibold text-stone-500">You'll need</p>
@@ -293,7 +293,9 @@ const RecipeBody = ({ recipe }: { recipe: Recipe }) => (
   </div>
 );
 
-/* ── Menu card: picture, name, price, choices, recipe dropdown, order button ── */
+/* ── Menu row: everything for one item on a single line (wraps to two on phones) ──
+ * picture · name + description + choices · price · Recipe dropdown · Order
+ */
 
 interface OrderRowProps {
   index: number;
@@ -306,39 +308,48 @@ interface OrderRowProps {
   priceNote: string;
   onAdd: () => void;
   recipe?: Recipe | null;
+  /** replaces the plain Order button, e.g. with a quantity stepper beside it */
+  action?: ReactNode;
   children?: ReactNode;
 }
 
 export const OrderRow = ({
-  index, image, fallbackImage, name, description, tint, price, priceNote, onAdd, recipe, children,
+  index, image, fallbackImage, name, description, tint, price, priceNote, onAdd, recipe, action, children,
 }: OrderRowProps) => (
-  <AccordionPrimitive.Root type="single" collapsible asChild>
-    <article className="rounded-3xl border border-stone-200 bg-white p-5 md:p-7 transition-colors hover:border-stone-300">
-      <AccordionPrimitive.Item value="recipe" className="group/item">
-        <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-4 md:gap-5 items-start">
+  <AccordionPrimitive.Root
+    type="single"
+    collapsible
+    className="rounded-3xl border border-stone-200 bg-white px-4 py-4 md:px-6 md:py-5 transition-colors hover:border-stone-300"
+  >
+    <AccordionPrimitive.Item value="recipe" className="group/item">
+      <article className="grid grid-cols-[auto_minmax(0,1fr)] lg:grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-4 lg:gap-x-8 gap-y-3">
+        <span className="row-span-2 lg:row-span-1 self-start lg:self-center">
           <Thumb src={image} fallbackSrc={fallbackImage} alt={name} tint={tint} index={index} />
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <h2
-                className="text-2xl md:text-[1.8rem] font-bold leading-tight text-stone-900 [overflow-wrap:anywhere]"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {name}
-              </h2>
-              <span className="text-right">
-                <span className="text-2xl font-bold text-orange-700 tabular-nums" style={{ fontFamily: "var(--font-display)" }} aria-live="polite">
-                  {formatRupees(price)}
-                </span>
-                <span className="ml-1.5 text-xs text-stone-500 whitespace-nowrap">{priceNote}</span>
-              </span>
-            </div>
-            <p className="mt-1.5 text-sm md:text-base text-stone-600 leading-relaxed">{description}</p>
-          </div>
+        </span>
+
+        <div className="min-w-0">
+          <h2
+            className="text-[1.6rem] md:text-[1.9rem] font-bold leading-tight text-stone-900 [overflow-wrap:anywhere]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {name}
+          </h2>
+          <p className="mt-0.5 text-sm md:text-base text-stone-600 leading-relaxed">{description}</p>
+          {children && <div className="mt-4 flex flex-col gap-3">{children}</div>}
         </div>
 
-        {children && <div className="mt-5 flex flex-col gap-4">{children}</div>}
+        <div className="min-w-0 lg:text-right lg:min-w-[7rem]">
+          <span
+            className="block text-2xl md:text-[1.75rem] font-bold leading-none text-orange-700 tabular-nums"
+            style={{ fontFamily: "var(--font-display)" }}
+            aria-live="polite"
+          >
+            {formatRupees(price)}
+          </span>
+          <span className="mt-1 block text-xs text-stone-500 whitespace-nowrap">{priceNote}</span>
+        </div>
 
-        <div className="mt-6 pt-5 border-t border-dashed border-stone-200 flex flex-wrap items-center justify-between gap-3">
+        <div className="col-span-2 lg:col-span-1 flex flex-wrap items-center justify-between lg:justify-end gap-2.5 pt-3 lg:pt-0 border-t border-dashed border-stone-200 lg:border-0">
           {recipe ? (
             <AccordionPrimitive.Header asChild>
               <div>
@@ -351,23 +362,53 @@ export const OrderRow = ({
               </div>
             </AccordionPrimitive.Header>
           ) : (
-            <span />
+            <span className="lg:hidden" />
           )}
-          {/* price is already in the card head; on the narrowest phones the button just says Order */}
-          <AddButton onAdd={onAdd} label={<>Order<span className="hidden min-[360px]:inline"> · {formatRupees(price)}</span></>} />
+          {action ?? <AddButton onAdd={onAdd} label="Order" />}
         </div>
+      </article>
 
-        {recipe && (
-          <AccordionPrimitive.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down motion-reduce:animate-none">
-            <RecipeBody recipe={recipe} />
-          </AccordionPrimitive.Content>
-        )}
-      </AccordionPrimitive.Item>
-    </article>
+      {recipe && (
+        <AccordionPrimitive.Content className="overflow-hidden data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down motion-reduce:animate-none">
+          <RecipeBody recipe={recipe} />
+        </AccordionPrimitive.Content>
+      )}
+    </AccordionPrimitive.Item>
   </AccordionPrimitive.Root>
 );
 
-/** Grid of menu cards. */
+/** Quantity stepper: − n +, typing allowed, no cap at 5. */
+export const QtyStepper = ({
+  value, onChange, max = 99, label,
+}: { value: number; onChange: (update: (n: number) => number) => void; max?: number; label: string }) => {
+  const clamp = (n: number) => Math.min(max, Math.max(1, Math.round(n) || 1));
+  // functional updates so fast repeated taps each count
+  const bump = (d: number) => onChange((n) => clamp(n + d));
+  const set = (n: number) => onChange(() => clamp(n));
+  const btn = `flex items-center justify-center w-10 h-10 text-lg font-semibold text-stone-700 transition-colors hover:bg-stone-100 active:bg-stone-200 disabled:opacity-35 disabled:hover:bg-transparent ${focusRing}`;
+  return (
+    <div className="inline-flex items-center rounded-full border border-stone-300 bg-white overflow-hidden" role="group" aria-label={label}>
+      <button type="button" className={`${btn} rounded-l-full`} onClick={() => bump(-1)} disabled={value <= 1} aria-label="One less">
+        −
+      </button>
+      <input
+        type="number"
+        inputMode="numeric"
+        min={1}
+        max={max}
+        value={value}
+        onChange={(e) => set(Number(e.target.value))}
+        aria-label={label}
+        className="w-11 h-10 text-center text-sm font-semibold text-stone-900 tabular-nums bg-transparent border-x border-stone-200 outline-none focus-visible:bg-orange-50 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+      />
+      <button type="button" className={`${btn} rounded-r-full`} onClick={() => bump(1)} disabled={value >= max} aria-label="One more">
+        +
+      </button>
+    </div>
+  );
+};
+
+/** Stack of one-line menu rows. */
 export const OrderList = ({ children }: { children: ReactNode }) => (
-  <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-4 md:gap-6 items-start">{children}</div>
+  <div className="flex flex-col gap-3 md:gap-4">{children}</div>
 );

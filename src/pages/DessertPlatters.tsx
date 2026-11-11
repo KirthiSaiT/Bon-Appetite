@@ -1,7 +1,9 @@
-/* Hallmark · genre: editorial · macrostructure: Logo Menu · shared system (components/OrderSheet) */
+/* Hallmark · genre: editorial · macrostructure: Logo Menu · shared system (components/OrderSheet)
+ * Quantity is a − / + stepper (type any number up to 99), not fixed 1–5 chips.
+ */
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
-import { OrderPage, OrderList, OrderRow, Choice } from "@/components/OrderSheet";
+import { OrderPage, OrderList, OrderRow, QtyStepper, AddButton } from "@/components/OrderSheet";
 import { usePrices } from "@/hooks/use-menu-data";
 
 const desserts = [
@@ -12,14 +14,20 @@ const desserts = [
   { id: "d005", name: "Ice cream - Chocolate", description: "Rich chocolate ice cream scoop.", price: 50, tint: "var(--flavour-wheat)" },
 ];
 
-const pieces = [1, 2, 3, 4, 5];
-
 const DessertRow = ({ dessert, index }: { dessert: (typeof desserts)[number]; index: number }) => {
   const { addToCart } = useCart();
   const { price: dbPrice } = usePrices();
   const each = dbPrice(`dessert.${dessert.id}`, dessert.price);
   const [qty, setQty] = useState(1);
   const price = each * qty;
+
+  const add = () =>
+    addToCart({
+      id: `${dessert.id}-${qty}`,
+      name: `${dessert.name} (${qty} piece${qty > 1 ? "s" : ""})`,
+      price,
+      image: "/dessertplatter.webp",
+    });
 
   return (
     <OrderRow
@@ -30,32 +38,23 @@ const DessertRow = ({ dessert, index }: { dessert: (typeof desserts)[number]; in
       description={dessert.description}
       tint={dessert.tint}
       price={price}
-      priceNote={`₹${each} each`}
-      onAdd={() =>
-        addToCart({
-          id: `${dessert.id}-${qty}`,
-          name: `${dessert.name} (${qty} piece${qty > 1 ? "s" : ""})`,
-          price,
-          image: "/dessertplatter.webp",
-        })
+      priceNote={qty > 1 ? `${qty} × ₹${each}` : `₹${each} each`}
+      onAdd={add}
+      action={
+        <span className="flex items-center gap-2.5">
+          <QtyStepper value={qty} onChange={setQty} label={`How many ${dessert.name}`} />
+          <AddButton onAdd={add} label="Order" />
+        </span>
       }
-    >
-      <Choice
-        label="Pieces"
-        value={qty}
-        onChange={setQty}
-        options={pieces.map((n) => ({ value: n, label: String(n) }))}
-      />
-    </OrderRow>
+    />
   );
 };
 
 const DessertPlatters = () => (
   <OrderPage
-    eyebrow="Ready to Eat"
     title="Our"
     accent="Dessert Platters"
-    intro="Sweet treats to end your meal on a high note."
+    intro="Sweet treats to end your meal on a high note. Pick as many as you like with − and +, or type a number. Planning a party platter? Call us on 93901 05767."
     stamp="/dessertplatter.webp"
   >
     <OrderList>

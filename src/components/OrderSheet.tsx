@@ -3,10 +3,10 @@
  * audience: Hyderabad home cooks · use: pick a pack and order it · tone: warm editorial
  * pre-emit critique: P4 H5 E4 S5 R4 V5
  */
-import { ReactNode, useState } from "react";
+import { Children, ReactNode, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import * as AccordionPrimitive from "@radix-ui/react-accordion";
-import { ArrowLeft, CalendarClock, Check, ChevronDown, Clock, ShoppingBag } from "lucide-react";
+import { ArrowLeft, CalendarClock, Check, ChevronDown, ChevronLeft, ChevronRight, Clock, ShoppingBag } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 
@@ -408,7 +408,76 @@ export const QtyStepper = ({
   );
 };
 
-/** Stack of one-line menu rows. */
-export const OrderList = ({ children }: { children: ReactNode }) => (
-  <div className="flex flex-col gap-3 md:gap-4">{children}</div>
+/* Previous / next step of a pager: arrow always, label from small screens up */
+const PagerStep = ({ dir, onClick, disabled }: { dir: 1 | -1; onClick: () => void; disabled: boolean }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    disabled={disabled}
+    aria-label={dir < 0 ? "Previous page" : "Next page"}
+    className={`group inline-flex items-center gap-2.5 rounded-full h-11 px-2 sm:px-3 text-sm font-semibold text-stone-700 whitespace-nowrap transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent ${focusRing} ${
+      dir > 0 ? "flex-row-reverse" : ""
+    }`}
+  >
+    <span className="flex items-center justify-center w-8 h-8 shrink-0 rounded-full border border-stone-300 transition-colors group-hover:border-orange-600 group-hover:bg-orange-600 group-hover:text-white group-disabled:border-stone-300 group-disabled:bg-transparent group-disabled:text-stone-700">
+      {dir < 0 ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+    </span>
+    <span className="hidden sm:inline">{dir < 0 ? "Previous" : "Next"}</span>
+  </button>
 );
+
+/** Stack of one-line menu rows, paged: `perPage` items at a time with a sleek pager underneath. */
+export const OrderList = ({ children, perPage = 4, noun = "items" }: { children: ReactNode; perPage?: number; noun?: string }) => {
+  const items = Children.toArray(children);
+  const [page, setPage] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+  const pages = Math.max(1, Math.ceil(items.length / perPage));
+  const current = Math.min(page, pages - 1);
+  const first = current * perPage;
+  const shown = items.slice(first, first + perPage);
+
+  const go = (p: number) => {
+    setPage(p);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    listRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  };
+
+  return (
+    <div ref={listRef} className="scroll-mt-24">
+      <div className="flex flex-col gap-3 md:gap-4">{shown}</div>
+      {items.length > 0 && (
+        <nav
+          aria-label={`${noun} pages`}
+          className="mt-6 md:mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-stone-200 pt-5"
+        >
+          <p className="text-sm text-stone-500 tabular-nums whitespace-nowrap" aria-live="polite">
+            Showing{" "}
+            <span className="font-semibold text-stone-900">{shown.length > 1 ? `${first + 1}–${first + shown.length}` : first + 1}</span>{" "}
+            of <span className="font-semibold text-stone-900">{items.length}</span> {noun}
+          </p>
+          <div className="flex items-center gap-1.5">
+            <PagerStep dir={-1} onClick={() => go(current - 1)} disabled={current === 0} />
+            <ol className="flex items-center gap-1">
+              {Array.from({ length: pages }, (_, p) => (
+                <li key={p}>
+                  <button
+                    type="button"
+                    onClick={() => go(p)}
+                    aria-label={`Page ${p + 1} of ${pages}`}
+                    aria-current={p === current ? "page" : undefined}
+                    className={`h-9 min-w-9 px-2.5 rounded-full text-sm font-semibold tabular-nums transition-colors ${focusRing} ${
+                      p === current ? "bg-stone-900 text-white" : "text-stone-500 hover:bg-stone-100 hover:text-stone-900"
+                    }`}
+                  >
+                    {p + 1}
+                  </button>
+                </li>
+              ))}
+            </ol>
+            <PagerStep dir={1} onClick={() => go(current + 1)} disabled={current === pages - 1} />
+          </div>
+        </nav>
+      )}
+    </div>
+  );
+};

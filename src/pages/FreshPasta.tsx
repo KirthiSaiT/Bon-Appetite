@@ -166,7 +166,7 @@ const FreshPasta = () => {
       shelfLife="2-hour shelf life"
       stamp="/freshpasta.webp"
     >
-      <OrderList>
+      <OrderList noun="pastas">
         {freshPastaTypes.map((p, i) => (
           <PastaRow key={p.id} pasta={p} index={i + 1} recipe={recipeFor(p.name)} />
         ))}

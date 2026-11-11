@@ -59,7 +59,7 @@ const SeasonalSauces = () => (
     shelfLife="1-month shelf life"
     stamp="/seaonal.webp"
   >
-    <OrderList>
+    <OrderList noun="sauces">
       {sauces.map((s, i) => (
         <SauceRow key={s.id} sauce={s} index={i + 1} />
       ))}

@@ -57,7 +57,7 @@ const DessertPlatters = () => (
     intro="Sweet treats to end your meal on a high note. Pick as many as you like with − and +, or type a number. Planning a party platter? Call us on 93901 05767."
     stamp="/dessertplatter.webp"
   >
-    <OrderList>
+    <OrderList noun="desserts">
       {desserts.map((d, i) => (
         <DessertRow key={d.id} dessert={d} index={i + 1} />
       ))}

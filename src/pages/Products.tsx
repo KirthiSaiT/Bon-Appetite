@@ -8,7 +8,7 @@ import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import emailjs from "@emailjs/browser";
 import { toast } from "sonner";
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, Loader2, Phone, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Loader2, Phone, X } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
@@ -24,26 +24,6 @@ const chapters: { id: ChapterId; label: string; line: string; logo: string; alt:
 ];
 
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-/* Previous / next step of a pager: arrow always, label from small screens up */
-const PagerStep = ({ dir, label, onClick, disabled = false }: { dir: 1 | -1; label: string; onClick: () => void; disabled?: boolean }) => (
-  <button
-    type="button"
-    onClick={onClick}
-    disabled={disabled}
-    aria-label={`${dir < 0 ? "Previous" : "Next"}: ${label}`}
-    className={`group inline-flex items-center gap-2.5 min-w-0 rounded-full h-11 px-3 sm:px-4 text-sm font-semibold text-stone-700 whitespace-nowrap transition-colors hover:bg-stone-100 hover:text-stone-900 disabled:opacity-30 disabled:hover:bg-transparent ${focusRing} ${
-      dir > 0 ? "flex-row-reverse" : ""
-    }`}
-  >
-    <span className="flex items-center justify-center w-8 h-8 shrink-0 rounded-full border border-stone-300 transition-colors group-hover:border-orange-600 group-hover:bg-orange-600 group-hover:text-white group-disabled:border-stone-300 group-disabled:bg-transparent group-disabled:text-stone-700">
-      {dir < 0 ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-    </span>
-    <span className="hidden sm:inline truncate">{label}</span>
-  </button>
-);
-
-const PASTA_PER_PAGE = 4;
 
 /* Chapter head: the chapter's logo sits beside its heading */
 const ChapterHead = ({ logo, title, children }: { logo: string; title: string; children?: React.ReactNode }) => (
@@ -97,14 +77,6 @@ const CafePastaCard = ({ pasta, index }: { pasta: CafePasta; index: number }) =>
 
 const PastaChapter = () => {
   const { data: pastas = [], isLoading } = useCafePastas();
-  const [page, setPage] = useState(0);
-  const pages = Math.max(1, Math.ceil(pastas.length / PASTA_PER_PAGE));
-  const current = Math.min(page, pages - 1);
-  const shown = pastas.slice(current * PASTA_PER_PAGE, (current + 1) * PASTA_PER_PAGE);
-  const go = (p: number) => {
-    setPage(p);
-    document.getElementById("cafe-pasta-list")?.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
-  };
   return (
     <section id="cafe-pasta" aria-labelledby="cafe-pasta-title" className="scroll-mt-24 border-t border-stone-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 py-14 md:py-20">
@@ -119,48 +91,10 @@ const PastaChapter = () => {
         ) : pastas.length === 0 ? (
           <p className="text-stone-600 bg-stone-50 rounded-2xl p-6">Our fresh pasta menu is being updated. Check back soon.</p>
         ) : (
-          <div id="cafe-pasta-list" className="scroll-mt-24">
-            <OrderList>
-              {shown.map((p, i) => <CafePastaCard key={p.id} pasta={p} index={current * PASTA_PER_PAGE + i + 1} />)}
-            </OrderList>
-            {/* Pager: always shown so it's ready as more pastas are added in Admin → Cafe */}
-            <nav
-              aria-label="Fresh pasta pages"
-              className="mt-6 md:mt-8 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-stone-200 pt-5"
-            >
-              <p className="text-sm text-stone-500 tabular-nums whitespace-nowrap" aria-live="polite">
-                Showing{" "}
-                <span className="font-semibold text-stone-900">
-                  {shown.length > 1
-                    ? `${current * PASTA_PER_PAGE + 1}–${current * PASTA_PER_PAGE + shown.length}`
-                    : current * PASTA_PER_PAGE + 1}
-                </span>{" "}
-                of{" "}
-                <span className="font-semibold text-stone-900">{pastas.length}</span> pastas
-              </p>
-              <div className="flex items-center gap-1.5">
-                <PagerStep dir={-1} label="Previous" onClick={() => go(current - 1)} disabled={current === 0} />
-                <ol className="flex items-center gap-1">
-                  {Array.from({ length: pages }, (_, p) => (
-                    <li key={p}>
-                      <button
-                        type="button"
-                        onClick={() => go(p)}
-                        aria-label={`Page ${p + 1} of ${pages}`}
-                        aria-current={p === current ? "page" : undefined}
-                        className={`h-9 min-w-9 px-2.5 rounded-full text-sm font-semibold tabular-nums transition-colors ${focusRing} ${
-                          p === current ? "bg-stone-900 text-white" : "text-stone-500 hover:bg-stone-100 hover:text-stone-900"
-                        }`}
-                      >
-                        {p + 1}
-                      </button>
-                    </li>
-                  ))}
-                </ol>
-                <PagerStep dir={1} label="Next" onClick={() => go(current + 1)} disabled={current === pages - 1} />
-              </div>
-            </nav>
-          </div>
+          // Paged 4 at a time; the pager stays visible so it's ready as more pastas are added in Admin → Cafe
+          <OrderList noun="pastas">
+            {pastas.map((p, i) => <CafePastaCard key={p.id} pasta={p} index={i + 1} />)}
+          </OrderList>
         )}
 
         {/* The full cafe menu, each section shown by its own logo */}

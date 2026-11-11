@@ -204,36 +204,56 @@ const OurPastaBrand = () => (
       </div>
     </section>
 
-    {/* ── Retailer CTA: dark split panel ── */}
-    <section className="px-6 md:px-14 xl:px-20 py-20 md:py-28 bg-stone-900">
-      <div className="max-w-7xl mx-auto grid lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] gap-10 lg:gap-20 lg:items-end">
+    {/* ── Retailer CTA: orange band, headline left, a white "how to stock us" card right ── */}
+    <section className="px-6 md:px-14 xl:px-20 py-16 md:py-24 bg-orange-700">
+      <div className="max-w-7xl mx-auto grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 lg:gap-16 lg:items-center">
         <div className="min-w-0">
-          <span className="flex items-center justify-center w-14 h-14 rounded-full bg-orange-600 text-white mb-8">
-            <Handshake className="w-6 h-6" strokeWidth={1.5} />
-          </span>
+          <p className="inline-flex items-center gap-2 text-sm font-semibold text-orange-50 whitespace-nowrap">
+            <Handshake className="w-5 h-5" strokeWidth={1.75} /> For shops and distributors
+          </p>
           <h2
-            className="text-[2.4rem] md:text-[3.4rem] xl:text-[4rem] font-light leading-[1.02] text-stone-50 max-w-[14ch] [overflow-wrap:anywhere]"
+            className="mt-4 text-[2.6rem] md:text-[3.6rem] xl:text-[4.2rem] font-semibold leading-[1.0] text-white max-w-[13ch] [overflow-wrap:anywhere]"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Are you a <span className="text-orange-500">retailer or distributor?</span>
+            Put our pasta on your shelf.
           </h2>
-        </div>
-        <div className="min-w-0 lg:border-l lg:border-stone-700 lg:pl-14">
-          <p className="text-stone-300 text-base md:text-lg leading-relaxed max-w-md">
-            We're actively expanding our retail network. Get in touch with our sales team to
-            stock Bon Appetit pasta in your store.
+          <p className="mt-5 max-w-md text-orange-50 text-base md:text-lg leading-relaxed">
+            We're growing our retail network and would love to hear from stores and distributors.
           </p>
-          <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-5">
+        </div>
+
+        <div className="min-w-0 rounded-3xl bg-white p-6 md:p-9 shadow-[0_24px_48px_-28px_theme(colors.stone.900/0.6)]">
+          <h3 className="text-2xl md:text-[1.75rem] font-semibold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
+            How to stock Bon Appetit
+          </h3>
+          <ol className="mt-5">
+            {[
+              ["Tell us about your store", "Where you are and what you'd like to carry."],
+              ["Get the catalogue", "Our sales team shares the shapes, flavours and pack sizes."],
+              ["Stock the shelf", "We set up your first order with you."],
+            ].map(([title, text], i) => (
+              <li key={title} className="grid grid-cols-[auto_minmax(0,1fr)] gap-4 border-t border-stone-200 py-4">
+                <span className="flex items-center justify-center w-9 h-9 rounded-full bg-orange-50 text-sm font-semibold text-orange-700 tabular-nums">
+                  {i + 1}
+                </span>
+                <span className="min-w-0">
+                  <span className="block font-semibold text-stone-900">{title}</span>
+                  <span className="block text-sm text-stone-600 leading-relaxed">{text}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-4">
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-500 active:translate-y-px text-white px-7 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500"
+              className="inline-flex items-center gap-2 rounded-full bg-stone-900 hover:bg-orange-600 active:translate-y-px text-white px-7 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600"
             >
               Talk to our sales team
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               to="/products"
-              className="group inline-flex items-center gap-1.5 text-stone-100 hover:text-orange-400 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-500"
+              className="group inline-flex items-center gap-1.5 text-stone-800 hover:text-orange-700 text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600"
             >
               View catalogue
               <ArrowRight className="w-3.5 h-3.5 motion-safe:transition-transform group-hover:translate-x-1" />

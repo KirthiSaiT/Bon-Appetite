@@ -1,4 +1,4 @@
-/* Hallmark · macrostructure: Film Roll (horizontal snap-scroll film strip → contact sheet → one-line close)
+/* Hallmark · macrostructure: Film Roll (horizontal snap-scroll film strip → taped photo wall → one-line close)
  * theme: custom (project tokens · Cormorant Garamond + DM Sans · orange accent on a stone-900 roll)
  * inspiration: Awwwards film-roll / horizontal-scroll galleries, contact-sheet navigation (structure only)
  * audience: people curious about the kitchen · use: look through the photos · tone: warm editorial, darkroom
@@ -22,6 +22,9 @@ const frames = [
   { src: "/cmpic1.webp", w: 505, h: 1300, caption: "Meeting people at our stall" },
   { src: "/school2.webp", w: 1600, h: 1200, caption: "A cooking session with students" },
 ];
+
+/* Each print on the wall leans a little; the angles repeat so the wall never looks machine-straight */
+const tilts = ["-rotate-2", "rotate-1", "-rotate-1", "rotate-2", "rotate-[0.5deg]", "-rotate-[1.5deg]"];
 
 const no = (i: number) => String(i + 1).padStart(2, "0");
 const focusRing = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500";
@@ -154,37 +157,44 @@ const Gallery = () => {
         <Sprockets />
       </section>
 
-      {/* ── Contact sheet ── */}
-      <section aria-labelledby="sheet-title" className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 py-14 md:py-20">
-        <h2 id="sheet-title" className="text-[2rem] md:text-[2.6rem] font-semibold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
-          Contact sheet
-        </h2>
-        <p className="mt-1 text-stone-600">Every frame on the roll. The one you're on is circled.</p>
-        <ol className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(min(100%,9.5rem),1fr))] gap-3 md:gap-4">
-          {frames.map((f, i) => (
-            <li key={f.src} className="min-w-0">
-              <button
-                type="button"
-                onClick={() => {
-                  goTo(i);
-                  setOpen(i);
-                }}
-                aria-label={`Open frame ${no(i)}: ${f.caption}`}
-                className={`group block w-full text-left rounded-xl p-1.5 transition-colors ${focusRing} ${
-                  i === current ? "ring-2 ring-orange-600 bg-orange-50" : "hover:bg-stone-100"
-                }`}
-              >
-                <span className="block aspect-square overflow-hidden rounded-lg bg-stone-100">
-                  <img src={f.src} alt="" loading="lazy" className="w-full h-full object-cover motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-[1.05]" />
-                </span>
-                <span className="mt-1.5 flex items-baseline gap-2 px-0.5">
-                  <span className="text-xs font-semibold text-orange-700 tabular-nums">{no(i)}</span>
-                  <span className="text-xs text-stone-600 truncate">{f.caption}</span>
-                </span>
-              </button>
-            </li>
-          ))}
-        </ol>
+      {/* ── Photo wall: prints taped up at slight angles; tap one to see it big ── */}
+      <section aria-labelledby="wall-title" className="bg-stone-100 border-y border-stone-200">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 py-14 md:py-20">
+          <h2 id="wall-title" className="text-[2rem] md:text-[2.6rem] font-semibold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
+            The photo wall
+          </h2>
+          <p className="mt-1 text-stone-600">Every print from the roll, taped up. Tap one to see it big.</p>
+          <ol className="mt-10 columns-2 sm:columns-3 lg:columns-4 gap-4 md:gap-7">
+            {frames.map((f, i) => (
+              <li key={f.src} className="mb-6 md:mb-8 break-inside-avoid">
+                <button
+                  type="button"
+                  onClick={() => setOpen(i)}
+                  aria-label={`Open photo ${no(i)}: ${f.caption}`}
+                  className={`group relative block w-full text-left bg-white p-2 pb-3 md:p-2.5 md:pb-4 shadow-[0_10px_24px_-14px_theme(colors.stone.900/0.45)] motion-safe:transition-transform motion-safe:duration-300 hover:rotate-0 hover:scale-[1.03] hover:z-10 focus-visible:rotate-0 ${tilts[i % tilts.length]} ${focusRing}`}
+                >
+                  {/* tape */}
+                  <span
+                    aria-hidden="true"
+                    className="absolute -top-2.5 left-1/2 -translate-x-1/2 -rotate-3 w-14 h-5 bg-amber-100/80 shadow-sm"
+                  />
+                  <img
+                    src={f.src}
+                    alt=""
+                    width={f.w}
+                    height={f.h}
+                    loading="lazy"
+                    className="block w-full h-auto bg-stone-200"
+                  />
+                  <span className="mt-2 flex items-baseline gap-2 px-0.5">
+                    <span className="text-xs font-semibold text-orange-700 tabular-nums">{no(i)}</span>
+                    <span className="text-xs md:text-sm text-stone-700 leading-snug">{f.caption}</span>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
       {/* ── One-line close ── */}

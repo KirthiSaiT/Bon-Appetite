@@ -332,38 +332,65 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ── Five flavours (dark band) ── */}
-      <section className="mt-24 md:mt-28 bg-stone-900 text-white px-6 md:px-14 xl:px-20 py-16 md:py-20">
-        <div className="max-w-7xl mx-auto">
-          <h2
-            className="text-[2.4rem] md:text-[3.4rem] font-semibold leading-[1.02]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Five flavours, <span className="text-orange-400">one honest dough.</span>
-          </h2>
-          <ul className="mt-12 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10">
-            {flavours.map((f) => (
-              <li key={f.name} className="min-w-0 flex flex-col items-center text-center">
-                <span
-                  className="mt-4 flex items-center justify-center w-24 h-24 sm:w-32 sm:h-32 md:w-36 md:h-36 rounded-full shadow-[inset_0_-10px_24px_oklch(0%_0_0/0.18)]"
-                  style={{ background: f.swatch, color: f.ink }}
+      {/* ── Five flavours: a real photo of the packs beside a plain list of what colours each dough ── */}
+      <section className="mt-24 md:mt-28 px-6 md:px-14 xl:px-20">
+        <div className="max-w-7xl mx-auto grid gap-10 lg:gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center">
+          <figure className="min-w-0 relative">
+            <div className="aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] overflow-hidden rounded-3xl bg-stone-100">
+              <img
+                src="/aboutus.webp"
+                alt="Paprika, spinach and beetroot pasta packs"
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {/* the five colours as one stacked band along the photo's foot */}
+            <div aria-hidden="true" className="absolute inset-x-6 -bottom-3 flex h-6 overflow-hidden rounded-full ring-4 ring-white">
+              {flavours.map((f) => (
+                <span key={f.name} className="flex-1" style={{ background: f.swatch }} />
+              ))}
+            </div>
+          </figure>
+
+          <div className="min-w-0">
+            <h2
+              className="text-[2.4rem] md:text-[3.4rem] font-semibold leading-[1.02] text-stone-900 [overflow-wrap:anywhere]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Five flavours, <span className="text-orange-600">one honest dough.</span>
+            </h2>
+            <p className="mt-4 max-w-lg text-stone-600 leading-relaxed">
+              The colour comes from what goes into the dough, nothing else.
+            </p>
+            <ol className="mt-8 border-t border-stone-200">
+              {flavours.map((f) => (
+                <li
+                  key={f.name}
+                  className="grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-0.5 border-b border-stone-200 py-4"
                 >
-                  <span className="text-3xl md:text-4xl font-semibold" style={{ fontFamily: "var(--font-display)" }}>
-                    {f.name[0]}
+                  <span
+                    aria-hidden="true"
+                    className="row-span-2 sm:row-span-1 w-10 h-10 rounded-full ring-1 ring-stone-900/10"
+                    style={{ background: f.swatch }}
+                  />
+                  <span
+                    className="text-2xl md:text-[1.75rem] font-semibold leading-tight text-stone-900"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    {f.name}
                   </span>
-                </span>
-                <p className="mt-5 text-xl font-semibold whitespace-nowrap">{f.name}</p>
-                <p className="mt-1 text-sm text-stone-400">{f.from}</p>
-              </li>
-            ))}
-          </ul>
-          <Link
-            to="/our-pasta-brand"
-            className={`group mt-12 inline-flex items-center gap-2 rounded-full bg-orange-600 hover:bg-orange-700 active:translate-y-px text-white px-8 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors ${focusRing}`}
-          >
-            See every shape
-            <ArrowRight className="w-4 h-4 motion-safe:transition-transform group-hover:translate-x-1" />
-          </Link>
+                  <span className="text-sm text-stone-500 sm:text-right">{f.from}</span>
+                </li>
+              ))}
+            </ol>
+            <Link
+              to="/our-pasta-brand"
+              className={`group mt-8 inline-flex items-center gap-2 rounded-full bg-orange-600 hover:bg-orange-700 active:translate-y-px text-white px-8 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors ${focusRing}`}
+            >
+              See every shape
+              <ArrowRight className="w-4 h-4 motion-safe:transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
         </div>
       </section>
 

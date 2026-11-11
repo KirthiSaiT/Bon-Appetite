@@ -65,27 +65,54 @@ export function loadRazorpayScript(): Promise<void> {
   return scriptPromise;
 }
 
-/** Ask the server to create an order. Amount is in paise (>= 100). */
-export async function createOrder(amount: number, receipt: string): Promise<CreatedOrder> {
+export interface BookingRequest {
+  workshop_id: string;
+  people: number;
+  name: string;
+  phone: string;
+  email: string;
+  notes: string;
+}
+
+/**
+ * Ask the server to create an order for a workshop booking.
+ * The server looks up the price itself; the amount is never sent from here.
+ */
+export async function createOrder(booking: BookingRequest): Promise<CreatedOrder> {
   const res = await fetch("/api/create-order", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount, currency: "INR", receipt }),
+    body: JSON.stringify(booking),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Could not start payment. Please try again.");
   return data as CreatedOrder;
 }
 
-/** Ask the server to verify the signature. Returns true only on a genuine payment. */
-export async function verifyPayment(success: RazorpaySuccess): Promise<boolean> {
-  const res = await fetch("/api/verify-payment", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(success),
-  });
-  const data = await res.json().catch(() => ({}));
-  return res.ok && data.verified === true;
+export interface VerifyResult {
+  /** The payment signature is genuine. */
+  verified: boolean;
+  /** The server recorded the paid booking. */
+  saved: boolean;
+  payment_id?: string;
+  order_id?: string;
+  ticket?: string;
+}
+
+/** Ask the server to verify the payment and record the booking. */
+export async function verifyPayment(success: RazorpaySuccess): Promise<VerifyResult> {
+  try {
+    const res = await fetch("/api/verify-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(success),
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ...data, verified: data.verified === true, saved: res.ok && data.saved === true };
+  } catch {
+    // Network drop after payment: the money may be taken, so keep the reference.
+    return { verified: false, saved: false, payment_id: success.razorpay_payment_id };
+  }
 }
 
 export class PaymentCancelled extends Error {

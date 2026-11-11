@@ -80,29 +80,42 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
       return setError("Online payment isn't available right now. Please contact us to book this workshop.");
     }
 
-    // Charge the GST-inclusive total (base × people + 18% GST).
+    // Shown to the customer; the server works out the real charge from the workshop's price.
     const { total: amountRupees } = workshopTotals(chosen.price, people);
-    const amountPaise = Math.round(amountRupees * 100);
-    if (amountPaise < 100) {
-      return setError("This workshop's price is not set correctly. Please contact us to book.");
-    }
 
-    // 1) Take payment first — a booking is only created once payment is verified.
+    // 1) Take payment first. The server prices the order and, once the payment
+    //    checks out, records the paid booking itself.
     setState("paying");
     let payment: { razorpay_payment_id: string; razorpay_order_id: string };
     try {
       await loadRazorpayScript();
-      const order = await createOrder(amountPaise, `ws_${chosen.id.slice(0, 8)}_${Date.now()}`.slice(0, 40));
+      const order = await createOrder({
+        workshop_id: chosen.id,
+        people,
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        notes: form.notes.trim(),
+      });
       const success = await openCheckout({
         order,
         name: "Bon Appetit · Pasta Workshop",
         description: `${chosen.title} · ${people} ${people === 1 ? "seat" : "seats"}`,
         prefill: { name: form.name.trim(), email: form.email.trim() || undefined, contact: form.phone.trim() },
       });
-      const verified = await verifyPayment(success);
-      if (!verified) {
+
+      // 2) Server verifies the payment and saves the booking.
+      setState("saving");
+      const result = await verifyPayment(success);
+      if (!result.verified && !result.payment_id) {
         setState("idle");
         return setError("We couldn't verify your payment. If money was deducted, please contact us — you won't be charged twice.");
+      }
+      if (!result.saved) {
+        setState("idle");
+        return setError(
+          `Payment received (ref ${success.razorpay_payment_id}), but we couldn't save your booking automatically. Please contact us with this reference and we'll confirm your seat.`,
+        );
       }
       payment = { razorpay_payment_id: success.razorpay_payment_id, razorpay_order_id: success.razorpay_order_id };
     } catch (err) {
@@ -111,30 +124,6 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
         return setError("Payment cancelled. Your spot isn't booked yet — you can try again.");
       }
       return setError(err instanceof Error ? err.message : "Payment couldn't be completed. Please try again.");
-    }
-
-    // 2) Record the paid booking.
-    setState("saving");
-    const { error: dbError } = await supabase.from("workshop_bookings").insert({
-      workshop_id: chosen.id,
-      workshop_title: chosen.title,
-      workshop_date: chosen.workshop_date,
-      name: form.name.trim(),
-      phone: form.phone.trim(),
-      email: form.email.trim() || null,
-      people,
-      notes: form.notes.trim() || null,
-      amount: amountRupees,
-      paid: true,
-      razorpay_order_id: payment.razorpay_order_id,
-      razorpay_payment_id: payment.razorpay_payment_id,
-    });
-    if (dbError) {
-      // Payment succeeded but we couldn't save the booking — make sure the user can reach us.
-      setState("idle");
-      return setError(
-        `Payment received (ref ${payment.razorpay_payment_id}), but we couldn't save your booking automatically. Please contact us with this reference and we'll confirm your seat.`,
-      );
     }
 
     // 3) Email the customer + admin. Best-effort — the booking is already paid & saved.

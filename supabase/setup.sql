@@ -85,9 +85,21 @@ drop policy if exists "workshops managed by admin" on public.workshops;
 create policy "workshops managed by admin" on public.workshops
   for all to authenticated using (public.is_admin()) with check (public.is_admin());
 
+-- The public key can only create UNPAID bookings. Paid bookings are written by
+-- /api/verify-payment with the server-only secret key, after Razorpay confirms payment.
 drop policy if exists "anyone can book" on public.workshop_bookings;
 create policy "anyone can book" on public.workshop_bookings
-  for insert with check (status = 'new');
+  for insert with check (
+    status = 'new'
+    and paid = false
+    and amount is null
+    and razorpay_order_id is null
+    and razorpay_payment_id is null
+  );
+
+-- One booking per Razorpay payment, so a retried confirmation can't double-book.
+create unique index if not exists workshop_bookings_payment_uniq
+  on public.workshop_bookings (razorpay_payment_id) where razorpay_payment_id is not null;
 
 drop policy if exists "bookings visible to admin" on public.workshop_bookings;
 create policy "bookings visible to admin" on public.workshop_bookings

@@ -8,7 +8,11 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import {
   CalendarDays, Plus, Pencil, Trash2, Loader2, ShieldAlert, ShieldCheck, Save, X, IndianRupee, Users, ImageUp, RotateCcw,
+  UtensilsCrossed,
 } from "lucide-react";
+import {
+  CAFE_PASTAS_KEY, SETTINGS_KEY, DEFAULT_SETTINGS, DELIVERY_APPS, CafePasta,
+} from "@/hooks/use-cafe-data";
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,7 +52,23 @@ const DEFAULT_IMAGE = "/pastaworkshop.webp";
 const MAX_BYTES = 5 * 1024 * 1024;
 const ACCEPTED = ["image/jpeg", "image/png", "image/webp"];
 
-const ImageUploader = ({ value, onChange }: { value: string; onChange: (url: string) => void }) => {
+const ImageUploader = ({
+  value,
+  onChange,
+  label = "Image",
+  fallback = DEFAULT_IMAGE,
+  resetLabel = "Use default image",
+  contain = false,
+}: {
+  value: string;
+  onChange: (url: string) => void;
+  label?: string;
+  /** Image used when none is uploaded ("" = no image). */
+  fallback?: string;
+  resetLabel?: string;
+  /** Show the preview uncropped (for logos). */
+  contain?: boolean;
+}) => {
   const db = useSupabase();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -84,7 +104,7 @@ const ImageUploader = ({ value, onChange }: { value: string; onChange: (url: str
 
   return (
     <div>
-      <span className={labelCls}>Image</span>
+      <span className={labelCls}>{label}</span>
       <div
         onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
         onDragLeave={() => setDragging(false)}
@@ -93,24 +113,30 @@ const ImageUploader = ({ value, onChange }: { value: string; onChange: (url: str
           dragging ? "border-orange-500 bg-orange-50" : "border-stone-300 bg-white"
         }`}
       >
-        <img
-          src={value || DEFAULT_IMAGE}
-          alt="Workshop preview"
-          className="w-20 h-20 rounded-md object-cover ring-1 ring-stone-200 flex-shrink-0 bg-stone-100"
-        />
+        {value || fallback ? (
+          <img
+            src={value || fallback}
+            alt={`${label} preview`}
+            className={`w-20 h-20 rounded-md ring-1 ring-stone-200 flex-shrink-0 bg-stone-100 ${contain ? "object-contain p-1 bg-white" : "object-cover"}`}
+          />
+        ) : (
+          <span className="w-20 h-20 rounded-md ring-1 ring-stone-200 flex-shrink-0 bg-stone-50 flex items-center justify-center text-[0.65rem] text-stone-400 text-center px-1">
+            No image
+          </span>
+        )}
         <div className="min-w-0 flex-1 space-y-2">
           <button type="button" className={ghostBtn} disabled={uploading} onClick={() => inputRef.current?.click()}>
             {uploading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ImageUp className="w-3.5 h-3.5" />}
             {uploading ? "Uploading…" : "Upload image"}
           </button>
           <p className="text-xs text-stone-500">or drag a photo here · JPG, PNG, WebP · max 5 MB</p>
-          {value && value !== DEFAULT_IMAGE && (
+          {value && value !== fallback && (
             <button
               type="button"
               className="inline-flex items-center gap-1 text-xs font-semibold text-stone-600 hover:text-orange-600"
-              onClick={() => onChange(DEFAULT_IMAGE)}
+              onClick={() => onChange(fallback)}
             >
-              <RotateCcw className="w-3 h-3" /> Use default image
+              <RotateCcw className="w-3 h-3" /> {resetLabel}
             </button>
           )}
         </div>
@@ -563,6 +589,360 @@ const BookingsTab = () => {
   );
 };
 
+/* ── Cafe: fresh pasta items + ordering text/links ─────────── */
+
+type PastaDraft = {
+  id?: string;
+  name: string;
+  description: string;
+  price: string;
+  price_note: string;
+  image: string;
+  recipe_title: string;
+  recipe_ingredients: string;
+  recipe_steps: string;
+  is_active: boolean;
+  sort: string;
+};
+
+const blankPasta = (sort: number): PastaDraft => ({
+  name: "",
+  description: "",
+  price: "250",
+  price_note: "250g pack",
+  image: "/freshpasta.webp",
+  recipe_title: "",
+  recipe_ingredients: "",
+  recipe_steps: "",
+  is_active: true,
+  sort: String(sort),
+});
+
+const CafePastasSection = () => {
+  const db = useSupabase();
+  const qc = useQueryClient();
+  const [draft, setDraft] = useState<PastaDraft | null>(null);
+
+  const { data: all = [], isLoading, error } = useQuery({
+    queryKey: ["admin", "cafe-pastas"],
+    enabled: !!db,
+    queryFn: async () => {
+      const { data, error } = await db!.from("cafe_pastas").select("*").order("sort").order("created_at");
+      if (error) throw error;
+      return (data ?? []).map((p) => ({ ...p, price: Number(p.price) })) as CafePasta[];
+    },
+  });
+
+  const refresh = () => {
+    qc.invalidateQueries({ queryKey: ["admin", "cafe-pastas"] });
+    qc.invalidateQueries({ queryKey: CAFE_PASTAS_KEY });
+  };
+
+  const save = useMutation({
+    mutationFn: async (d: PastaDraft) => {
+      const row = {
+        name: d.name.trim(),
+        description: d.description.trim() || null,
+        price: Number(d.price),
+        price_note: d.price_note.trim() || null,
+        image: d.image.trim() || "/freshpasta.webp",
+        recipe_title: d.recipe_title.trim() || null,
+        recipe_ingredients: d.recipe_ingredients.trim() || null,
+        recipe_steps: d.recipe_steps.trim() || null,
+        is_active: d.is_active,
+        sort: Number(d.sort) || 0,
+      };
+      const q = d.id
+        ? db!.from("cafe_pastas").update(row).eq("id", d.id).select()
+        : db!.from("cafe_pastas").insert(row).select();
+      const { data, error } = await q;
+      if (error) throw error;
+      if (!data?.length) throw new Error(rlsHint);
+    },
+    onSuccess: (_, d) => {
+      toast.success(d.id ? "Pasta updated" : "Pasta added");
+      setDraft(null);
+      refresh();
+    },
+    onError: (e: Error) => toast.error(explainCafe(e)),
+  });
+
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await db!.from("cafe_pastas").delete().eq("id", id).select();
+      if (error) throw error;
+      if (!data?.length) throw new Error(rlsHint);
+    },
+    onSuccess: () => {
+      toast.success("Pasta deleted");
+      refresh();
+    },
+    onError: (e: Error) => toast.error(explainCafe(e)),
+  });
+
+  const submit = () => {
+    if (!draft) return;
+    if (!draft.name.trim()) return toast.error("Give the pasta a name.");
+    if (draft.price === "" || !(Number(draft.price) >= 0)) return toast.error("Enter a valid price.");
+    save.mutate(draft);
+  };
+
+  const edit = (p: CafePasta) =>
+    setDraft({
+      id: p.id,
+      name: p.name,
+      description: p.description ?? "",
+      price: String(p.price),
+      price_note: p.price_note ?? "",
+      image: p.image,
+      recipe_title: p.recipe_title ?? "",
+      recipe_ingredients: p.recipe_ingredients ?? "",
+      recipe_steps: p.recipe_steps ?? "",
+      is_active: p.is_active,
+      sort: String(p.sort),
+    });
+
+  return (
+    <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] gap-8 items-start">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h2 className="text-2xl font-bold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
+            Fresh pasta on the Cafe page
+          </h2>
+          <button
+            type="button"
+            className={primaryBtn}
+            onClick={() => setDraft(blankPasta((all.at(-1)?.sort ?? 0) + 1))}
+          >
+            <Plus className="w-4 h-4" /> New pasta
+          </button>
+        </div>
+
+        {isLoading && <p className="flex items-center gap-2 text-stone-500 text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>}
+        {error && <p className="text-sm text-red-600">Couldn't load the cafe menu: {explainCafe(error)}</p>}
+        {!isLoading && !error && all.length === 0 && (
+          <p className="text-sm text-stone-600 bg-stone-50 rounded-lg p-4">No pasta yet. Add the first one.</p>
+        )}
+
+        <ul className="divide-y divide-stone-200 border-y border-stone-200">
+          {all.map((p) => (
+            <li key={p.id} className="py-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <img src={p.image} alt="" className="w-14 h-14 rounded-full object-cover ring-1 ring-stone-200 bg-stone-100 flex-shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold text-stone-900 [overflow-wrap:anywhere]">{p.name}</p>
+                <p className="text-sm text-stone-500">
+                  ₹{p.price}{p.price_note ? ` · ${p.price_note}` : ""} · {p.recipe_title ? `Recipe: ${p.recipe_title}` : "No recipe yet"}
+                </p>
+                {!p.is_active && <span className="mt-1.5 inline-block text-[0.7rem] px-2 py-0.5 rounded-full bg-stone-200 text-stone-700">Hidden</span>}
+              </div>
+              <div className="flex gap-2">
+                <button type="button" className={ghostBtn} onClick={() => edit(p)}>
+                  <Pencil className="w-3.5 h-3.5" /> Edit
+                </button>
+                <button
+                  type="button"
+                  className={`${ghostBtn} hover:border-red-600 hover:text-red-600`}
+                  disabled={remove.isPending}
+                  onClick={() => window.confirm(`Delete "${p.name}" from the Cafe page?`) && remove.mutate(p.id)}
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <aside className="lg:sticky lg:top-24 border border-stone-200 rounded-xl p-5 md:p-6 bg-stone-50">
+        {!draft ? (
+          <div className="text-sm text-stone-600">
+            <UtensilsCrossed className="w-8 h-8 text-orange-600 mb-3" />
+            Pick <span className="font-semibold">New pasta</span> or <span className="font-semibold">Edit</span> to change a name, price,
+            photo or recipe. Changes show on the Cafe page straight away.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-stone-900">{draft.id ? "Edit pasta" : "New pasta"}</h3>
+              <button type="button" aria-label="Close editor" className="p-1.5 rounded-full hover:bg-stone-200" onClick={() => setDraft(null)}>
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <label htmlFor="cp-name" className={labelCls}>Name</label>
+              <input id="cp-name" className={inputCls} value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+            </div>
+            <div>
+              <label htmlFor="cp-desc" className={labelCls}>Short description</label>
+              <input id="cp-desc" className={inputCls} value={draft.description} onChange={(e) => setDraft({ ...draft, description: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_minmax(0,0.8fr)] gap-3">
+              <div>
+                <label htmlFor="cp-price" className={labelCls}>Price (₹)</label>
+                <input id="cp-price" type="number" min={0} className={inputCls} value={draft.price} onChange={(e) => setDraft({ ...draft, price: e.target.value })} />
+              </div>
+              <div>
+                <label htmlFor="cp-note" className={labelCls}>Price note</label>
+                <input id="cp-note" placeholder="250g pack" className={inputCls} value={draft.price_note} onChange={(e) => setDraft({ ...draft, price_note: e.target.value })} />
+              </div>
+              <div>
+                <label htmlFor="cp-sort" className={labelCls}>Order</label>
+                <input id="cp-sort" type="number" className={inputCls} value={draft.sort} onChange={(e) => setDraft({ ...draft, sort: e.target.value })} />
+              </div>
+            </div>
+
+            <ImageUploader
+              label="Photo"
+              value={draft.image}
+              fallback="/freshpasta.webp"
+              onChange={(url) => setDraft({ ...draft, image: url })}
+            />
+
+            <div className="pt-2 border-t border-stone-200">
+              <label htmlFor="cp-rtitle" className={labelCls}>Recipe name</label>
+              <input id="cp-rtitle" placeholder="e.g. Aglio e olio" className={inputCls} value={draft.recipe_title} onChange={(e) => setDraft({ ...draft, recipe_title: e.target.value })} />
+            </div>
+            <div>
+              <label htmlFor="cp-ing" className={labelCls}>Ingredients · one per line</label>
+              <textarea id="cp-ing" rows={5} className={`${inputCls} resize-y`} value={draft.recipe_ingredients} onChange={(e) => setDraft({ ...draft, recipe_ingredients: e.target.value })} />
+            </div>
+            <div>
+              <label htmlFor="cp-steps" className={labelCls}>Method · one step per line</label>
+              <textarea id="cp-steps" rows={6} className={`${inputCls} resize-y`} value={draft.recipe_steps} onChange={(e) => setDraft({ ...draft, recipe_steps: e.target.value })} />
+            </div>
+
+            <label className="flex items-center justify-between gap-3 text-sm text-stone-700">
+              Show on the website
+              <Switch checked={draft.is_active} onCheckedChange={(v) => setDraft({ ...draft, is_active: v })} />
+            </label>
+
+            <button type="button" className={`${primaryBtn} w-full`} disabled={save.isPending} onClick={submit}>
+              {save.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              {draft.id ? "Save changes" : "Add pasta"}
+            </button>
+          </div>
+        )}
+      </aside>
+    </div>
+  );
+};
+
+const settingKeys = [
+  "cafe.order_intro",
+  ...DELIVERY_APPS.flatMap((a) => [`cafe.${a.id}_url`, `cafe.${a.id}_logo`]),
+];
+
+const CafeOrderSection = () => {
+  const db = useSupabase();
+  const qc = useQueryClient();
+  const [edits, setEdits] = useState<Record<string, string>>({});
+
+  const { data: saved = {}, isLoading, error } = useQuery({
+    queryKey: ["admin", "site-settings"],
+    enabled: !!db,
+    queryFn: async () => {
+      const { data, error } = await db!.from("site_settings").select("key, value").in("key", settingKeys);
+      if (error) throw error;
+      return Object.fromEntries((data ?? []).map((r) => [r.key, r.value ?? ""])) as Record<string, string>;
+    },
+  });
+
+  const value = (k: string) => edits[k] ?? saved[k] ?? (k === "cafe.order_intro" ? DEFAULT_SETTINGS[k] : "");
+  const set = (k: string, v: string) => setEdits((e) => ({ ...e, [k]: v }));
+  const changed = Object.keys(edits).filter((k) => edits[k] !== (saved[k] ?? ""));
+
+  const save = useMutation({
+    mutationFn: async () => {
+      for (const k of changed) {
+        const v = edits[k].trim();
+        if (k.endsWith("_url") && v && !/^https:\/\//i.test(v)) {
+          throw new Error("Delivery links must start with https://");
+        }
+      }
+      const rows = changed.map((key) => ({ key, value: edits[key].trim(), updated_at: new Date().toISOString() }));
+      const { data, error } = await db!.from("site_settings").upsert(rows).select();
+      if (error) throw error;
+      if ((data?.length ?? 0) < rows.length) throw new Error(rlsHint);
+    },
+    onSuccess: () => {
+      toast.success("Cafe ordering details saved");
+      setEdits({});
+      qc.invalidateQueries({ queryKey: ["admin", "site-settings"] });
+      qc.invalidateQueries({ queryKey: SETTINGS_KEY });
+    },
+    onError: (e: Error) => toast.error(explainCafe(e)),
+  });
+
+  if (isLoading) return <p className="flex items-center gap-2 text-stone-500 text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>;
+  if (error) return <p className="text-sm text-red-600">Couldn't load ordering details: {explainCafe(error)}</p>;
+
+  return (
+    <div className="max-w-4xl">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+        <h2 className="text-2xl font-bold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
+          Order from the Cafe
+        </h2>
+        <button type="button" className={primaryBtn} disabled={!changed.length || save.isPending} onClick={() => save.mutate()}>
+          {save.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Save {changed.length ? `(${changed.length})` : ""}
+        </button>
+      </div>
+
+      <label htmlFor="cafe-intro" className={labelCls}>Text above the apps</label>
+      <textarea
+        id="cafe-intro"
+        rows={3}
+        className={`${inputCls} resize-y mb-6`}
+        value={value("cafe.order_intro")}
+        onChange={(e) => set("cafe.order_intro", e.target.value)}
+      />
+
+      <div className="grid md:grid-cols-3 gap-5">
+        {DELIVERY_APPS.map((a) => (
+          <div key={a.id} className="border border-stone-200 rounded-xl p-4 bg-stone-50 space-y-3 min-w-0">
+            <p className="font-semibold text-stone-900">{a.name}</p>
+            <div>
+              <label htmlFor={`url-${a.id}`} className={labelCls}>Link</label>
+              <input
+                id={`url-${a.id}`}
+                type="url"
+                placeholder="https://…"
+                className={inputCls}
+                value={value(`cafe.${a.id}_url`)}
+                onChange={(e) => set(`cafe.${a.id}_url`, e.target.value)}
+              />
+              <p className="mt-1 text-xs text-stone-500">Empty shows "Link coming soon".</p>
+            </div>
+            <ImageUploader
+              label="Logo"
+              value={value(`cafe.${a.id}_logo`)}
+              fallback=""
+              resetLabel="Remove logo (show name)"
+              contain
+              onChange={(url) => set(`cafe.${a.id}_logo`, url)}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const explainCafe = (e: unknown) => {
+  const err = e as { code?: string; message?: string };
+  if (err?.code === "PGRST205" || /schema cache|cafe_pastas|site_settings/i.test(err?.message ?? ""))
+    return "The cafe tables don't exist yet. Run supabase/cafe.sql in the Supabase SQL Editor.";
+  return explain(e);
+};
+
+const CafeTab = () => (
+  <div className="space-y-16">
+    <CafePastasSection />
+    <CafeOrderSection />
+  </div>
+);
+
 /* ── Page ──────────────────────────────────────────────────── */
 
 const Admin = () => {
@@ -601,10 +981,12 @@ const Admin = () => {
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList className="mb-8">
           <TabsTrigger value="workshops">Workshops</TabsTrigger>
+          <TabsTrigger value="cafe">Cafe</TabsTrigger>
           <TabsTrigger value="prices">Prices</TabsTrigger>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
         </TabsList>
         <TabsContent value="workshops"><WorkshopsTab /></TabsContent>
+        <TabsContent value="cafe"><CafeTab /></TabsContent>
         <TabsContent value="prices"><PricesTab /></TabsContent>
         <TabsContent value="bookings"><BookingsTab /></TabsContent>
       </Tabs>

@@ -223,7 +223,7 @@ const Careers = () => {
     const roleLabel = openings.find((o) => o.id === selectedRole)?.title ?? selectedRole;
     try {
       await emailjs.send(
-        "service_0ngsn9l",
+        "service_z4w0fmg",
         "template_rdzt2i6",
         {
           from_name: form.name,

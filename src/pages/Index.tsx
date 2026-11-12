@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { CafeMenuBoard } from "@/components/CafeMenu";
 
 const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600";
@@ -69,11 +70,6 @@ const cookSteps: { text: string; icon: LucideIcon }[] = [
   { text: "Fresh pasta: drop it in and cook for 5 minutes, then drain.", icon: Timer },
   { text: "Dry pasta: cook for 7–8 minutes, then drain and toss in your sauce.", icon: CookingPot },
 ];
-
-const callouts = {
-  left: ["Handmade daily", "Semolina & '00' flour", "Made to order"],
-  right: ["No preservatives", "Five natural flavours", "Ready in 5 minutes"],
-};
 
 const notes = [
   { q: "Is the pasta cooked?", a: "All our pastas are uncooked. Boil within 10 minutes and they're ready to savour." },
@@ -332,6 +328,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ── Cafe menu board ── */}
+      <CafeMenuBoard />
+
       {/* ── Five flavours: a real photo of the packs beside a plain list of what colours each dough ── */}
       <section className="mt-24 md:mt-28 px-6 md:px-14 xl:px-20">
         <div className="max-w-7xl mx-auto grid gap-10 lg:gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center">
@@ -394,6 +393,30 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ── Making of our pasta: full-bleed band in the picture's own paper colour, so the picture has no edges ── */}
+      <section aria-label="How our pasta is made" className="mt-24 md:mt-28 bg-[var(--making-paper)] px-4 md:px-14 xl:px-20 pt-10 md:pt-14 pb-14 md:pb-20">
+        <div className="max-w-7xl mx-auto">
+          <img
+            src="/making-of-our-pasta.webp"
+            alt="Making of our pasta: it starts with semolina flour, is mixed with water into a fresh dough, blended with beetroot pulp, and becomes our beetroot pasta."
+            loading="lazy"
+            width={1778}
+            height={885}
+            className="block w-full h-auto"
+          />
+          <div className="mt-6 md:mt-4 flex flex-col sm:flex-row items-center justify-center gap-x-6 gap-y-4 text-center">
+            <p className="text-lg md:text-xl text-stone-700">Every colour comes from real vegetable pulp.</p>
+            <Link
+              to="/our-pasta-brand"
+              className={`group inline-flex items-center gap-2 rounded-full bg-stone-900 hover:bg-orange-600 active:translate-y-px text-white px-7 py-3 text-sm font-semibold whitespace-nowrap transition-colors ${focusRing}`}
+            >
+              See every flavour
+              <ArrowRight className="w-4 h-4 motion-safe:transition-transform group-hover:translate-x-1" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* ── What is handmade pasta? + promise cards ── */}
       <section className="px-6 md:px-14 xl:px-20 pt-24 md:pt-28">
         <div className="max-w-7xl mx-auto">
@@ -445,41 +468,33 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ── Callout diagram ── */}
-      <section className="px-6 md:px-14 xl:px-20 pt-24 md:pt-28">
-        <div className="max-w-6xl mx-auto rounded-2xl bg-gradient-to-b from-stone-50 to-orange-50 border border-stone-200 px-6 sm:px-10 py-14 md:py-16">
-          <h2
-            className="text-center text-[2.4rem] md:text-[3.4rem] font-semibold text-stone-900 leading-[1.02]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Small batch, <span className="text-orange-600">big flavour.</span>
-          </h2>
-          <div className="mt-12 grid md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-8 md:gap-0">
-            <figure className="md:order-2 mx-auto w-52 h-52 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full overflow-hidden border-[8px] border-white shadow-xl">
-              <img src="/spinachpasta (1).webp" alt="Spinach pasta with tomatoes and olive oil" className="w-full h-full object-cover" />
-            </figure>
-            {(["left", "right"] as const).map((side) => (
-              <ul
-                key={side}
-                className={`grid grid-cols-2 md:grid-cols-1 gap-6 md:gap-12 ${side === "left" ? "md:order-1" : "md:order-3"}`}
-              >
-                {callouts[side].map((c) => (
-                  <li
-                    key={c}
-                    className={`flex items-center gap-4 ${side === "left" ? "md:flex-row" : "md:flex-row-reverse"}`}
-                  >
-                    <span
-                      className={`text-xl lg:text-2xl font-semibold text-stone-900 leading-tight min-w-0 ${side === "left" ? "md:text-right" : ""}`}
-                      style={{ fontFamily: "var(--font-display)" }}
-                    >
-                      {c}
-                    </span>
-                    <span aria-hidden="true" className="hidden md:block flex-1 min-w-8 h-px bg-stone-900" />
-                    <span aria-hidden="true" className="hidden md:block w-2 h-2 rounded-full bg-orange-600 shrink-0" />
-                  </li>
-                ))}
-              </ul>
-            ))}
+      {/* ── Goodness without guilt: the supplied callout picture as one big rounded panel, with its next step underneath ── */}
+      <section aria-label="What goes into our spinach pasta" className="px-4 md:px-14 xl:px-20 pt-24 md:pt-28">
+        <div className="max-w-6xl mx-auto">
+          <figure className="overflow-hidden rounded-[2rem] md:rounded-[3rem] shadow-[0_30px_60px_-40px_theme(colors.stone.900/0.6)]">
+            <img
+              src="/goodness-without-guilt.webp"
+              alt="Goodness without guilt: 100% semolina, no maida, made with spinach, no artificial colours, no preservatives, ready in 5 minutes."
+              loading="lazy"
+              width={1672}
+              height={941}
+              className="block w-full h-auto"
+            />
+          </figure>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              to="/fresh-pasta"
+              className={`group inline-flex items-center gap-2 rounded-full bg-orange-600 hover:bg-orange-700 active:translate-y-px text-white px-8 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors ${focusRing}`}
+            >
+              Order fresh pasta
+              <ArrowRight className="w-4 h-4 motion-safe:transition-transform group-hover:translate-x-1" />
+            </Link>
+            <Link
+              to="/recipes"
+              className={`inline-flex items-center gap-2 rounded-full border border-stone-300 hover:border-stone-900 active:translate-y-px text-stone-800 px-8 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors ${focusRing}`}
+            >
+              Get a recipe
+            </Link>
           </div>
         </div>
       </section>

@@ -8,7 +8,7 @@ When a workshop payment succeeds, the app sends **two** emails (code in
 2. **Customer ticket** → the email the customer entered — a booking reference
    (e.g. `BA-7XP7X`) plus a **QR code** to scan at check-in.
 
-Both go through EmailJS (service `service_0ngsn9l`, public key `lBQ8UpD7SH9b45AVq`).
+Both go through EmailJS (service `service_z4w0fmg`, public key `lBQ8UpD7SH9b45AVq`).
 
 ---
 

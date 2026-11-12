@@ -62,6 +62,14 @@
     --flavour-paprika: oklch(55% 0.17 35);
     --flavour-beetroot: oklch(45% 0.13 350);
     --flavour-wheat: oklch(66% 0.08 70);
+    /* Cafe menu board (colours taken from the printed menu card) */
+    --menu-cream: oklch(97.5% 0.03 88);
+    --menu-olive: oklch(42% 0.06 118);
+    --menu-rust: oklch(56% 0.16 45);
+    --menu-veg: oklch(50% 0.14 145);
+    --menu-nonveg: oklch(52% 0.19 27);
+    /* the exact paper of the "Making of our pasta" picture (#fff6e9), so its band has no visible edge */
+    --making-paper: #fff6e9;
     --dur-fast: 150ms;
     --dur-base: 250ms;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

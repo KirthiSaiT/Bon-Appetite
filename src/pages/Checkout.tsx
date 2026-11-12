@@ -72,7 +72,7 @@ const Checkout = () => {
     console.log("Sending email with params:", templateParams);
 
     // Test EmailJS configuration
-    const serviceID = 'service_0ngsn9l';
+    const serviceID = 'service_z4w0fmg';
     const templateID = 'template_rdzt2i6';
     const publicKey = 'lBQ8UpD7SH9b45AVq';
 

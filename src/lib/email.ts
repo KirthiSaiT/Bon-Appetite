@@ -3,7 +3,7 @@
 // - Customer gets a TICKET: a booking reference + a scannable QR code for check-in.
 import emailjs from "@emailjs/browser";
 
-const SERVICE_ID = "service_0ngsn9l";
+const SERVICE_ID = "service_z4w0fmg";
 const PUBLIC_KEY = "lBQ8UpD7SH9b45AVq";
 
 // Admin notification uses the existing order template.

@@ -55,7 +55,7 @@ const Contact = () => {
     e.preventDefault();
 
     emailjs.send(
-      'service_0ngsn9l',
+      'service_z4w0fmg',
       'template_rdzt2i6',
       {
         from_name: `${formData.firstName} ${formData.lastName}`,

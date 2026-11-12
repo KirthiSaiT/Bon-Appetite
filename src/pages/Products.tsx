@@ -1,5 +1,7 @@
 /* Hallmark · redesign · macrostructure: Logo Spotlight (free-standing logos, open one in colour, others greyed → one section at a time → paged fresh pasta list)
- * theme: custom (project tokens · Cormorant Garamond + DM Sans · orange accent) · enrichment: supplied logo artwork, shown whole
+ * theme: custom (project tokens · Cormorant Garamond + DM Sans · orange accent · --menu-* cream/olive/rust from the printed menu card)
+ * enrichment: supplied logo artwork + kitchen photos + supplied "Making of our pasta" / "Goodness without guilt" panels
+ * order chapter: pasta photos · Order from us (build a plate / call) · menu-card window · delivery apps · pure-pulp band
  * audience: Hyderabad food lovers · use: order fresh pasta, order hot food, or book a service · tone: warm editorial
  * pre-emit critique: P4 H5 E4 S5 R4 V5
  * Content (pasta items, prices, recipes, photos, ordering text, delivery links) is edited in Admin → Cafe.
@@ -13,6 +15,7 @@ import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { OrderList, OrderRow, cafeMenus, focusRing } from "@/components/OrderSheet";
+import { MenuCardButton } from "@/components/CafeMenu";
 import { CafePasta, DELIVERY_APPS, lines, useCafePastas, useSiteSettings } from "@/hooks/use-cafe-data";
 
 type ChapterId = "pasta" | "order" | "services";
@@ -23,22 +26,30 @@ const chapters: { id: ChapterId; label: string; line: string; logo: string; alt:
   { id: "services", label: "Services", line: "Catering and corporate workshops", logo: "/services.webp", alt: "Services" },
 ];
 
+const flavourDots = [
+  { name: "Plain", swatch: "var(--flavour-plain)" },
+  { name: "Spinach", swatch: "var(--flavour-spinach)" },
+  { name: "Paprika", swatch: "var(--flavour-paprika)" },
+  { name: "Beetroot", swatch: "var(--flavour-beetroot)" },
+  { name: "Wheat", swatch: "var(--flavour-wheat)" },
+];
+
 const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* Chapter head: the chapter's logo sits beside its heading */
 const ChapterHead = ({ logo, title, children }: { logo: string; title: string; children?: React.ReactNode }) => (
-  <div className="mb-8 md:mb-12 grid grid-cols-1 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center gap-4 sm:gap-5 md:gap-8">
-    <span className="block w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 overflow-hidden rounded-full bg-white ring-1 ring-stone-200">
+  <div className="mb-10 md:mb-14 grid grid-cols-1 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center gap-4 sm:gap-6 md:gap-10">
+    <span className="block w-20 h-20 sm:w-24 sm:h-24 md:w-36 md:h-36 overflow-hidden rounded-full bg-white ring-1 ring-stone-200">
       <img src={logo} alt="" className="w-full h-full object-contain scale-[1.45]" />
     </span>
     <div className="min-w-0">
       <h2
-        className="text-[2rem] md:text-[3rem] font-semibold leading-[1.05] text-stone-900 [overflow-wrap:anywhere]"
+        className="text-[2.4rem] md:text-[3.8rem] font-bold leading-[1.0] text-stone-900 [overflow-wrap:anywhere]"
         style={{ fontFamily: "var(--font-display)" }}
       >
         {title}
       </h2>
-      {children && <p className="mt-2 max-w-2xl text-stone-600 leading-relaxed">{children}</p>}
+      {children && <p className="mt-3 max-w-2xl text-lg md:text-xl text-stone-600 leading-relaxed">{children}</p>}
     </div>
   </div>
 );
@@ -135,11 +146,53 @@ const PastaChapter = () => {
 const OrderChapter = () => {
   const { get } = useSiteSettings();
   return (
-    <section id="cafe-order" aria-labelledby="cafe-order-title" className="scroll-mt-24 bg-stone-50 border-t border-stone-200">
+    <section id="cafe-order" aria-labelledby="cafe-order-title" className="scroll-mt-24 bg-[var(--menu-cream)] border-t border-stone-200">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 py-14 md:py-20">
         <div id="cafe-order-title">
-          <ChapterHead logo="/readytoeat.webp" title="Order from the Cafe.">{get("cafe.order_intro")}</ChapterHead>
+          <ChapterHead logo="/readytoeat.webp" title="5 flavours. Zero guilt.">{get("cafe.order_intro")}</ChapterHead>
         </div>
+
+        {/* Pictures of our pasta · order straight from us · a small window onto the menu card */}
+        <div className="grid gap-4 md:gap-6 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)]">
+          {/* phones: two photos side by side, the order card full width under them; sm+: tall photo left, packs + card stacked right */}
+          <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] sm:grid-rows-[minmax(0,1fr)_auto] gap-4 md:gap-6">
+            <figure className="sm:row-span-2 aspect-square sm:aspect-auto overflow-hidden rounded-3xl bg-stone-200">
+              <img src="/spinachpasta (1).webp" alt="Spinach pasta with the ingredients that go into it" loading="lazy" className="w-full h-full sm:min-h-[16rem] object-cover" />
+            </figure>
+            <figure className="aspect-square sm:aspect-auto min-w-0 overflow-hidden rounded-3xl bg-stone-200">
+              <img src="/aboutus.webp" alt="Paprika, spinach and beetroot pasta packs" loading="lazy" className="w-full h-full object-cover" />
+            </figure>
+            <div className="col-span-2 sm:col-span-1 min-w-0">
+              <div className="rounded-3xl bg-orange-700 p-5 md:p-7 text-white">
+                <h3 className="text-[1.7rem] md:text-[2.1rem] font-bold leading-none" style={{ fontFamily: "var(--font-display)" }}>
+                  Order from us
+                </h3>
+                <p className="mt-2 text-sm md:text-base text-orange-50 leading-relaxed">Build your plate online, or call the kitchen.</p>
+                <div className="mt-4 flex flex-col gap-2.5">
+                  <Link
+                    to="/cooked-pasta"
+                    className={`inline-flex items-center justify-center gap-2 rounded-full bg-white text-stone-900 hover:bg-orange-50 px-5 py-3 text-sm font-semibold whitespace-nowrap transition-colors active:translate-y-px ${focusRing}`}
+                  >
+                    Build your plate <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  <a
+                    href="tel:+919390105767"
+                    className={`inline-flex items-center justify-center gap-2 rounded-full border border-orange-300 hover:bg-orange-800 px-5 py-3 text-sm font-semibold whitespace-nowrap transition-colors active:translate-y-px ${focusRing}`}
+                  >
+                    <Phone className="w-4 h-4" /> 93901 05767
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="max-w-[22rem] w-full justify-self-center lg:max-w-none">
+            <MenuCardButton />
+          </div>
+        </div>
+
+        <h3 className="mt-14 md:mt-20 mb-5 md:mb-6 text-2xl md:text-[2.2rem] font-bold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
+          Or order on your delivery app
+        </h3>
         <ul className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
           {DELIVERY_APPS.map((app) => {
             const url = get(`cafe.${app.id}_url`);
@@ -180,12 +233,28 @@ const OrderChapter = () => {
             );
           })}
         </ul>
-        <p className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-stone-600">
-          Prefer to call?
-          <a href="tel:+919390105767" className={`inline-flex items-center gap-2 font-semibold text-stone-900 hover:text-orange-700 whitespace-nowrap ${focusRing}`}>
-            <Phone className="w-4 h-4 text-orange-600" /> 93901 05767
-          </a>
-        </p>
+        {/* What colours the dough */}
+        <div className="mt-14 md:mt-20 grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center rounded-3xl md:rounded-[2.5rem] px-6 py-8 md:px-12 md:py-12 text-white" style={{ background: "var(--menu-olive)" }}>
+          <div className="min-w-0">
+            <p className="text-[2rem] md:text-[3rem] font-bold leading-[1.02] [overflow-wrap:anywhere]" style={{ fontFamily: "var(--font-display)" }}>
+              Pure vegetable pulp.
+            </p>
+            <p className="mt-2 text-base md:text-lg text-stone-100 leading-relaxed">No added colours. No preservatives. Just what grows.</p>
+          </div>
+          <ul className="flex items-center" aria-label="Our five flavours">
+            {flavourDots.map((f) => (
+              <li key={f.name} className="-ml-2 first:ml-0">
+                <span
+                  role="img"
+                  aria-label={f.name}
+                  title={f.name}
+                  className="block w-12 h-12 md:w-16 md:h-16 rounded-full ring-4"
+                  style={{ background: f.swatch, ["--tw-ring-color" as string]: "var(--menu-olive)" }}
+                />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
@@ -255,7 +324,7 @@ const CateringModal = ({ onClose }: { onClose: () => void }) => {
     setSending(true);
     try {
       await emailjs.send(
-        "service_0ngsn9l",
+        "service_z4w0fmg",
         "template_rdzt2i6",
         {
           from_name: form.name.trim(),

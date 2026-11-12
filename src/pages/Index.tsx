@@ -50,15 +50,6 @@ const stars: { name: string; image: string; to: string; tint: string; badge?: st
   { name: "Pasta Workshops", image: "/pastaworkshop.webp", to: "/pasta-workshops", tint: "var(--color-ink)" },
 ];
 
-// Five doughs — swatches use the pasta-flavour tokens; colour comes from the vegetable itself
-const flavours: { name: string; from: string; swatch: string; ink: string }[] = [
-  { name: "Plain", from: "Semolina & '00' flour", swatch: "var(--flavour-plain)", ink: "var(--color-ink)" },
-  { name: "Spinach", from: "Fresh spinach pulp", swatch: "var(--flavour-spinach)", ink: "var(--color-paper)" },
-  { name: "Paprika", from: "Paprika", swatch: "var(--flavour-paprika)", ink: "var(--color-paper)" },
-  { name: "Beetroot", from: "Real beetroot pulp", swatch: "var(--flavour-beetroot)", ink: "var(--color-paper)" },
-  { name: "Wheat", from: "Wheat flour", swatch: "var(--flavour-wheat)", ink: "var(--color-paper)" },
-];
-
 const promises: { title: string; body: string; icon: LucideIcon }[] = [
   { title: "No Preservatives", body: "Nothing added to make it last longer — just flour, water and vegetables.", icon: Ban },
   { title: "Real Vegetable Colours", body: "Spinach, beetroot and paprika give our pasta its colour. No dyes.", icon: Leaf },
@@ -330,56 +321,6 @@ const Index = () => {
 
       {/* ── Cafe menu board ── */}
       <CafeMenuBoard />
-
-      {/* ── 100% pulp: quiet white page, one photo, two plain facts, the five doughs as a single line ── */}
-      <section aria-labelledby="pulp-title" className="mt-24 md:mt-32 px-6 md:px-14 xl:px-20">
-        <div className="max-w-6xl mx-auto grid gap-10 md:gap-14 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center">
-          <figure className="min-w-0 aspect-[4/5] overflow-hidden rounded-[2rem] bg-stone-100">
-            <img src="/aboutus.webp" alt="Paprika, spinach and beetroot pasta packs" loading="lazy" className="w-full h-full object-cover" />
-          </figure>
-
-          <div className="min-w-0">
-            <h2
-              id="pulp-title"
-              className="text-[2.6rem] sm:text-[3.2rem] lg:text-[4rem] font-semibold leading-[1] text-stone-900 [overflow-wrap:anywhere]"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Made with <span className="text-orange-600">100% pulp.</span>
-            </h2>
-            <p className="mt-4 text-lg text-stone-600">No additional preservatives.</p>
-
-            <dl className="mt-10 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-y border-stone-200">
-              <div className="py-6 pr-4 border-r border-stone-200">
-                <dt className="sr-only">Vegetable pulp</dt>
-                <dd className="text-[2.6rem] md:text-[3.2rem] font-semibold leading-none text-stone-900" style={{ fontFamily: "var(--font-display)" }}>100%</dd>
-                <dd className="mt-2 text-sm text-stone-500">vegetable pulp</dd>
-              </div>
-              <div className="py-6 pl-6">
-                <dt className="sr-only">Additional preservatives</dt>
-                <dd className="text-[2.6rem] md:text-[3.2rem] font-semibold leading-none text-stone-900" style={{ fontFamily: "var(--font-display)" }}>0</dd>
-                <dd className="mt-2 text-sm text-stone-500">additional preservatives</dd>
-              </div>
-            </dl>
-
-            <ul aria-label="Our five flavours" className="mt-8 flex flex-wrap gap-x-5 gap-y-3">
-              {flavours.map((f) => (
-                <li key={f.name} className="inline-flex items-center gap-2 text-sm font-medium text-stone-700 whitespace-nowrap">
-                  <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full" style={{ background: f.swatch }} />
-                  {f.name}
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              to="/our-pasta-brand"
-              className={`group mt-10 inline-flex items-center gap-2 text-sm font-semibold text-stone-900 whitespace-nowrap border-b-2 border-orange-600 pb-1 hover:text-orange-700 ${focusRing}`}
-            >
-              See every shape
-              <ArrowRight className="w-4 h-4 motion-safe:transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
-        </div>
-      </section>
 
       {/* ── Making of our pasta: full-bleed band in the picture's own paper colour, so the picture has no edges ── */}
       <section aria-label="How our pasta is made" className="mt-24 md:mt-28 bg-[var(--making-paper)] px-4 md:px-14 xl:px-20 pt-10 md:pt-14 pb-14 md:pb-20">

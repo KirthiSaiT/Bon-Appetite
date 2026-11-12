@@ -53,9 +53,9 @@ const stars: { name: string; image: string; to: string; tint: string; badge?: st
 // Five doughs — swatches use the pasta-flavour tokens; colour comes from the vegetable itself
 const flavours: { name: string; from: string; swatch: string; ink: string }[] = [
   { name: "Plain", from: "Semolina & '00' flour", swatch: "var(--flavour-plain)", ink: "var(--color-ink)" },
-  { name: "Spinach", from: "Fresh spinach", swatch: "var(--flavour-spinach)", ink: "var(--color-paper)" },
+  { name: "Spinach", from: "Fresh spinach pulp", swatch: "var(--flavour-spinach)", ink: "var(--color-paper)" },
   { name: "Paprika", from: "Paprika", swatch: "var(--flavour-paprika)", ink: "var(--color-paper)" },
-  { name: "Beetroot", from: "Real beetroot", swatch: "var(--flavour-beetroot)", ink: "var(--color-paper)" },
+  { name: "Beetroot", from: "Real beetroot pulp", swatch: "var(--flavour-beetroot)", ink: "var(--color-paper)" },
   { name: "Wheat", from: "Wheat flour", swatch: "var(--flavour-wheat)", ink: "var(--color-paper)" },
 ];
 
@@ -331,60 +331,48 @@ const Index = () => {
       {/* ── Cafe menu board ── */}
       <CafeMenuBoard />
 
-      {/* ── Five flavours: a real photo of the packs beside a plain list of what colours each dough ── */}
-      <section className="mt-24 md:mt-28 px-6 md:px-14 xl:px-20">
-        <div className="max-w-7xl mx-auto grid gap-10 lg:gap-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center">
-          <figure className="min-w-0 relative">
-            <div className="aspect-[4/5] sm:aspect-[5/4] lg:aspect-[4/5] overflow-hidden rounded-3xl bg-stone-100">
-              <img
-                src="/aboutus.webp"
-                alt="Paprika, spinach and beetroot pasta packs"
-                loading="lazy"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {/* the five colours as one stacked band along the photo's foot */}
-            <div aria-hidden="true" className="absolute inset-x-6 -bottom-3 flex h-6 overflow-hidden rounded-full ring-4 ring-white">
-              {flavours.map((f) => (
-                <span key={f.name} className="flex-1" style={{ background: f.swatch }} />
-              ))}
-            </div>
+      {/* ── 100% pulp: quiet white page, one photo, two plain facts, the five doughs as a single line ── */}
+      <section aria-labelledby="pulp-title" className="mt-24 md:mt-32 px-6 md:px-14 xl:px-20">
+        <div className="max-w-6xl mx-auto grid gap-10 md:gap-14 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-center">
+          <figure className="min-w-0 aspect-[4/5] overflow-hidden rounded-[2rem] bg-stone-100">
+            <img src="/aboutus.webp" alt="Paprika, spinach and beetroot pasta packs" loading="lazy" className="w-full h-full object-cover" />
           </figure>
 
           <div className="min-w-0">
             <h2
-              className="text-[2.4rem] md:text-[3.4rem] font-semibold leading-[1.02] text-stone-900 [overflow-wrap:anywhere]"
+              id="pulp-title"
+              className="text-[2.6rem] sm:text-[3.2rem] lg:text-[4rem] font-semibold leading-[1] text-stone-900 [overflow-wrap:anywhere]"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              Five flavours, <span className="text-orange-600">one honest dough.</span>
+              Made with <span className="text-orange-600">100% pulp.</span>
             </h2>
-            <p className="mt-4 max-w-lg text-stone-600 leading-relaxed">
-              The colour comes from what goes into the dough, nothing else.
-            </p>
-            <ol className="mt-8 border-t border-stone-200">
+            <p className="mt-4 text-lg text-stone-600">No additional preservatives.</p>
+
+            <dl className="mt-10 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] border-y border-stone-200">
+              <div className="py-6 pr-4 border-r border-stone-200">
+                <dt className="sr-only">Vegetable pulp</dt>
+                <dd className="text-[2.6rem] md:text-[3.2rem] font-semibold leading-none text-stone-900" style={{ fontFamily: "var(--font-display)" }}>100%</dd>
+                <dd className="mt-2 text-sm text-stone-500">vegetable pulp</dd>
+              </div>
+              <div className="py-6 pl-6">
+                <dt className="sr-only">Additional preservatives</dt>
+                <dd className="text-[2.6rem] md:text-[3.2rem] font-semibold leading-none text-stone-900" style={{ fontFamily: "var(--font-display)" }}>0</dd>
+                <dd className="mt-2 text-sm text-stone-500">additional preservatives</dd>
+              </div>
+            </dl>
+
+            <ul aria-label="Our five flavours" className="mt-8 flex flex-wrap gap-x-5 gap-y-3">
               {flavours.map((f) => (
-                <li
-                  key={f.name}
-                  className="grid grid-cols-[auto_minmax(0,1fr)] sm:grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-0.5 border-b border-stone-200 py-4"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="row-span-2 sm:row-span-1 w-10 h-10 rounded-full ring-1 ring-stone-900/10"
-                    style={{ background: f.swatch }}
-                  />
-                  <span
-                    className="text-2xl md:text-[1.75rem] font-semibold leading-tight text-stone-900"
-                    style={{ fontFamily: "var(--font-display)" }}
-                  >
-                    {f.name}
-                  </span>
-                  <span className="text-sm text-stone-500 sm:text-right">{f.from}</span>
+                <li key={f.name} className="inline-flex items-center gap-2 text-sm font-medium text-stone-700 whitespace-nowrap">
+                  <span aria-hidden="true" className="w-2.5 h-2.5 rounded-full" style={{ background: f.swatch }} />
+                  {f.name}
                 </li>
               ))}
-            </ol>
+            </ul>
+
             <Link
               to="/our-pasta-brand"
-              className={`group mt-8 inline-flex items-center gap-2 rounded-full bg-orange-600 hover:bg-orange-700 active:translate-y-px text-white px-8 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors ${focusRing}`}
+              className={`group mt-10 inline-flex items-center gap-2 text-sm font-semibold text-stone-900 whitespace-nowrap border-b-2 border-orange-600 pb-1 hover:text-orange-700 ${focusRing}`}
             >
               See every shape
               <ArrowRight className="w-4 h-4 motion-safe:transition-transform group-hover:translate-x-1" />

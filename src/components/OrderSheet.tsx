@@ -436,10 +436,16 @@ export const OrderList = ({ children, perPage = 4, noun = "items" }: { children:
   const first = current * perPage;
   const shown = items.slice(first, first + perPage);
 
+  // Swap the rows first, then (only if the list's top has scrolled out of view) glide up to it.
+  // Scrolling while the rows were still swapping changed the page height mid-scroll and made it jerk.
   const go = (p: number) => {
     setPage(p);
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    listRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    requestAnimationFrame(() => {
+      const el = listRef.current;
+      if (!el || el.getBoundingClientRect().top >= 80) return;
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    });
   };
 
   return (

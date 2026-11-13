@@ -1,4 +1,4 @@
-/* Hallmark · redesign · macrostructure: Logo Spotlight (free-standing logos, open one in colour, others greyed → one section at a time → paged fresh pasta list)
+/* Hallmark · redesign · macrostructure: Logo Spotlight (free-standing full-colour logos, the open one enlarged → one section at a time → paged fresh pasta list)
  * theme: custom (project tokens · Cormorant Garamond + DM Sans · orange accent · --menu-* cream/olive/rust from the printed menu card)
  * enrichment: supplied logo artwork + kitchen photos + supplied "Making of our pasta" / "Goodness without guilt" panels
  * pass 3 (cleaner): labelled picker · one-line chapter heads · order = two side-by-side cards (from us / delivery apps)
@@ -110,7 +110,8 @@ const PastaChapter = () => {
                     src={m.logo}
                     alt={m.name}
                     loading="lazy"
-                    className="w-full h-full object-contain scale-[1.25] motion-safe:transition-transform motion-safe:duration-500 group-hover:scale-[1.32]"
+                    decoding="async"
+                    className="w-full h-full object-contain scale-[1.25] will-change-transform motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out group-hover:scale-[1.32]"
                   />
                 </span>
                 <span className="mt-2 flex items-center justify-between gap-2 px-1 text-sm font-semibold text-stone-800 group-hover:text-orange-700">
@@ -381,9 +382,9 @@ const Products = () => {
           Take home fresh pasta, order a hot plate, or book us for your event.
         </p>
 
-        {/* Spotlight picker: the logos stand free on the page (no boxes, no rings).
-            The open section's logo is full colour and full size; the other two step back
-            in grey until hovered. A hairline track underneath marks the open one in orange. */}
+        {/* Spotlight picker: the logos stand free on the page (no boxes, no rings), all in full colour.
+            The open one is a touch larger with an orange track under it. Only transform animates
+            (no filters, no blend modes), so the page scrolls smoothly past it. */}
         <nav id="cafe-picker" aria-label="Cafe sections" className="mt-8 md:mt-12 scroll-mt-20">
           <div role="tablist" className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] border-b border-stone-200">
             {chapters.map((c, i) => {
@@ -399,21 +400,22 @@ const Products = () => {
                   onClick={() => show(i)}
                   className={`group relative block min-w-0 -mb-px pb-4 md:pb-5 rounded-t-2xl ${focusRing}`}
                 >
-                  {/* The artwork carries wide white margins; the crop is invisible on the white page */}
+                  {/* The artwork carries wide pure-white margins; the crop is invisible on the white page */}
                   <span className="mx-auto block aspect-square w-full max-w-[12rem] overflow-hidden">
                     <img
                       src={c.logo}
                       alt=""
-                      className={`w-full h-full object-contain mix-blend-multiply motion-safe:transition-[transform,filter,opacity] motion-safe:duration-300 ${
-                        selected
-                          ? "scale-[1.6] opacity-100 brightness-[1.04]"
-                          : "scale-[1.3] opacity-50 grayscale brightness-[1.04] group-hover:grayscale-0 group-hover:opacity-90 group-hover:scale-[1.38]"
+                      width={256}
+                      height={256}
+                      decoding="async"
+                      className={`w-full h-full object-contain will-change-transform motion-safe:transition-transform motion-safe:duration-300 motion-safe:ease-out ${
+                        selected ? "scale-[1.55]" : "scale-[1.3] group-hover:scale-[1.42]"
                       }`}
                     />
                   </span>
                   <span
                     className={`mt-1 block text-center text-xs sm:text-sm font-semibold sm:whitespace-nowrap ${
-                      selected ? "text-stone-900" : "text-stone-500 group-hover:text-stone-800"
+                      selected ? "text-stone-900" : "text-stone-600 group-hover:text-stone-900"
                     }`}
                   >
                     {c.label}
@@ -431,7 +433,15 @@ const Products = () => {
         </nav>
       </header>
 
-      <main id="cafe-panel" role="tabpanel" aria-labelledby={`tab-${active.id}`}>
+      {/* min-height keeps the page from collapsing (and the scroll position from jumping) when a shorter tab opens;
+          the panel fades in with opacity only */}
+      <main
+        id="cafe-panel"
+        key={active.id}
+        role="tabpanel"
+        aria-labelledby={`tab-${active.id}`}
+        className="min-h-[70vh] motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300"
+      >
         {active.id === "pasta" && <PastaChapter />}
         {active.id === "order" && <OrderChapter />}
         {active.id === "services" && <ServicesChapter onCatering={() => setCatering(true)} />}

@@ -87,6 +87,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
     //    checks out, records the paid booking itself.
     setState("paying");
     let payment: { razorpay_payment_id: string; razorpay_order_id: string };
+    let adminEmailed = false;
     try {
       await loadRazorpayScript();
       const order = await createOrder({
@@ -118,6 +119,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
         );
       }
       payment = { razorpay_payment_id: success.razorpay_payment_id, razorpay_order_id: success.razorpay_order_id };
+      adminEmailed = result.admin_emailed === true;
     } catch (err) {
       setState("idle");
       if (err instanceof PaymentCancelled) {
@@ -141,7 +143,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
         notes: form.notes.trim(),
         paymentId: payment.razorpay_payment_id,
         orderId: payment.razorpay_order_id,
-      });
+      }, { skipAdmin: adminEmailed });
     } catch {
       // Ignore — a failed confirmation email must not block a paid booking.
     }

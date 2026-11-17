@@ -7,7 +7,7 @@
 //    allowed to insert paid bookings, so this is the only way one can exist.
 // Calling it twice for the same payment returns the same booking (no duplicates).
 import crypto from "node:crypto";
-import { razorpayClient, readBody, supabaseAdmin, ticketCode } from "./_lib/booking.js";
+import { emailAdmin, notifyOwnerWhatsApp, razorpayClient, readBody, supabaseAdmin, ticketCode } from "./_lib/booking.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
 
   const { data: workshop } = await db
     .from("workshops")
-    .select("id, title, workshop_date")
+    .select("id, title, workshop_date, time_label, venue")
     .eq("id", n.workshop_id)
     .maybeSingle();
   if (!workshop) {
@@ -83,9 +83,36 @@ export default async function handler(req, res) {
     return res.status(500).json({ verified: true, saved: false, ...paymentRef });
   }
 
+  // Tell the owner (WhatsApp + email) — only for a newly recorded booking, not a retried confirmation.
+  let adminEmailed = false;
+  if (!insertError) {
+    const details =
+      `Ticket: ${ticketCode(razorpay_payment_id)}\n` +
+      `Workshop: ${workshop.title}\n` +
+      `Date: ${workshop.workshop_date} · ${workshop.time_label}\n` +
+      `Venue: ${workshop.venue}\n\n` +
+      `Name: ${n.name}\n` +
+      `Phone: ${n.phone}\n` +
+      `Email: ${n.email || "-"}\n` +
+      `Guests: ${people}\n` +
+      (n.notes ? `Notes: ${n.notes}\n` : "") +
+      `\nPaid: ₹${(order.amount / 100).toLocaleString("en-IN")} (incl. 18% GST)\n` +
+      `Razorpay payment id: ${razorpay_payment_id}\n` +
+      `Razorpay order id: ${razorpay_order_id}`;
+    const [, emailed] = await Promise.all([
+      notifyOwnerWhatsApp(`🍝 New PAID workshop booking\n${details}`),
+      emailAdmin({
+        subject: `New booking ${ticketCode(razorpay_payment_id)} · ${workshop.title} · ${n.name}`,
+        text: `New PAID workshop booking\n\n${details}`,
+      }),
+    ]);
+    adminEmailed = emailed;
+  }
+
   return res.status(200).json({
     verified: true,
     saved: true,
+    admin_emailed: adminEmailed,
     ...paymentRef,
     order_id: razorpay_order_id,
     ticket: ticketCode(razorpay_payment_id),

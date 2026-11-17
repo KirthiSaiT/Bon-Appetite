@@ -78,7 +78,10 @@ function sendTo(
  * Never throws — email problems must not undo a successful, paid booking.
  * Returns which sends succeeded.
  */
-export async function sendWorkshopBookingEmails(d: BookingEmailData): Promise<{ admin: boolean; customer: boolean }> {
+export async function sendWorkshopBookingEmails(
+  d: BookingEmailData,
+  opts: { skipAdmin?: boolean } = {},
+): Promise<{ admin: boolean; customer: boolean }> {
   const code = ticketCode(d.paymentId);
   const qr = ticketQrUrl(d, code);
   const amount = `₹${d.amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}`;
@@ -132,9 +135,11 @@ export async function sendWorkshopBookingEmails(d: BookingEmailData): Promise<{ 
   };
 
   const results = await Promise.allSettled([
-    sendTo(ADMIN_TEMPLATE_ID, ADMIN_BOOKING_EMAIL, "Bon Appetit Admin", `New booking ${code} · ${d.workshopTitle}`, adminMsg, d.email, {
-      ticket_code: code,
-    }),
+    opts.skipAdmin
+      ? Promise.resolve() // the server already emailed the admin
+      : sendTo(ADMIN_TEMPLATE_ID, ADMIN_BOOKING_EMAIL, "Bon Appetit Admin", `New booking ${code} · ${d.workshopTitle}`, adminMsg, d.email, {
+          ticket_code: code,
+        }),
     d.email
       ? sendTo(TICKET_TEMPLATE_ID, d.email, d.name, `🎟️ Your ticket ${code} · ${d.workshopTitle}`, customerMsg, ADMIN_BOOKING_EMAIL, ticketVars)
       : Promise.reject(new Error("no customer email")),

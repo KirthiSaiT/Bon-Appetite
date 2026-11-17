@@ -97,6 +97,8 @@ export interface VerifyResult {
   payment_id?: string;
   order_id?: string;
   ticket?: string;
+  /** The server already emailed the admin, so the browser needn't. */
+  admin_emailed?: boolean;
 }
 
 /** Ask the server to verify the payment and record the booking. */

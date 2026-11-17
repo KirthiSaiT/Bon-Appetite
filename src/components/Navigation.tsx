@@ -35,14 +35,20 @@ const Navigation = () => {
   return (
     <nav className="bg-white border-b border-stone-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="flex items-center h-16 gap-3">
+        <div className="flex items-center h-[4.5rem] md:h-20 gap-3">
 
-          {/* Logo */}
-          <Link to="/" className="flex-shrink-0">
+          {/* Logo: the artwork has wide white margins, so it is cropped in a rounded frame to show the mark and its name big */}
+          <Link
+            to="/"
+            aria-label="Bon Appetit Cafe, home"
+            className="flex-shrink-0 block w-14 h-14 md:w-16 md:h-16 overflow-hidden rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600"
+          >
             <img
               src="/bonappetitlogo.jpeg"
               alt="Bon Appetit Logo"
-              className="h-10 w-auto rounded-lg"
+              width={128}
+              height={128}
+              className="w-full h-full object-contain scale-[1.5]"
             />
           </Link>
 

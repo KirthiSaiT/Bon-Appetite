@@ -1,7 +1,7 @@
 /* Hallmark · study → rebuild · genre: editorial · macrostructure: Shelf Stack · theme: custom (project tokens)
  * tone: warm editorial · anchor hue: warm orange · nav: shared · footer: shared (Ft2)
  * section rhythm studied from a reference D2C food home page; type, colour and copy are Bon Appetit's own
- * sections: banner hero + retail band · "what is" card + ribbon · our stars rail · callout diagram · taped notes rail · kitchen map
+ * sections: banner hero + retail band · "what is" card + ribbon · our stars spotlight index (names left, logo preview right) · menu · callout diagram · taped notes rail · kitchen map
  * pre-emit critique: P4 H5 E4 S5 R4 V5
  */
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -40,14 +40,14 @@ const shops = [
 
 const ribbon = ["Handmade daily", "No preservatives", "5 natural flavours", "Ready in 5 minutes", "Made in Hyderabad"];
 
-// Tiles take the pasta-flavour tokens so the shelf reads like the coloured dough itself
-const stars: { name: string; image: string; to: string; tint: string; badge?: string }[] = [
-  { name: "Fresh Pasta", image: "/freshpasta.webp", to: "/fresh-pasta", tint: "var(--flavour-paprika)", badge: "Made to order" },
-  { name: "Dry Pasta", image: "/drypasta.webp", to: "/our-pasta-brand", tint: "var(--flavour-spinach)" },
-  { name: "Seasonal Sauces", image: "/seaonal.webp", to: "/seasonal-sauces", tint: "var(--color-accent)" },
-  { name: "Cooked Pasta", image: "/cooked.webp", to: "/cooked-pasta", tint: "var(--flavour-beetroot)" },
-  { name: "Dessert Platters", image: "/dessertplatter.webp", to: "/dessert-platters", tint: "var(--flavour-wheat)" },
-  { name: "Pasta Workshops", image: "/pastaworkshop.webp", to: "/pasta-workshops", tint: "var(--color-ink)" },
+// The six things we make, each shown by its own logo artwork (pure-white backgrounds, so they sit cleanly on white)
+const stars: { name: string; image: string; to: string; badge?: string }[] = [
+  { name: "Fresh Pasta", image: "/freshpasta.webp", to: "/fresh-pasta", badge: "Made to order" },
+  { name: "Dry Pasta", image: "/drypasta.webp", to: "/our-pasta-brand" },
+  { name: "Seasonal Sauces", image: "/seaonal.webp", to: "/seasonal-sauces" },
+  { name: "Cooked Pasta", image: "/cooked.webp", to: "/cooked-pasta" },
+  { name: "Dessert Platters", image: "/dessertplatter.webp", to: "/dessert-platters" },
+  { name: "Pasta Workshops", image: "/pastaworkshop.webp", to: "/pasta-workshops" },
 ];
 
 const promises: { title: string; body: string; icon: LucideIcon }[] = [
@@ -141,7 +141,7 @@ const RailDots = ({ page, pages, go, label }: { page: number; pages: number; go:
   ) : null;
 
 const Index = () => {
-  const starsRail = useRail();
+  const [star, setStar] = useState(0);
   const notesRail = useRail();
 
   return (
@@ -273,49 +273,69 @@ const Index = () => {
       </section>
 
       {/* ── Our stars ── */}
-      <section className="px-6 md:px-14 xl:px-20 pt-24 md:pt-28">
-        <div className="max-w-7xl mx-auto">
-          <h2
-            className="text-[2.4rem] md:text-[3.2rem] font-light text-stone-900 leading-[1.02] mb-8"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Our stars.
-          </h2>
-          <div className="relative">
-            <RailArrows step={starsRail.step} page={starsRail.page} pages={starsRail.pages} label="products" />
-            <ul ref={starsRail.ref} className="no-scrollbar flex gap-5 overflow-x-auto snap-x snap-mandatory">
-              {stars.map((s) => (
-                <li key={s.name} className="snap-start shrink-0 w-[80%] sm:w-[calc(50%-10px)] lg:w-[calc(25%-15px)] flex flex-col items-center">
+      {/* Spotlight index: big names on one side, the logo of the one you point at on the other (phones: plain rows with a small logo) */}
+      <section aria-labelledby="stars-title" className="px-6 md:px-14 xl:px-20 pt-24 md:pt-32">
+        <div className="max-w-6xl mx-auto grid gap-10 lg:gap-16 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center">
+          <div className="min-w-0">
+            <h2
+              id="stars-title"
+              className="text-[2.6rem] md:text-[3.6rem] font-semibold text-stone-900 leading-[1.02]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Our <span className="text-orange-600">stars.</span>
+            </h2>
+            <ul className="mt-8 md:mt-10 border-t border-stone-200">
+              {stars.map((s, i) => (
+                <li key={s.name} className="border-b border-stone-200">
                   <Link
                     to={s.to}
-                    className={`group relative block w-full overflow-hidden ${focusRing}`}
-                    style={{ background: s.tint }}
+                    onMouseEnter={() => setStar(i)}
+                    onFocus={() => setStar(i)}
+                    className={`group flex items-center gap-4 py-3.5 md:py-5 ${focusRing}`}
                   >
+                    <span aria-hidden="true" className="lg:hidden block w-14 h-14 shrink-0 overflow-hidden rounded-full bg-white ring-1 ring-stone-200">
+                      <img src={s.image} alt="" loading="lazy" decoding="async" className="w-full h-full object-contain scale-[1.4]" />
+                    </span>
+                    <span
+                      className={`min-w-0 text-[1.7rem] md:text-[2.5rem] font-semibold leading-none motion-safe:transition-colors motion-safe:duration-200 ${
+                        i === star ? "lg:text-orange-600" : "lg:text-stone-900"
+                      } text-stone-900 group-hover:text-orange-600`}
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
+                      {s.name}
+                    </span>
                     {s.badge && (
-                      <span className="absolute top-4 -left-9 z-10 w-36 -rotate-45 bg-amber-100 text-stone-900 text-[0.65rem] font-bold uppercase tracking-wider text-center py-1">
+                      <span className="hidden sm:inline-flex rounded-full bg-orange-50 px-3 py-1 text-xs font-semibold text-orange-800 whitespace-nowrap">
                         {s.badge}
                       </span>
                     )}
-                    <div className="aspect-square p-6 pb-0">
-                      <div className="w-full h-full bg-white shadow-lg flex items-center justify-center motion-safe:transition-transform motion-safe:duration-300 group-hover:scale-[1.03] group-hover:-rotate-1">
-                        <img src={s.image} alt={s.name} className="w-full h-full object-contain p-6" />
-                      </div>
-                    </div>
-                    <p className="px-4 py-4 text-center text-white text-base font-semibold whitespace-nowrap">{s.name}</p>
-                  </Link>
-                  <Link
-                    to={s.to}
-                    tabIndex={-1}
-                    aria-hidden="true"
-                    className="mt-4 rounded-full bg-stone-900 hover:bg-orange-600 text-white px-9 py-2.5 text-sm font-medium whitespace-nowrap transition-colors"
-                  >
-                    Explore
+                    <span
+                      aria-hidden="true"
+                      className="ml-auto flex items-center justify-center w-10 h-10 shrink-0 rounded-full border border-stone-300 text-stone-700 motion-safe:transition-colors group-hover:border-orange-600 group-hover:bg-orange-600 group-hover:text-white"
+                    >
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
                   </Link>
                 </li>
               ))}
             </ul>
           </div>
-          <RailDots go={starsRail.go} page={starsRail.page} pages={starsRail.pages} label="Products" />
+
+          {/* Preview: all six logos stacked, only opacity changes, so switching never reflows the page */}
+          <div aria-hidden="true" className="hidden lg:block relative aspect-square overflow-hidden rounded-[2.5rem] bg-white ring-1 ring-stone-200">
+            {stars.map((s, i) => (
+              <img
+                key={s.name}
+                src={s.image}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                className={`absolute inset-0 w-full h-full object-contain scale-[1.2] motion-safe:transition-opacity motion-safe:duration-300 ${
+                  i === star ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 

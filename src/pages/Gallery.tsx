@@ -1,10 +1,14 @@
-/* Hallmark · redesign · macrostructure: Sectioned Catalogue (jump chips → three labelled sections, each laid out its own way → one-line close)
- * theme: custom (project tokens · Cormorant Garamond + DM Sans · orange accent on white / stone-50)
- * nav: shared · footer: shared · previous page shape was Film Roll (single horizontal roll + photo wall)
- * audience: people curious about the kitchen · use: look through the photos by topic · tone: warm editorial
- * enrichment: real photos only, honest captions (no invented dates or places)
- * motion: image hover-zoom (transform) · lightbox · no scroll-linked effects
+/* Hallmark · redesign · macrostructure: Flush Mosaic (photos locked into columns that all end at the same height, no cropping on desktop → 2-up grid on phones → full-screen viewer with a thumbnail strip)
+ * theme: custom (project tokens · Cormorant Garamond + DM Sans · orange accent on white / stone-950 viewer)
+ * nav: shared · footer: shared · earlier shapes of this page: Film Roll, Sectioned Catalogue
+ * references: justified / flush photo layouts (Flickr, Google Photos style), lightbox galleries with a thumbnail strip (Awwwards-style)
+ * audience: people curious about the kitchen · use: look through the photos · tone: warm editorial
+ * enrichment: only photos that appear nowhere else on the site, honest captions (no invented dates or places)
+ * motion: image hover-zoom (transform) · viewer · no scroll-linked effects
  * pre-emit critique: P5 H4 E4 S5 R5 V5
+ *
+ * To add photos: append to `photos` below. Anything not placed in `columns` shows in a grid under the mosaic,
+ * so a new photo never disappears. Add its index to `columns` to build it into the mosaic.
  */
 import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
@@ -13,191 +17,121 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 
-type Frame = { src: string; w: number; h: number; caption: string };
-type Layout = "duo" | "feature" | "wall";
-type Section = { id: string; title: string; line: string; layout: Layout; band: string; frames: Frame[] };
+type Photo = { src: string; w: number; h: number; caption: string };
 
-const sections: Section[] = [
-  {
-    id: "kitchen",
-    title: "Kitchen",
-    line: "Where every batch is made by hand.",
-    layout: "duo",
-    band: "bg-white",
-    frames: [
-      { src: "/bts1.webp", w: 975, h: 1300, caption: "Morning prep with the kitchen team" },
-      { src: "/making-of-our-pasta.webp", w: 1778, h: 885, caption: "How our pasta is made, from flour to beetroot pasta" },
-    ],
-  },
-  {
-    id: "products",
-    title: "Products",
-    line: "The packs, and what goes into them.",
-    layout: "feature",
-    band: "bg-stone-50",
-    frames: [
-      { src: "/goodness-without-guilt.webp", w: 1672, h: 941, caption: "What goes into our spinach pasta" },
-      { src: "/pack-plain.webp", w: 1000, h: 1000, caption: "Artisanal plain pasta pack" },
-      { src: "/pack-spinach.webp", w: 1000, h: 1000, caption: "Spinach pasta pack" },
-      { src: "/pack-beetroot.webp", w: 1000, h: 1000, caption: "Beetroot pasta pack" },
-      { src: "/spinachpasta (1).webp", w: 4032, h: 3024, caption: "Spinach pasta and what goes into it" },
-      { src: "/aboutus.webp", w: 682, h: 680, caption: "Paprika, spinach and beetroot packs" },
-    ],
-  },
-  {
-    id: "workshops",
-    title: "Workshops",
-    line: "Live demos, classes and our stall.",
-    layout: "wall",
-    band: "bg-white",
-    frames: [
-      { src: "/workshop1.webp", w: 1300, h: 1300, caption: "A live pasta demo" },
-      { src: "/school2.webp", w: 1600, h: 1200, caption: "A cooking session with students" },
-      { src: "/school1.webp", w: 973, h: 1300, caption: "Cooking for a crowd" },
-      { src: "/cmpic21.webp", w: 569, h: 1300, caption: "At our stall" },
-      { src: "/cmpic1.webp", w: 505, h: 1300, caption: "Meeting people at our stall" },
-    ],
-  },
+const photos: Photo[] = [
+  { src: "/workshop1.webp", w: 1300, h: 1300, caption: "A live pasta demo" },
+  { src: "/school2.webp", w: 1600, h: 1200, caption: "A cooking session with students" },
+  { src: "/cmpic21.webp", w: 569, h: 1300, caption: "At our stall" },
+  { src: "/cmpic1.webp", w: 505, h: 1300, caption: "Meeting people at our stall" },
 ];
 
-/* One flat list for the full-screen viewer, so Next / Previous walk through every section in order */
-const all = sections.flatMap((s) => s.frames.map((f) => ({ ...f, section: s.title })));
-const starts = sections.reduce<number[]>((acc, s, i) => [...acc, (acc[i - 1] ?? 0) + (sections[i - 1]?.frames.length ?? 0)], []);
+/* Desktop mosaic recipe: indexes into `photos`, grouped into columns. A column holding photos of ratio r1, r2…
+ * gets a width of 1 / (1/r1 + 1/r2 + …), which makes every column end at exactly the same height. */
+const columns: number[][] = [[0, 1], [2], [3]];
+
+const ratio = (p: Photo) => p.w / p.h;
+const colFr = columns.map((c) => 1 / c.reduce((sum, i) => sum + 1 / ratio(photos[i]), 0));
+const placed = new Set(columns.flat());
+const extra = photos.map((_, i) => i).filter((i) => !placed.has(i));
 
 const no = (i: number) => String(i + 1).padStart(2, "0");
 const focusRing = "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-500";
-const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-const RoundBtn = ({ onClick, label, children, dark = false }: { onClick: () => void; label: string; children: React.ReactNode; dark?: boolean }) => (
+const RoundBtn = ({ onClick, label, children }: { onClick: () => void; label: string; children: React.ReactNode }) => (
   <button
     type="button"
     onClick={onClick}
     aria-label={label}
-    className={`flex items-center justify-center w-11 h-11 rounded-full border transition-colors active:translate-y-px ${focusRing} ${
-      dark
-        ? "border-stone-600 text-stone-100 hover:border-orange-500 hover:bg-orange-600"
-        : "border-stone-300 text-stone-700 hover:border-orange-600 hover:text-orange-700"
-    }`}
+    className={`flex items-center justify-center w-11 h-11 rounded-full border border-stone-600 text-stone-100 transition-colors hover:border-orange-500 hover:bg-orange-600 active:translate-y-px ${focusRing}`}
   >
     {children}
   </button>
 );
 
-/* A photo you can open: rounded picture, caption underneath. `fit` crops to a fixed shape; otherwise the photo keeps its own ratio */
-const Tile = ({ frame, index, onOpen, fit, className = "" }: { frame: Frame; index: number; onOpen: (i: number) => void; fit?: string; className?: string }) => (
-  <figure className={`min-w-0 ${className}`}>
+/* One photo you can open. `fill` makes it fill its parent's height (cropping a hair); otherwise it keeps its own ratio via `ar`. */
+const Tile = ({ index, onOpen, className = "", fill = false }: { index: number; onOpen: (i: number) => void; className?: string; fill?: boolean }) => {
+  const p = photos[index];
+  return (
     <button
       type="button"
       onClick={() => onOpen(index)}
-      aria-label={`Open photo ${no(index)}: ${frame.caption}`}
-      className={`group block w-full overflow-hidden rounded-3xl bg-stone-100 text-left ${focusRing}`}
+      aria-label={`Open photo ${no(index)}: ${p.caption}`}
+      style={{ ["--ar" as string]: `${p.w} / ${p.h}` }}
+      className={`group relative block w-full overflow-hidden rounded-3xl bg-stone-100 text-left ${fill ? "h-full" : "[aspect-ratio:var(--ar)]"} ${className} ${focusRing}`}
     >
       <img
-        src={frame.src}
-        alt={frame.caption}
-        width={frame.w}
-        height={frame.h}
-        loading="lazy"
+        src={p.src}
+        alt={p.caption}
+        width={p.w}
+        height={p.h}
+        loading={index < 2 ? "eager" : "lazy"}
         decoding="async"
-        className={`block w-full ${fit ? `${fit} object-cover` : "h-auto"} motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-out group-hover:scale-[1.03]`}
+        className="block w-full h-full object-cover will-change-transform motion-safe:transition-transform motion-safe:duration-500 motion-safe:ease-out group-hover:scale-[1.03]"
       />
+      <span className="absolute inset-x-0 bottom-0 flex items-baseline gap-2.5 bg-gradient-to-t from-stone-950/75 via-stone-950/30 to-transparent px-4 pb-3.5 pt-12 text-white">
+        <span className="text-xs font-semibold text-orange-300 tabular-nums">{no(index)}</span>
+        <span className="text-sm leading-snug">{p.caption}</span>
+      </span>
     </button>
-    <figcaption className="mt-3 flex items-baseline gap-3 px-1">
-      <span className="text-xs font-semibold text-orange-700 tabular-nums">{no(index)}</span>
-      <span className="text-sm text-stone-700 leading-snug">{frame.caption}</span>
-    </figcaption>
-  </figure>
-);
-
-const Layouts = ({ section, start, onOpen }: { section: Section; start: number; onOpen: (i: number) => void }) => {
-  const f = section.frames;
-  if (section.layout === "duo") {
-    return (
-      <div className="grid gap-6 md:gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:items-start">
-        {f.map((fr, n) => <Tile key={fr.src} frame={fr} index={start + n} onOpen={onOpen} />)}
-      </div>
-    );
-  }
-  if (section.layout === "feature") {
-    // one wide picture, then the three pack shots across, then the rest in pairs
-    const packs = f.slice(1, 4);
-    const rest = f.slice(4);
-    return (
-      <div className="grid gap-6 md:gap-8">
-        <Tile frame={f[0]} index={start} onOpen={onOpen} />
-        <div className="grid gap-6 md:gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
-          {packs.map((fr, n) => <Tile key={fr.src} frame={fr} index={start + 1 + n} onOpen={onOpen} fit="aspect-square" />)}
-        </div>
-        <div className="grid gap-6 md:gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-          {rest.map((fr, n) => <Tile key={fr.src} frame={fr} index={start + 4 + n} onOpen={onOpen} fit="aspect-[4/3]" />)}
-        </div>
-      </div>
-    );
-  }
-  return (
-    <div className="columns-2 md:columns-3 gap-4 md:gap-6">
-      {f.map((fr, n) => <Tile key={fr.src} frame={fr} index={start + n} onOpen={onOpen} className="mb-6 break-inside-avoid" />)}
-    </div>
   );
 };
 
 const Gallery = () => {
   const [open, setOpen] = useState<number | null>(null);
-  const step = useCallback((dir: 1 | -1) => setOpen((o) => (o === null ? o : (o + dir + all.length) % all.length)), []);
-
-  const jump = (e: React.MouseEvent, id: string) => {
-    e.preventDefault();
-    document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion() ? "auto" : "smooth", block: "start" });
-  };
+  const step = useCallback((dir: 1 | -1) => setOpen((o) => (o === null ? o : (o + dir + photos.length) % photos.length)), []);
 
   return (
     <div className="min-h-screen bg-white overflow-x-clip">
       <Navigation />
 
-      <header className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 pt-12 md:pt-16 pb-10 md:pb-12">
-        <h1
-          className="text-[3rem] sm:text-[4rem] xl:text-[5rem] font-semibold leading-[1.02] text-stone-900 [overflow-wrap:anywhere]"
-          style={{ fontFamily: "var(--font-display)" }}
-        >
-          The <span className="text-orange-600">Gallery.</span>
-        </h1>
-        <p className="mt-4 max-w-lg text-lg leading-relaxed text-stone-600">Our kitchen, our packs and our workshops. Tap any photo to see it big.</p>
+      <header className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 pt-12 md:pt-16 pb-8 md:pb-12 grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+        <div className="min-w-0">
+          <h1
+            className="text-[3rem] sm:text-[4rem] xl:text-[5rem] font-semibold leading-[1.02] text-stone-900 [overflow-wrap:anywhere]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            The <span className="text-orange-600">Gallery.</span>
+          </h1>
+          <p className="mt-4 max-w-lg text-lg leading-relaxed text-stone-600">Workshops, classes and our stall, in photos. Tap one to see it big.</p>
+        </div>
+        <p className="text-sm text-stone-500 tabular-nums whitespace-nowrap">{photos.length} photos</p>
+      </header>
 
-        <nav aria-label="Gallery sections" className="mt-8">
-          <ul className="flex flex-wrap gap-3">
-            {sections.map((s) => (
-              <li key={s.id}>
-                <a
-                  href={`#${s.id}`}
-                  onClick={(e) => jump(e, s.id)}
-                  className={`inline-flex items-center gap-2.5 rounded-full border border-stone-300 hover:border-stone-900 px-5 py-2.5 text-sm font-semibold text-stone-800 whitespace-nowrap transition-colors active:translate-y-px ${focusRing}`}
-                >
-                  {s.title}
-                  <span className="text-xs font-medium text-stone-500 tabular-nums">{s.frames.length}</span>
-                </a>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 pb-16 md:pb-24">
+        {/* phones and tablets: 2-up grid, wide photos span both columns, tall ones are cropped to 3:4 */}
+        <ul className="grid grid-cols-2 gap-3 md:gap-4 lg:hidden">
+          {photos.map((p, i) => (
+            <li key={p.src} className={`min-w-0 ${p.w >= p.h ? "col-span-2" : ""}`}>
+              <Tile index={i} onOpen={setOpen} className={p.w >= p.h ? "" : "!aspect-[3/4]"} />
+            </li>
+          ))}
+        </ul>
+
+        {/* desktop: flush mosaic, every column ends at the same height and nothing is cropped (give or take a pixel) */}
+        <div className="hidden lg:grid gap-4" style={{ gridTemplateColumns: colFr.map((f) => `${f}fr`).join(" ") }}>
+          {columns.map((col, ci) => (
+            <div key={ci} className="flex min-w-0 flex-col gap-4">
+              {col.map((i) => (
+                <div key={i} className={col.length > 1 ? "" : "flex-1 min-h-0"}>
+                  <Tile index={i} onOpen={setOpen} fill={col.length === 1} />
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* photos added to the list but not yet placed in the mosaic */}
+        {extra.length > 0 && (
+          <ul className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 [&>li]:min-w-0 hidden lg:grid">
+            {extra.map((i) => (
+              <li key={photos[i].src}>
+                <Tile index={i} onOpen={setOpen} className="!aspect-[4/3]" />
               </li>
             ))}
           </ul>
-        </nav>
-      </header>
-
-      {sections.map((s, si) => (
-        <section key={s.id} id={s.id} aria-labelledby={`${s.id}-title`} className={`scroll-mt-20 border-t border-stone-200 ${s.band}`}>
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-14 xl:px-6 py-14 md:py-20">
-            <div className="mb-8 md:mb-12 min-w-0">
-              <h2
-                id={`${s.id}-title`}
-                className="text-[2.4rem] md:text-[3.4rem] font-semibold leading-[1.02] text-stone-900 [overflow-wrap:anywhere]"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {s.title}
-              </h2>
-              <p className="mt-3 text-lg text-stone-600">{s.line}</p>
-            </div>
-            <Layouts section={s} start={starts[si]} onOpen={setOpen} />
-          </div>
-        </section>
-      ))}
+        )}
+      </main>
 
       {/* ── One-line close ── */}
       <section className="border-t border-stone-200">
@@ -224,7 +158,7 @@ const Gallery = () => {
         </div>
       </section>
 
-      {/* ── Full-screen photo ── */}
+      {/* ── Full-screen viewer with a thumbnail strip ── */}
       <Dialog open={open !== null} onOpenChange={(o) => !o && setOpen(null)}>
         <DialogContent
           className="max-w-none w-screen h-[100dvh] p-0 border-0 rounded-none bg-stone-950/95 text-stone-100 flex flex-col [&>button:last-child]:hidden"
@@ -233,25 +167,42 @@ const Gallery = () => {
             if (e.key === "ArrowLeft") step(-1);
           }}
         >
-          <DialogTitle className="sr-only">{open !== null ? all[open].caption : "Photo"}</DialogTitle>
+          <DialogTitle className="sr-only">{open !== null ? photos[open].caption : "Photo"}</DialogTitle>
           {open !== null && (
             <>
               <div className="flex items-center justify-between gap-4 px-4 md:px-8 py-4">
                 <p className="min-w-0 flex items-baseline gap-3">
                   <span className="text-sm font-semibold text-orange-400 tabular-nums">{no(open)}</span>
-                  <span className="truncate">{all[open].caption}</span>
-                  <span className="hidden sm:inline text-sm text-stone-400 whitespace-nowrap">· {all[open].section}</span>
+                  <span className="truncate">{photos[open].caption}</span>
                 </p>
-                <RoundBtn dark onClick={() => setOpen(null)} label="Close photo"><X className="w-5 h-5" /></RoundBtn>
+                <RoundBtn onClick={() => setOpen(null)} label="Close photo"><X className="w-5 h-5" /></RoundBtn>
               </div>
-              <div className="flex-1 min-h-0 px-4 md:px-20 pb-4">
-                <img src={all[open].src} alt={all[open].caption} className="w-full h-full object-contain" />
+
+              <div className="relative flex-1 min-h-0 px-4 md:px-20 pb-4">
+                <img src={photos[open].src} alt={photos[open].caption} className="w-full h-full object-contain" />
+                <div className="pointer-events-none absolute inset-y-0 left-2 right-2 md:left-6 md:right-6 flex items-center justify-between">
+                  <span className="pointer-events-auto"><RoundBtn onClick={() => step(-1)} label="Previous photo"><ArrowLeft className="w-4 h-4" /></RoundBtn></span>
+                  <span className="pointer-events-auto"><RoundBtn onClick={() => step(1)} label="Next photo"><ArrowRight className="w-4 h-4" /></RoundBtn></span>
+                </div>
               </div>
-              <div className="flex items-center justify-center gap-4 pb-6">
-                <RoundBtn dark onClick={() => step(-1)} label="Previous photo"><ArrowLeft className="w-4 h-4" /></RoundBtn>
-                <span className="text-sm text-stone-400 tabular-nums w-16 text-center">{no(open)} / {no(all.length - 1)}</span>
-                <RoundBtn dark onClick={() => step(1)} label="Next photo"><ArrowRight className="w-4 h-4" /></RoundBtn>
-              </div>
+
+              <ul className="flex items-center justify-center gap-2 px-4 pb-6" aria-label="All photos">
+                {photos.map((p, i) => (
+                  <li key={p.src}>
+                    <button
+                      type="button"
+                      onClick={() => setOpen(i)}
+                      aria-label={`Show photo ${no(i)}: ${p.caption}`}
+                      aria-current={i === open ? "true" : undefined}
+                      className={`block w-12 h-12 md:w-14 md:h-14 overflow-hidden rounded-xl ring-2 transition-opacity ${focusRing} ${
+                        i === open ? "ring-orange-500 opacity-100" : "ring-transparent opacity-55 hover:opacity-100"
+                      }`}
+                    >
+                      <img src={p.src} alt="" width={112} height={112} loading="lazy" className="w-full h-full object-cover" />
+                    </button>
+                  </li>
+                ))}
+              </ul>
             </>
           )}
         </DialogContent>

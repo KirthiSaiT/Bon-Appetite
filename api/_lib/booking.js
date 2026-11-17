@@ -53,31 +53,6 @@ export function readBody(req) {
 }
 
 /**
- * Send the owner a WhatsApp message through CallMeBot (https://www.callmebot.com/blog/free-api-whatsapp-messages/).
- * Needs OWNER_WHATSAPP_PHONE (international format, e.g. +919876543210) and CALLMEBOT_API_KEY.
- * Best-effort: never throws, so a failed notification can't undo a paid booking.
- */
-export async function notifyOwnerWhatsApp(text) {
-  const phone = process.env.OWNER_WHATSAPP_PHONE;
-  const apikey = process.env.CALLMEBOT_API_KEY;
-  if (!phone || !apikey) {
-    console.warn("[whatsapp] skipped: OWNER_WHATSAPP_PHONE / CALLMEBOT_API_KEY not set");
-    return false;
-  }
-  try {
-    const url =
-      `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(phone)}` +
-      `&text=${encodeURIComponent(text)}&apikey=${encodeURIComponent(apikey)}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
-    if (!res.ok) console.error("[whatsapp] CallMeBot responded", res.status);
-    return res.ok;
-  } catch (err) {
-    console.error("[whatsapp] send failed", err?.message);
-    return false;
-  }
-}
-
-/**
  * Email the admin the full booking details, from the server (Gmail SMTP).
  * Needs SMTP_USER (a Gmail address) and SMTP_PASS (a Gmail App Password).
  * Goes to ADMIN_NOTIFY_EMAIL, defaulting to admin.bonappetit@gmail.com.

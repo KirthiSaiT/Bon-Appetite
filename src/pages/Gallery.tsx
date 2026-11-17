@@ -37,6 +37,9 @@ const sections: Section[] = [
     band: "bg-stone-50",
     frames: [
       { src: "/goodness-without-guilt.webp", w: 1672, h: 941, caption: "What goes into our spinach pasta" },
+      { src: "/pack-plain.webp", w: 1000, h: 1000, caption: "Artisanal plain pasta pack" },
+      { src: "/pack-spinach.webp", w: 1000, h: 1000, caption: "Spinach pasta pack" },
+      { src: "/pack-beetroot.webp", w: 1000, h: 1000, caption: "Beetroot pasta pack" },
       { src: "/spinachpasta (1).webp", w: 4032, h: 3024, caption: "Spinach pasta and what goes into it" },
       { src: "/aboutus.webp", w: 682, h: 680, caption: "Paprika, spinach and beetroot packs" },
     ],
@@ -116,10 +119,18 @@ const Layouts = ({ section, start, onOpen }: { section: Section; start: number; 
     );
   }
   if (section.layout === "feature") {
+    // one wide picture, then the three pack shots across, then the rest in pairs
+    const packs = f.slice(1, 4);
+    const rest = f.slice(4);
     return (
-      <div className="grid gap-6 md:gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-        <Tile frame={f[0]} index={start} onOpen={onOpen} className="sm:col-span-2" />
-        {f.slice(1).map((fr, n) => <Tile key={fr.src} frame={fr} index={start + n + 1} onOpen={onOpen} fit="aspect-[4/3]" />)}
+      <div className="grid gap-6 md:gap-8">
+        <Tile frame={f[0]} index={start} onOpen={onOpen} />
+        <div className="grid gap-6 md:gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]">
+          {packs.map((fr, n) => <Tile key={fr.src} frame={fr} index={start + 1 + n} onOpen={onOpen} fit="aspect-square" />)}
+        </div>
+        <div className="grid gap-6 md:gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+          {rest.map((fr, n) => <Tile key={fr.src} frame={fr} index={start + 4 + n} onOpen={onOpen} fit="aspect-[4/3]" />)}
+        </div>
       </div>
     );
   }

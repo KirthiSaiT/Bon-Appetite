@@ -123,6 +123,39 @@ const OurPastaBrand = () => (
       </div>
     </section>
 
+    {/* ── The packs: three real pouch photos, one per flavour ── */}
+    <section aria-labelledby="packs-title" className="py-16 md:py-20 px-6 md:px-14 xl:px-20 bg-stone-50">
+      <div className="max-w-6xl mx-auto">
+        <h2
+          id="packs-title"
+          className="text-[2.4rem] md:text-[3.4rem] font-semibold leading-[1.02] text-stone-900 [overflow-wrap:anywhere]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          Meet the <span className="text-orange-600">packs.</span>
+        </h2>
+        <p className="mt-3 text-lg text-stone-600">Plain, spinach and beetroot, in kraft pouches with a window.</p>
+        <ul className="mt-10 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-6 md:gap-8">
+          {[
+            { src: "/pack-plain.webp", name: "Artisanal (plain)", alt: "Artisanal plain fettuccine in a kraft pouch with a window", swatch: "var(--flavour-plain)" },
+            { src: "/pack-spinach.webp", name: "Spinach", alt: "Spinach pasta in a kraft pouch with a window", swatch: "var(--flavour-spinach)" },
+            { src: "/pack-beetroot.webp", name: "Beetroot", alt: "Beetroot pasta in a kraft pouch with a window", swatch: "var(--flavour-beetroot)" },
+          ].map((p) => (
+            <li key={p.name} className="min-w-0">
+              <figure>
+                <div className="aspect-square overflow-hidden rounded-3xl bg-stone-200">
+                  <img src={p.src} alt={p.alt} width={1000} height={1000} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                </div>
+                <figcaption className="mt-3 flex items-center gap-2.5 px-1 text-base font-semibold text-stone-900">
+                  <span aria-hidden="true" className="w-3 h-3 rounded-full ring-1 ring-stone-900/10" style={{ background: p.swatch }} />
+                  {p.name}
+                </figcaption>
+              </figure>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
     {/* ── Product range ── */}
     <section className="py-16 md:py-20 px-8 md:px-14 xl:px-20 bg-white">
       <div className="max-w-6xl mx-auto">

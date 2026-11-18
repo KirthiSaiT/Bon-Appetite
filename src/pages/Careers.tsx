@@ -15,6 +15,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import emailjs from "@emailjs/browser";
+import { supabase } from "@/lib/supabase";
+import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY } from "@/lib/emailjsConfig";
 import {
   MapPin,
   Clock,
@@ -222,16 +224,33 @@ const Careers = () => {
     setIsSubmitting(true);
     const roleLabel = openings.find((o) => o.id === selectedRole)?.title ?? selectedRole;
     try {
+      // 1. Upload the CV first. If this fails we must NOT tell the applicant it worked.
+      if (!supabase) throw new Error("storage not configured");
+      const ticketRes = await fetch("/api/resume-upload", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ filename: resumeFile.name, contentType: resumeFile.type, size: resumeFile.size }),
+      });
+      const ticket = await ticketRes.json().catch(() => ({}));
+      if (!ticketRes.ok) throw new Error(ticket.error || "upload could not start");
+      const { error: uploadError } = await supabase.storage
+        .from("resumes")
+        .uploadToSignedUrl(ticket.path, ticket.token, resumeFile, { contentType: resumeFile.type });
+      if (uploadError) throw uploadError;
+      const resumeUrl: string = ticket.url;
+
+      // 2. Email the admin with the link.
       await emailjs.send(
-        "service_z4w0fmg",
-        "template_rdzt2i6",
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
         {
           from_name: form.name,
           to_name: "Bon Appetit HR",
+          subject: `New application · ${roleLabel}`,
           user_email: form.email,
-          message: `New Application — ${roleLabel}\n\nName: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\nLinkedIn: ${form.linkedin || "—"}\nResume: ${resumeFile.name}\n\nCover note:\n${form.message || "—"}`,
+          message: `New Application — ${roleLabel}\n\nName: ${form.name}\nEmail: ${form.email}\nPhone: ${form.phone}\nLinkedIn: ${form.linkedin || "—"}\nResume: ${resumeUrl}\n\nCover note:\n${form.message || "—"}`,
         },
-        "lBQ8UpD7SH9b45AVq"
+        EMAILJS_PUBLIC_KEY
       );
       setIsSubmitted(true);
     } catch {

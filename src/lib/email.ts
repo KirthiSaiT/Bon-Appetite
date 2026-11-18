@@ -3,14 +3,16 @@
 // - Customer gets a TICKET: a booking reference + a scannable QR code for check-in.
 import emailjs from "@emailjs/browser";
 
-const SERVICE_ID = "service_z4w0fmg";
-const PUBLIC_KEY = "lBQ8UpD7SH9b45AVq";
+import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY } from "./emailjsConfig";
 
-// Admin notification uses the existing order template.
-const ADMIN_TEMPLATE_ID = "template_rdzt2i6";
+const SERVICE_ID = EMAILJS_SERVICE_ID;
+const PUBLIC_KEY = EMAILJS_PUBLIC_KEY;
+
+// Admin notification uses the shared template.
+const ADMIN_TEMPLATE_ID = EMAILJS_TEMPLATE_ID;
 // Customer ticket template. Falls back to the admin template until a dedicated
 // ticket template is created in the EmailJS dashboard (see TICKET-EMAIL-SETUP.md).
-const TICKET_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TICKET_TEMPLATE_ID || "template_rdzt2i6";
+const TICKET_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TICKET_TEMPLATE_ID || EMAILJS_TEMPLATE_ID;
 
 export const ADMIN_BOOKING_EMAIL = "admin.bonappetit@gmail.com";
 

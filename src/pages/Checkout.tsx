@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { User, Mail, Phone, Home, CheckCircle, MessageSquare } from "lucide-react";
 import emailjs from "@emailjs/browser";
+import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY } from "@/lib/emailjsConfig";
 import { Label } from "@/components/ui/label";
 
 const Checkout = () => {
@@ -18,7 +19,7 @@ const Checkout = () => {
 
   useEffect(() => {
     // Initialize EmailJS
-    emailjs.init("lBQ8UpD7SH9b45AVq");
+    emailjs.init(EMAILJS_PUBLIC_KEY);
   }, []);
 
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -72,9 +73,9 @@ const Checkout = () => {
     console.log("Sending email with params:", templateParams);
 
     // Test EmailJS configuration
-    const serviceID = 'service_z4w0fmg';
-    const templateID = 'template_rdzt2i6';
-    const publicKey = 'lBQ8UpD7SH9b45AVq';
+    const serviceID = EMAILJS_SERVICE_ID;
+    const templateID = EMAILJS_TEMPLATE_ID;
+    const publicKey = EMAILJS_PUBLIC_KEY;
 
     console.log("EmailJS config - Service ID:", serviceID, "Template ID:", templateID, "Public Key:", publicKey);
 

@@ -8,6 +8,7 @@ import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import emailjs from '@emailjs/browser';
 import { SimpleFooter } from "@/components/Footer";
+import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY } from "@/lib/emailjsConfig";
 
 const contactInfo = [
   {
@@ -19,7 +20,7 @@ const contactInfo = [
   {
     icon: Mail,
     title: "Email",
-    details: ["kirthisai251@gmail.com"],
+    details: ["admin.bonappetit@gmail.com"],
     description: "Send us your questions anytime",
   },
   {
@@ -55,8 +56,8 @@ const Contact = () => {
     e.preventDefault();
 
     emailjs.send(
-      'service_z4w0fmg',
-      'template_rdzt2i6',
+      EMAILJS_SERVICE_ID,
+      EMAILJS_TEMPLATE_ID,
       {
         from_name: `${formData.firstName} ${formData.lastName}`,
         to_name: "Bon Appetite",
@@ -64,7 +65,7 @@ const Contact = () => {
         message: `You have a new contact message!\nFrom: ${formData.firstName} ${formData.lastName}\nEmail: ${formData.email}\nPhone: ${formData.phone}\n---\nMessage:\n${formData.message}`,
         user_email: formData.email
       },
-      'lBQ8UpD7SH9b45AVq'
+      EMAILJS_PUBLIC_KEY
     )
     .then(() => {
       alert("Thank you for your message! We'll get back to you soon.");

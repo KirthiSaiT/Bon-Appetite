@@ -9,6 +9,7 @@
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import emailjs from "@emailjs/browser";
+import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY } from "@/lib/emailjsConfig";
 import { toast } from "sonner";
 import { ArrowRight, ArrowUpRight, Expand, Loader2, Phone, X } from "lucide-react";
 import Navigation from "@/components/Navigation";
@@ -273,8 +274,8 @@ const CateringModal = ({ onClose }: { onClose: () => void }) => {
     setSending(true);
     try {
       await emailjs.send(
-        "service_z4w0fmg",
-        "template_rdzt2i6",
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
         {
           from_name: form.name.trim(),
           to_name: "Bon Appetit",
@@ -283,7 +284,7 @@ const CateringModal = ({ onClose }: { onClose: () => void }) => {
             `New catering enquiry\n\nName: ${form.name}\nPhone: ${form.phone}\nDate: ${form.eventDate}\nTime: ${form.eventTime}\n` +
             `Service: ${form.serviceType}\nGuests: ${form.people}\n\n${form.query || "(no menu notes)"}`,
         },
-        "lBQ8UpD7SH9b45AVq",
+        EMAILJS_PUBLIC_KEY,
       );
       toast.success("Thanks! We'll call you about your event.");
       onClose();

@@ -3,6 +3,7 @@ import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { ShoppingBag, ArrowRight, Handshake } from "lucide-react";
+import PackOrder from "@/components/PackOrder";
 
 const products = [
   {
@@ -136,9 +137,9 @@ const OurPastaBrand = () => (
         <p className="mt-3 text-lg text-stone-600">Plain, spinach and beetroot, in kraft pouches with a window.</p>
         <ul className="mt-10 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-6 md:gap-8">
           {[
-            { src: "/pack-plain.webp", name: "Artisanal (plain)", alt: "Artisanal plain fettuccine in a kraft pouch with a window", swatch: "var(--flavour-plain)" },
-            { src: "/pack-spinach.webp", name: "Spinach", alt: "Spinach pasta in a kraft pouch with a window", swatch: "var(--flavour-spinach)" },
-            { src: "/pack-beetroot.webp", name: "Beetroot", alt: "Beetroot pasta in a kraft pouch with a window", swatch: "var(--flavour-beetroot)" },
+            { id: "plain", src: "/pack-plain.webp", name: "Artisanal (plain)", alt: "Artisanal plain fettuccine in a kraft pouch with a window", swatch: "var(--flavour-plain)" },
+            { id: "spinach", src: "/pack-spinach.webp", name: "Spinach", alt: "Spinach pasta in a kraft pouch with a window", swatch: "var(--flavour-spinach)" },
+            { id: "beetroot", src: "/pack-beetroot.webp", name: "Beetroot", alt: "Beetroot pasta in a kraft pouch with a window", swatch: "var(--flavour-beetroot)" },
           ].map((p) => (
             <li key={p.name} className="min-w-0">
               <figure>
@@ -149,6 +150,7 @@ const OurPastaBrand = () => (
                   <span aria-hidden="true" className="w-3 h-3 rounded-full ring-1 ring-stone-900/10" style={{ background: p.swatch }} />
                   {p.name}
                 </figcaption>
+                <PackOrder id={p.id} name={p.name} image={p.src} />
               </figure>
             </li>
           ))}

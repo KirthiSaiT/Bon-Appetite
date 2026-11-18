@@ -20,23 +20,21 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
-import Footer from "@/components/Footer";
-import { CafeMenuBoard } from "@/components/CafeMenu";
+import { SimpleFooter } from "@/components/Footer";
+import {
+  AvailableOn,
+  CareersCallout,
+  Flyer,
+  JourneyTeaser,
+  MomentsSlot,
+  NutritionSlot,
+  ProductShowcase,
+  SHOW_PLACEHOLDERS,
+} from "@/components/HomeSections";
 
 const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600";
 
-const facts = [
-  ["Handmade", "daily."],
-  ["Ready in", "5 minutes."],
-  ["No", "preservatives."],
-];
-
-const shops = [
-  { name: "Amazon", href: "https://www.amazon.in" },
-  { name: "Meesho", href: "https://www.meesho.com" },
-  { name: "Flipkart", href: "https://www.flipkart.com" },
-];
 
 const ribbon = ["Handmade daily", "No preservatives", "5 natural flavours", "Ready in 5 minutes", "Made in Hyderabad"];
 
@@ -79,7 +77,7 @@ const useRail = () => {
 
   const measure = useCallback(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !el.clientWidth) return; // not laid out yet (hidden tab): avoid dividing by zero
     setPages(Math.max(1, Math.ceil((el.scrollWidth - 4) / el.clientWidth)));
     const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 4;
     setPage(atEnd ? Math.ceil((el.scrollWidth - 4) / el.clientWidth) - 1 : Math.round(el.scrollLeft / el.clientWidth));
@@ -148,84 +146,10 @@ const Index = () => {
     <div className="min-h-screen bg-white overflow-x-clip">
       <Navigation />
 
-      {/* ── Banner hero with retail band ── */}
-      <section className="relative bg-gradient-to-br from-orange-50 via-stone-50 to-amber-50 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 md:px-14 xl:px-20 pt-14 md:pt-20 pb-16 md:pb-20 grid md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-12 md:gap-8 items-center">
-          <div className="min-w-0">
-            <span className="inline-block -rotate-1 bg-stone-900 text-amber-300 px-4 py-1.5 mb-6 text-sm font-semibold tracking-wide whitespace-nowrap">
-              Handmade Fresh Pasta
-            </span>
-            <h1
-              className="text-[2.6rem] sm:text-[3.4rem] lg:text-[4.4rem] font-semibold leading-[1] text-stone-900 [overflow-wrap:anywhere] min-w-0"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              Made by hand this morning.
-              <span className="block text-orange-600">On your plate tonight.</span>
-            </h1>
-            <ul className="mt-8 grid grid-cols-3 gap-4 max-w-md">
-              {facts.map(([a, b]) => (
-                <li
-                  key={a}
-                  className="text-xl sm:text-2xl font-semibold leading-[1.05] text-stone-800"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  {a}
-                  <br />
-                  {b}
-                </li>
-              ))}
-            </ul>
-            <div className="mt-10">
-              <Link
-                to="/products"
-                className={`group inline-flex items-center gap-2 rounded-full bg-orange-600 hover:bg-orange-700 active:translate-y-px text-white px-8 py-3.5 text-sm font-semibold whitespace-nowrap transition-colors ${focusRing}`}
-              >
-                Order now
-                <ArrowRight className="w-4 h-4 motion-safe:transition-transform group-hover:translate-x-1" />
-              </Link>
-            </div>
-          </div>
+      {/* ── Main flyer ── */}
+      <Flyer />
 
-          {/* Two "packs" leaning on each other */}
-          <div className="relative min-w-0 h-[300px] sm:h-[380px] md:h-[420px]">
-            <figure className="absolute right-[4%] top-0 w-[62%] aspect-[4/5] rounded-2xl overflow-hidden shadow-xl rotate-[5deg] border-[6px] border-white">
-              <img src="/aboutus.webp" alt="Packs of Bon Appetit pasta" className="w-full h-full object-cover" />
-            </figure>
-            <figure className="absolute left-[2%] bottom-0 w-[62%] aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl -rotate-[4deg] border-[6px] border-white">
-              <img
-                src="/spinachpasta (1).webp"
-                alt="Bon Appetit spinach pasta with tomatoes, semolina and olive oil"
-                className="w-full h-full object-cover"
-              />
-            </figure>
-          </div>
-        </div>
-
-        <div className="bg-stone-900 text-white">
-          <div className="max-w-7xl mx-auto px-6 md:px-14 xl:px-20 py-5 flex flex-wrap items-center gap-x-10 gap-y-3">
-            <span className="text-sm font-medium text-stone-300 whitespace-nowrap">Also available on</span>
-            {shops.map((s) => (
-              <a
-                key={s.name}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`text-2xl md:text-[1.75rem] font-semibold whitespace-nowrap hover:text-orange-300 transition-colors ${focusRing}`}
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {s.name}
-              </a>
-            ))}
-            <img
-              src="/bonappetitlogo.jpeg"
-              alt="Bon Appetit"
-              className="hidden sm:block ml-auto w-12 h-12 rounded-full object-cover bg-white"
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ── What is Bon Appetit pasta? ── */}
+      {/* ── What is handmade pasta? (copy to come) ── */}
       <section className="px-6 md:px-14 xl:px-20 pt-24 md:pt-32">
         <div className="max-w-4xl mx-auto relative">
           <figure className="hidden sm:block absolute -top-14 -right-4 md:-right-10 w-36 h-36 md:w-44 md:h-44 rounded-full overflow-hidden border-[8px] border-white shadow-md z-10 bg-white">
@@ -237,23 +161,9 @@ const Index = () => {
                 className="text-[2.2rem] md:text-[3rem] font-semibold text-orange-800 leading-[1.05]"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                What is Bon Appetit pasta?
+                What is handmade pasta?
               </h2>
-              <p className="mt-5 text-stone-700 leading-relaxed max-w-xl">
-                Pasta the way it's made in Italian kitchens — rolled and cut by hand in small batches, every day.
-                Semolina, '00' flour and water, coloured with real spinach, beetroot and paprika.
-              </p>
-              <ul className="mt-5 space-y-1.5 text-stone-800">
-                <li>• Five flavours: Plain, Spinach, Paprika, Beetroot and Wheat</li>
-                <li>• Fresh pasta cooks in 5 minutes</li>
-              </ul>
-              <Link
-                to="/about"
-                className={`group mt-7 inline-flex items-center gap-1.5 text-sm font-semibold text-orange-800 whitespace-nowrap ${focusRing}`}
-              >
-                Read our story
-                <ArrowRight className="w-3.5 h-3.5 motion-safe:transition-transform group-hover:translate-x-1" />
-              </Link>
+              {SHOW_PLACEHOLDERS && <p className="mt-5 text-stone-500 max-w-xl">Content coming soon.</p>}
             </div>
             <div className="bg-orange-600 overflow-hidden py-3" aria-hidden="true">
               <div className="marquee-track">
@@ -339,8 +249,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* ── Cafe menu board ── */}
-      <CafeMenuBoard />
+      {/* ── Small product showcase ── */}
+      <ProductShowcase />
+
+      {/* ── Slots for the nutrition section and featured moments ── */}
+      <NutritionSlot />
+      <MomentsSlot />
 
       {/* ── Making of our pasta: full-bleed band in the picture's own paper colour, so the picture has no edges ── */}
       <section aria-label="How our pasta is made" className="mt-24 md:mt-28 bg-[var(--making-paper)] px-4 md:px-14 xl:px-20 pt-10 md:pt-14 pb-14 md:pb-20">
@@ -526,6 +440,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* ── Our journey (About teaser) ── */}
+      <JourneyTeaser />
+
       {/* ── Kitchen location ── */}
       <section className="px-6 md:px-14 xl:px-20 py-24 md:py-28">
         <div className="max-w-7xl mx-auto grid md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-8 md:gap-14 md:items-stretch">
@@ -569,7 +486,11 @@ const Index = () => {
         </div>
       </section>
 
-      <Footer />
+      {/* ── Available on, then careers ── */}
+      <AvailableOn />
+      <CareersCallout />
+
+      <SimpleFooter />
     </div>
   );
 };

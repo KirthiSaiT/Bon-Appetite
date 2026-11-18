@@ -26,7 +26,7 @@ const columns: { title: string; links: { label: string; to: string }[] }[] = [
     title: "Visit",
     links: [
       { label: "Pasta Workshops", to: "/pasta-workshops" },
-      { label: "Cafe & Catering", to: "/products" },
+      { label: "Cafe & Catering", to: "/cafe" },
       { label: "Recipes", to: "/recipes" },
       { label: "Gallery", to: "/gallery" },
     ],

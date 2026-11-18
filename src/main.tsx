@@ -16,7 +16,7 @@ createRoot(document.getElementById("root")!).render(
     appearance={{
       variables: {
         colorPrimary: 'oklch(64% 0.19 45)',
-        fontFamily: '"DM Sans", system-ui, sans-serif',
+        fontFamily: '"Nunito", system-ui, sans-serif',
         borderRadius: '0.5rem',
       },
     }}

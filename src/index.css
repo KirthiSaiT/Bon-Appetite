@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -48,8 +48,9 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
 
     /* Hallmark · custom theme tokens */
-    --font-display: 'Cormorant Garamond', Georgia, serif;
-    --font-body: 'DM Sans', system-ui, sans-serif;
+    /* Rounded, playful pair (stand-in for the designer's font: change these two lines and the @import above to swap) */
+    --font-display: 'Fredoka', 'Nunito', system-ui, sans-serif;
+    --font-body: 'Nunito', system-ui, sans-serif;
     --color-paper: oklch(98% 0.01 80);
     --color-ink: oklch(18% 0.02 80);
     --color-accent: oklch(65% 0.17 40);

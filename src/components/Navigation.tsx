@@ -16,21 +16,25 @@ import { CartDrawer } from "./CartDrawer";
 import { cn } from "@/lib/utils";
 
 // `label` is the compact desktop label; `full` is the mobile-sheet label.
-const navItems = [
+// Careers lives on the homepage now (and at /careers); Workshops, Gallery and Recipes are in the footer.
+// `also` lists other routes that belong to the same section, so the right item stays highlighted.
+const navItems: { label: string; full: string; path: string; also?: string[] }[] = [
   { label: "Home", full: "Home", path: "/" },
   { label: "About", full: "About Us", path: "/about" },
-  { label: "Pasta Brand", full: "Our Pasta Brand", path: "/our-pasta-brand" },
-  { label: "Cafe", full: "The Cafe", path: "/products" },
-  { label: "Workshops", full: "Pasta Workshops", path: "/pasta-workshops" },
-  { label: "Gallery", full: "Community & Gallery", path: "/gallery" },
-  { label: "Recipes", full: "Recipes", path: "/recipes" },
-  { label: "Careers", full: "Careers", path: "/careers" },
+  {
+    label: "Cafe",
+    full: "The Cafe",
+    path: "/cafe",
+    also: ["/products", "/cooked-pasta", "/fresh-pasta", "/dessert-platters", "/gourmet-sandwiches", "/fresh-salad-bowls", "/hot-curry-meals", "/seasonal-sauces"],
+  },
   { label: "Contact", full: "Contact Us", path: "/contact" },
 ];
 
 const Navigation = () => {
   const location = useLocation();
   const { isAdmin } = useIsAdmin();
+  const isActive = (item: (typeof navItems)[number]) =>
+    location.pathname === item.path || !!item.also?.includes(location.pathname);
 
   return (
     <nav className="bg-white border-b border-stone-200 sticky top-0 z-50">
@@ -62,7 +66,7 @@ const Navigation = () => {
                 to={item.path}
                 className={cn(
                   "text-[0.72rem] xl:text-[0.78rem] tracking-[0.04em] font-semibold uppercase transition-colors whitespace-nowrap focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600 rounded-sm",
-                  location.pathname === item.path
+                  isActive(item)
                     ? "text-orange-600"
                     : "text-stone-500 hover:text-stone-900"
                 )}
@@ -134,7 +138,7 @@ const Navigation = () => {
                         to={item.path}
                         className={cn(
                           "flex items-center px-4 py-3 text-sm transition-colors hover:bg-orange-50 hover:text-orange-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600 rounded-sm",
-                          location.pathname === item.path
+                          isActive(item)
                             ? "bg-orange-50 text-orange-600 font-semibold"
                             : "text-stone-600"
                         )}

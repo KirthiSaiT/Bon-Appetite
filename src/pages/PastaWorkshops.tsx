@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
-import { CalendarDays, MapPin, Users, Clock, CheckCircle, Building2, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { CalendarDays, MapPin, Users, Clock, CheckCircle, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
 import WorkshopBookingModal from "@/components/WorkshopBookingModal";
+import CorporateEnquiryModal from "@/components/CorporateEnquiryModal";
 import { useWorkshops, parseDay } from "@/hooks/use-menu-data";
 
 const includes = [
@@ -26,6 +27,7 @@ const PastaWorkshops = () => {
   const { data: upcomingWorkshops = [], isLoading } = useWorkshops();
   const [booking, setBooking] = useState<{ open: boolean; id?: string }>({ open: false });
   const openBooking = (id?: string) => setBooking({ open: true, id });
+  const [corporateOpen, setCorporateOpen] = useState(false);
 
   const listRef = useRef<HTMLElement>(null);
   const [page, setPage] = useState(1);
@@ -74,7 +76,7 @@ const PastaWorkshops = () => {
                   size="lg"
                   variant="outline"
                   className="border-orange-600 text-orange-600 hover:bg-orange-50"
-                  onClick={() => document.getElementById("corporate")?.scrollIntoView({ behavior: "smooth" })}
+                  onClick={() => setCorporateOpen(true)}
                 >
                   Corporate Enquiry
                 </Button>
@@ -236,50 +238,13 @@ const PastaWorkshops = () => {
         </div>
       </section>
 
-      {/* Corporate section */}
-      <section id="corporate" className="py-14 px-8 md:px-14 bg-stone-50">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-white border border-stone-200 p-10">
-            <div className="flex flex-col md:flex-row md:items-center gap-8">
-              <Building2 className="w-16 h-16 text-orange-600 flex-shrink-0 mx-auto md:mx-0" />
-              <div className="flex-1 text-center md:text-left">
-                <h2
-                  className="text-3xl font-bold text-stone-900 mb-3"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >For Corporates</h2>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  Looking for a unique team-building experience? Our corporate pasta workshops are
-                  a fun, hands-on way for your team to bond over food. We offer customised sessions
-                  for groups of any size — online or at your office premises.
-                </p>
-                <div className="flex flex-wrap gap-4 justify-center md:justify-start">
-                  <Button
-                    size="lg"
-                    className="bg-orange-600 hover:bg-orange-700 text-white"
-                    onClick={() => openBooking()}
-                  >
-                    Book Now
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="border-orange-600 text-orange-600 hover:bg-orange-50"
-                  >
-                    <a href="/contact">Contact Us</a>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <WorkshopBookingModal
         open={booking.open}
         workshopId={booking.id}
         onClose={() => setBooking({ open: false })}
       />
+
+      <CorporateEnquiryModal open={corporateOpen} onClose={() => setCorporateOpen(false)} />
 
       <SimpleFooter />
     </div>

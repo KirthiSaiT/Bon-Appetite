@@ -7,6 +7,7 @@ import React from "react";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import Products from "./pages/Products";
+import Cafe from "./pages/Cafe";
 import Gallery from "./pages/Gallery";
 import FAQ from "./pages/FAQ";
 import Recipes from "./pages/Recipes";
@@ -39,6 +40,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
+            <Route path="/cafe" element={<Cafe />} />
             <Route path="/products" element={<Products />} />
             <Route path="/dry-pasta" element={<DryPasta />} />
             <Route path="/fresh-pasta" element={<FreshPasta />} />

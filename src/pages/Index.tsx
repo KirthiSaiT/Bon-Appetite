@@ -28,6 +28,7 @@ import {
   JourneyTeaser,
   MomentsSlot,
   NutritionSlot,
+  PastaPacks,
   ProductShowcase,
   SHOW_PLACEHOLDERS,
 } from "@/components/HomeSections";
@@ -251,6 +252,9 @@ const Index = () => {
 
       {/* ── Small product showcase ── */}
       <ProductShowcase />
+
+      {/* ── The three packs, with size picker and Add to Cart ── */}
+      <PastaPacks />
 
       {/* ── Slots for the nutrition section and featured moments ── */}
       <NutritionSlot />

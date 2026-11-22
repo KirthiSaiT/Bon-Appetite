@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Facebook, Instagram } from "lucide-react";
 import { useSiteSettings } from "@/hooks/use-cafe-data";
+import PackOrder from "@/components/PackOrder";
 
 export const SHOW_PLACEHOLDERS = true;
 
@@ -135,36 +136,79 @@ export const MomentsSlot = () =>
     </section>
   ) : null;
 
-/* ── About teaser: a small photo collage and our journey ── */
+/* ── Photo collage: three real photos, tilted and overlapping. Swap the files for making / drying shots when they exist. ── */
+export const collagePhotos = [
+  { src: "/bts1.webp", alt: "The team at work in our first home kitchen", pos: "50% 40%" },
+  { src: "/aboutus.webp", alt: "Our handmade pasta in kraft boxes: artisanal, paprika, spinach and beetroot", pos: "50% 50%" },
+  { src: "/cmpic21.webp", alt: "Our founder at a food-startup expo with our pasta boxes", pos: "50% 62%" },
+];
+
+export const PhotoCollage = () => (
+  <div className="relative min-w-0 aspect-[5/4]">
+    <figure className="absolute left-0 top-0 w-[58%] aspect-[4/5] overflow-hidden rounded-3xl border-[6px] border-white shadow-xl -rotate-[3deg]">
+      <img src={collagePhotos[0].src} alt={collagePhotos[0].alt} loading="lazy" className="w-full h-full object-cover" style={{ objectPosition: collagePhotos[0].pos }} />
+    </figure>
+    <figure className="absolute right-0 top-[6%] w-[46%] aspect-square overflow-hidden rounded-3xl border-[6px] border-white shadow-xl rotate-[4deg]">
+      <img src={collagePhotos[1].src} alt={collagePhotos[1].alt} loading="lazy" className="w-full h-full object-cover" style={{ objectPosition: collagePhotos[1].pos }} />
+    </figure>
+    <figure className="absolute right-[10%] bottom-0 w-[40%] aspect-[4/5] overflow-hidden rounded-3xl border-[6px] border-white shadow-xl -rotate-[2deg]">
+      <img src={collagePhotos[2].src} alt={collagePhotos[2].alt} loading="lazy" className="w-full h-full object-cover" style={{ objectPosition: collagePhotos[2].pos }} />
+    </figure>
+  </div>
+);
+
+/* ── About teaser: the collage and our journey ── */
 export const JourneyTeaser = () => (
   <section aria-labelledby="journey-title" className="px-6 md:px-14 xl:px-20 pt-24 md:pt-28">
     <div className="max-w-6xl mx-auto grid md:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] gap-10 md:gap-14 items-center">
-      {/* Collage: pasta making, drying and the team at work */}
-      <div className="relative min-w-0 aspect-[5/4]">
-        <figure className="absolute left-0 top-0 w-[62%] aspect-[4/5] overflow-hidden rounded-3xl border-[6px] border-white shadow-xl -rotate-[3deg]">
-          <img src="/bts1.webp" alt="Our team shaping pasta by hand" loading="lazy" className="w-full h-full object-cover" />
-        </figure>
-        <figure className="absolute right-0 top-[10%] w-[48%] aspect-square overflow-hidden rounded-3xl border-[6px] border-white shadow-xl rotate-[4deg]">
-          <img src="/school1.webp" alt="Pasta being cooked in the kitchen" loading="lazy" className="w-full h-full object-cover" />
-        </figure>
-        <figure className="absolute right-[8%] bottom-0 w-[44%] aspect-[4/3] overflow-hidden rounded-3xl border-[6px] border-white shadow-xl -rotate-[2deg]">
-          <img src="/aboutus2.webp" alt="Fresh pasta ready to dry" loading="lazy" className="w-full h-full object-cover" />
-        </figure>
-      </div>
-
+      <PhotoCollage />
       <div className="min-w-0">
         <h2 id="journey-title" className={`text-[2.2rem] md:text-[3rem] ${heading}`} style={{ fontFamily: "var(--font-display)" }}>
           Our journey.
         </h2>
         <p className="mt-5 text-stone-600 text-base md:text-lg leading-relaxed max-w-lg">
-          We started from scratch in 2020 with a rolling pin and a small kitchen in Hyderabad. Today we make fresh and dry
-          pasta by hand, run workshops and send our pasta across India.
+          We started from scratch in 2020. Today Bon Appetit makes fresh and dry pasta by hand, runs pasta workshops and
+          delivers across India.
         </p>
         <Link to="/about" className={`${pill} mt-8 ${focusRing}`}>
           Know more about us
           <ArrowRight className="w-4 h-4 motion-safe:transition-transform group-hover:translate-x-1" />
         </Link>
       </div>
+    </div>
+  </section>
+);
+
+/* ── Our pasta: the three packs, each with a size picker and Add to Cart ── */
+const packs = [
+  { id: "plain", name: "Artisanal (plain)", src: "/pack-plain.webp", alt: "Artisanal plain pasta in a kraft pouch with a window", swatch: "var(--flavour-plain)" },
+  { id: "spinach", name: "Spinach", src: "/pack-spinach.webp", alt: "Spinach pasta in a kraft pouch with a window", swatch: "var(--flavour-spinach)" },
+  { id: "beetroot", name: "Beetroot", src: "/pack-beetroot.webp", alt: "Beetroot pasta in a kraft pouch with a window", swatch: "var(--flavour-beetroot)" },
+];
+
+export const PastaPacks = () => (
+  <section aria-labelledby="packs-title" className="px-6 md:px-14 xl:px-20 pt-24 md:pt-28">
+    <div className="max-w-6xl mx-auto">
+      <h2 id="packs-title" className={`text-[2.2rem] md:text-[3rem] ${heading}`} style={{ fontFamily: "var(--font-display)" }}>
+        Our pasta.
+      </h2>
+      <p className="mt-3 text-lg text-stone-600">Plain, spinach and beetroot, in kraft pouches with a window.</p>
+      <ul className="mt-10 grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)] gap-6 md:gap-8">
+        {packs.map((p) => (
+          <li key={p.id} className="min-w-0">
+            <figure>
+              <div className="aspect-square overflow-hidden rounded-3xl bg-stone-200">
+                <img src={p.src} alt={p.alt} width={1000} height={1000} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+              </div>
+              <figcaption className="mt-3 flex items-center gap-2.5 px-1 text-base font-semibold text-stone-900">
+                <span aria-hidden="true" className="w-3 h-3 rounded-full ring-1 ring-stone-900/10" style={{ background: p.swatch }} />
+                {p.name}
+              </figcaption>
+              <PackOrder id={p.id} name={p.name} image={p.src} />
+            </figure>
+          </li>
+        ))}
+      </ul>
     </div>
   </section>
 );

@@ -56,9 +56,10 @@ export function readBody(req) {
  * Email the admin the full booking details, from the server (Gmail SMTP).
  * Needs SMTP_USER (a Gmail address) and SMTP_PASS (a Gmail App Password).
  * Goes to ADMIN_NOTIFY_EMAIL, defaulting to admin.bonappetit@gmail.com.
+ * Optional replyTo and attachments ([{ filename, content: Buffer }]).
  * Best-effort: never throws. Returns true only if the mail was accepted.
  */
-export async function emailAdmin({ subject, text }) {
+export async function emailAdmin({ subject, text, replyTo, attachments = [] }) {
   const to = process.env.ADMIN_NOTIFY_EMAIL || "admin.bonappetit@gmail.com";
 
   // Preferred: Resend (just an API key, no Gmail password). Until a domain is verified,
@@ -74,6 +75,10 @@ export async function emailAdmin({ subject, text }) {
           to: [to],
           subject,
           text,
+          ...(replyTo ? { reply_to: replyTo } : {}),
+          ...(attachments.length
+            ? { attachments: attachments.map((a) => ({ filename: a.filename, content: a.content.toString("base64") })) }
+            : {}),
         }),
         signal: AbortSignal.timeout(8000),
       });
@@ -97,6 +102,8 @@ export async function emailAdmin({ subject, text }) {
       to,
       subject,
       text,
+      ...(replyTo ? { replyTo } : {}),
+      ...(attachments.length ? { attachments: attachments.map((a) => ({ filename: a.filename, content: a.content })) } : {}),
     });
     return true;
   } catch (err) {

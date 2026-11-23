@@ -239,7 +239,33 @@ const Careers = () => {
       if (uploadError) throw uploadError;
       const resumeUrl: string = ticket.url;
 
-      // 2. Email the admin with the link.
+      // 2. Preferred: the server emails the admin with the resume ATTACHED (replies go to the applicant).
+      let emailedWithFile = false;
+      try {
+        const appRes = await fetch("/api/submit-application", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            path: ticket.path,
+            role: roleLabel,
+            name: form.name,
+            email: form.email,
+            phone: form.phone,
+            linkedin: form.linkedin,
+            message: form.message,
+          }),
+        });
+        const appData = await appRes.json().catch(() => ({}));
+        emailedWithFile = appRes.ok && appData.emailed === true;
+      } catch {
+        emailedWithFile = false;
+      }
+      if (emailedWithFile) {
+        setIsSubmitted(true);
+        return;
+      }
+
+      // 3. Fallback: the EmailJS email with a link to the resume, so no application is ever lost.
       await emailjs.send(
         EMAILJS_SERVICE_ID,
         EMAILJS_TEMPLATE_ID,

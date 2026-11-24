@@ -1,7 +1,8 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { useCart } from "@/context/CartContext";
-import { ShoppingCart, Trash2 } from "lucide-react";
+import { MessageCircle, ShoppingCart, Trash2 } from "lucide-react";
+import { orderMessage, whatsappUrl } from "@/lib/whatsapp";
 import { useNavigate } from "react-router-dom";
 
 export function CartDrawer() {
@@ -62,7 +63,15 @@ export function CartDrawer() {
               <span>₹{total.toFixed(2)}</span>
             </div>
             <div className="flex flex-col space-y-2">
-              <Button disabled={cartItems.length === 0} onClick={handleCheckout}>Checkout</Button>
+              {cartItems.length > 0 ? (
+                <Button asChild className="bg-[var(--whatsapp)] text-white hover:bg-[var(--whatsapp)] hover:brightness-95">
+                  <a href={whatsappUrl(orderMessage(cartItems))} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle className="mr-2 h-4 w-4" aria-hidden="true" />
+                    Order on WhatsApp
+                  </a>
+                </Button>
+              ) : null}
+              <Button variant="outline" disabled={cartItems.length === 0} onClick={handleCheckout}>Checkout</Button>
               <Button variant="outline" onClick={clearCart} disabled={cartItems.length === 0}>Clear Cart</Button>
             </div>
           </div>

@@ -1,19 +1,15 @@
 /* Size picker + Add to Cart for a pasta pack (50 g, 100 g, 200 g).
- * Prices: fill PACK_PRICES below (rupees). A size with no price yet can be picked but not added,
- * so no order can be placed at a made-up price. */
+ * Prices come from the admin "prices" table, keys pack.<plain|spinach|beetroot>.<50|100|200> (rupees).
+ * A size with no price yet can be picked but not added, so no order can be placed at a made-up price.
+ * The server charges from the same table (api/_lib/catalog.js). */
 import { useState } from "react";
 import { toast } from "sonner";
 import { ShoppingBag } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { usePrices } from "@/hooks/use-menu-data";
 
 export const PACK_SIZES = [50, 100, 200] as const;
 type Size = (typeof PACK_SIZES)[number];
-
-export const PACK_PRICES: Record<Size, number | null> = {
-  50: null,
-  100: null,
-  200: null,
-};
 
 const focusRing =
   "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600";
@@ -21,7 +17,9 @@ const focusRing =
 const PackOrder = ({ id, name, image }: { id: string; name: string; image: string }) => {
   const { addToCart } = useCart();
   const [size, setSize] = useState<Size>(100);
-  const price = PACK_PRICES[size];
+  const { price: dbPrice } = usePrices();
+  const found = dbPrice(`pack.${id}.${size}`, 0);
+  const price: number | null = found > 0 ? found : null;
 
   return (
     <div className="mt-4">

@@ -167,3 +167,61 @@ export function openCheckout(opts: {
     rzp.open();
   });
 }
+
+/* ── Shop cart payments ── */
+
+export interface CartCustomer {
+  name: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  zip: string;
+  notes: string;
+}
+
+export interface CartLine {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+/** Ask the server to price the cart and create a Razorpay order. The server decides the amount. */
+export async function createCartOrder(customer: CartCustomer, items: CartLine[]): Promise<CreatedOrder> {
+  const res = await fetch("/api/create-cart-order", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ customer, items }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "Could not start payment. Please try again.");
+  return data as CreatedOrder;
+}
+
+export interface CartVerifyResult {
+  verified: boolean;
+  saved: boolean;
+  payment_id?: string;
+  amount?: number;
+}
+
+/** Ask the server to verify the payment and record the order. */
+export async function verifyCartPayment(
+  success: RazorpaySuccess,
+  customer: CartCustomer,
+  items: CartLine[],
+): Promise<CartVerifyResult> {
+  try {
+    const res = await fetch("/api/verify-cart-payment", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...success, customer, items }),
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ...data, verified: data.verified === true, saved: res.ok && data.saved === true };
+  } catch {
+    // Network drop after payment: the money may be taken, so keep the reference.
+    return { verified: false, saved: false, payment_id: success.razorpay_payment_id };
+  }
+}

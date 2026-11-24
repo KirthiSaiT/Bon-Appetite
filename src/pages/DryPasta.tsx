@@ -196,7 +196,7 @@ const DryPasta = () => {
                     <span className="text-lg font-bold text-orange-600 mb-2">₹{currentPrice}</span>
                     <button
                       onClick={() => addToCart({
-                        id: item.id,
+                        id: `${item.id}-${selectedQuantity}`, // weight in the id, so different weights stay separate lines
                         name: `${item.name} (${selectedQuantity}g)`,
                         price: parseFloat(currentPrice),
                         image: baseProduct?.image || '/drypasta.webp',

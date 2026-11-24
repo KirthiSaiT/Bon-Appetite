@@ -1,6 +1,6 @@
-/* Cafe landing: one section, two doors.
- * Cooked Pasta -> the cooked pasta menu with prices and ordering.
- * Cafe         -> the rest of the cafe: fresh pasta, hot food on Zomato and Swiggy, catering and workshops.
+/* Our Products landing: two doors.
+ * Ready to cook -> fresh and dry pasta to cook at home.
+ * Ready to eat  -> the Cafe: hot food, delivery apps, catering.
  */
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
@@ -12,20 +12,20 @@ const focusRing =
 
 const options = [
   {
-    title: "Cooked Pasta",
-    line: "Build your plate, see the prices and order.",
-    to: "/cooked-pasta",
-    image: "/cooked.webp",
-    alt: "Cooked Pasta",
-    action: "See the menu",
+    title: "Ready to cook",
+    line: "Fresh and dry pasta, made by hand, to cook at home.",
+    to: "/fresh-pasta",
+    image: "/readytocook.webp",
+    alt: "Ready to cook",
+    action: "See the pasta",
   },
   {
-    title: "Cafe",
-    line: "Fresh pasta, hot food on Zomato and Swiggy, catering and workshops.",
+    title: "Ready to eat",
+    line: "The Cafe: hot plates on Zomato and Swiggy, catering and more.",
     to: "/products",
     image: "/readytoeat.webp",
     alt: "Ready to eat",
-    action: "Visit the cafe",
+    action: "Visit the Cafe",
   },
 ];
 
@@ -39,7 +39,7 @@ const Cafe = () => (
           className="text-[2.6rem] md:text-[4rem] font-semibold leading-[1.02] text-stone-900 [overflow-wrap:break-word] min-w-0"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          The <span className="text-orange-600">Cafe.</span>
+          Our <span className="text-orange-600">products.</span>
         </h1>
         <p className="mt-4 text-lg text-stone-600 max-w-xl">Pick where you would like to start.</p>
 

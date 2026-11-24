@@ -71,6 +71,7 @@
     --menu-nonveg: oklch(52% 0.19 27);
     /* the exact paper of the "Making of our pasta" picture (#fff6e9), so its band has no visible edge */
     --making-paper: #fff6e9;
+    --whatsapp: #25d366;
     --dur-fast: 150ms;
     --dur-base: 250ms;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

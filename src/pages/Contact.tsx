@@ -55,6 +55,12 @@ const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Every field is required, and spaces alone don't count.
+    if (Object.values(formData).some((v) => !v.trim())) {
+      alert("Please fill in all the fields. Every field is required.");
+      return;
+    }
+
     emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
@@ -113,43 +119,44 @@ const Contact = () => {
             >
               Send us a message
             </h2>
-            <p className="text-stone-500 text-sm mb-8">We'll get back to you within 24 hours.</p>
+            <p className="text-stone-500 text-sm mb-2">We'll get back to you within 24 hours.</p>
+            <p className="text-stone-500 text-sm mb-8"><span className="text-red-500" aria-hidden="true">*</span> All fields are required.</p>
 
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label htmlFor="firstName" className="text-stone-700 font-semibold text-sm">First Name</Label>
+                  <Label htmlFor="firstName" className="text-stone-700 font-semibold text-sm">First Name <span className="text-red-500" aria-hidden="true">*</span></Label>
                   <Input id="firstName" name="firstName" placeholder="Enter your first name"
                     value={formData.firstName} onChange={handleInputChange} required
                     className="focus-visible:ring-orange-500" />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="lastName" className="text-stone-700 font-semibold text-sm">Last Name</Label>
+                  <Label htmlFor="lastName" className="text-stone-700 font-semibold text-sm">Last Name <span className="text-red-500" aria-hidden="true">*</span></Label>
                   <Input id="lastName" name="lastName" placeholder="Enter your last name"
                     value={formData.lastName} onChange={handleInputChange} required
                     className="focus-visible:ring-orange-500" />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-stone-700 font-semibold text-sm">Email</Label>
+                <Label htmlFor="email" className="text-stone-700 font-semibold text-sm">Email <span className="text-red-500" aria-hidden="true">*</span></Label>
                 <Input id="email" name="email" type="email" placeholder="Enter your email"
                   value={formData.email} onChange={handleInputChange} required
                   className="focus-visible:ring-orange-500" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="phone" className="text-stone-700 font-semibold text-sm">Phone Number</Label>
+                <Label htmlFor="phone" className="text-stone-700 font-semibold text-sm">Phone Number <span className="text-red-500" aria-hidden="true">*</span></Label>
                 <Input id="phone" name="phone" type="tel" placeholder="Enter your phone number"
-                  value={formData.phone} onChange={handleInputChange}
+                  value={formData.phone} onChange={handleInputChange} required
                   className="focus-visible:ring-orange-500" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="subject" className="text-stone-700 font-semibold text-sm">Subject</Label>
+                <Label htmlFor="subject" className="text-stone-700 font-semibold text-sm">Subject <span className="text-red-500" aria-hidden="true">*</span></Label>
                 <Input id="subject" name="subject" placeholder="What's this about?"
                   value={formData.subject} onChange={handleInputChange} required
                   className="focus-visible:ring-orange-500" />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="message" className="text-stone-700 font-semibold text-sm">Message</Label>
+                <Label htmlFor="message" className="text-stone-700 font-semibold text-sm">Message <span className="text-red-500" aria-hidden="true">*</span></Label>
                 <Textarea id="message" name="message" placeholder="Tell us more..."
                   className="min-h-32 focus-visible:ring-orange-500 resize-none"
                   value={formData.message} onChange={handleInputChange} required />

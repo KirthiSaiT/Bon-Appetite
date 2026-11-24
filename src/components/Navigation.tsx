@@ -16,17 +16,17 @@ import { CartDrawer } from "./CartDrawer";
 import { cn } from "@/lib/utils";
 
 // `label` is the compact desktop label; `full` is the mobile-sheet label.
-// Careers lives on the homepage now (and at /careers); Workshops, Gallery and Recipes are in the footer.
+// Careers and About live on the homepage; Gallery and Recipes are in the footer.
 // `also` lists other routes that belong to the same section, so the right item stays highlighted.
 const navItems: { label: string; full: string; path: string; also?: string[] }[] = [
   { label: "Home", full: "Home", path: "/" },
-  { label: "About", full: "About Us", path: "/about" },
   {
-    label: "Cafe",
-    full: "The Cafe",
+    label: "Our Products",
+    full: "Our Products",
     path: "/cafe",
-    also: ["/products", "/cooked-pasta", "/fresh-pasta", "/dessert-platters", "/gourmet-sandwiches", "/fresh-salad-bowls", "/hot-curry-meals", "/seasonal-sauces"],
+    also: ["/products", "/cooked-pasta", "/fresh-pasta", "/dry-pasta", "/our-pasta-brand", "/dessert-platters", "/gourmet-sandwiches", "/fresh-salad-bowls", "/hot-curry-meals", "/seasonal-sauces"],
   },
+  { label: "Workshops", full: "Pasta Workshops", path: "/pasta-workshops" },
   { label: "Contact", full: "Contact Us", path: "/contact" },
 ];
 

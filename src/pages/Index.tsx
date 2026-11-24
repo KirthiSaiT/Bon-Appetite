@@ -369,8 +369,15 @@ const Index = () => {
       {/* ── How to cook (dark band) ── */}
       <section className="mt-24 md:mt-28 bg-stone-900 text-white py-16 md:py-20 overflow-hidden">
         <div className="grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-12 lg:gap-16 items-center">
-          <figure className="min-w-0 aspect-[16/10] lg:aspect-auto lg:h-[440px] mx-6 lg:mx-0 rounded-3xl lg:rounded-l-none lg:rounded-r-[2.5rem] overflow-hidden">
-            <img src="/school1.webp" alt="Fresh pasta being cooked in a big pot" className="w-full h-full object-cover" />
+          <figure className="min-w-0 aspect-[2/1] mx-6 lg:mx-0 rounded-3xl lg:rounded-l-none lg:rounded-r-[2.5rem] overflow-hidden bg-[var(--making-paper)]">
+            <img
+              src="/how-to-cook.webp"
+              alt="How to cook: bring a large pot of water to a rolling boil, add salt, cook the pasta for 5 minutes, then drain. Your pasta is ready."
+              loading="lazy"
+              width={1774}
+              height={887}
+              className="w-full h-full object-cover"
+            />
           </figure>
           <div className="min-w-0 px-6 md:px-14 lg:px-0 lg:pr-20">
             <h2

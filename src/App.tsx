@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import Products from "./pages/Products";
 import Cafe from "./pages/Cafe";
+import WhatsAppButton from "./components/WhatsAppButton";
 import Gallery from "./pages/Gallery";
 import FAQ from "./pages/FAQ";
 import Recipes from "./pages/Recipes";
@@ -62,6 +63,7 @@ const App = () => (
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          <WhatsAppButton />
         </BrowserRouter>
       </CartProvider>
     </TooltipProvider>

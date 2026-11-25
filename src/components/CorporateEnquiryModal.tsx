@@ -24,8 +24,9 @@ const CorporateEnquiryModal = ({ open, onClose }: { open: boolean; onClose: () =
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    if (!form.company.trim() || !form.name.trim() || !form.email.trim() || form.phone.trim().length < 6) {
-      setError("Please fill in your company, name, email and phone number.");
+    const requiredFields = [form.company, form.name, form.email, form.people, form.mode, form.date];
+    if (requiredFields.some((v) => !v.trim()) || form.phone.trim().length < 6) {
+      setError("Please fill in all the fields marked with a star.");
       return;
     }
     setSending(true);
@@ -70,39 +71,39 @@ const CorporateEnquiryModal = ({ open, onClose }: { open: boolean; onClose: () =
 
         <form onSubmit={submit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="ce-company">Company</Label>
+            <Label htmlFor="ce-company">Company <span className="text-red-500" aria-hidden="true">*</span></Label>
             <Input id="ce-company" value={form.company} onChange={set("company")} required />
           </div>
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="ce-name">Your name</Label>
+              <Label htmlFor="ce-name">Your name <span className="text-red-500" aria-hidden="true">*</span></Label>
               <Input id="ce-name" value={form.name} onChange={set("name")} required />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="ce-phone">Phone</Label>
+              <Label htmlFor="ce-phone">Phone <span className="text-red-500" aria-hidden="true">*</span></Label>
               <Input id="ce-phone" type="tel" value={form.phone} onChange={set("phone")} required />
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="ce-email">Email</Label>
+            <Label htmlFor="ce-email">Email <span className="text-red-500" aria-hidden="true">*</span></Label>
             <Input id="ce-email" type="email" value={form.email} onChange={set("email")} required />
           </div>
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="ce-people">Team size</Label>
-              <Input id="ce-people" inputMode="numeric" value={form.people} onChange={set("people")} />
+              <Label htmlFor="ce-people">Team size <span className="text-red-500" aria-hidden="true">*</span></Label>
+              <Input id="ce-people" inputMode="numeric" value={form.people} onChange={set("people")} required />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="ce-mode">Online or office</Label>
-              <Input id="ce-mode" placeholder="Online" value={form.mode} onChange={set("mode")} />
+              <Label htmlFor="ce-mode">Online or office <span className="text-red-500" aria-hidden="true">*</span></Label>
+              <Input id="ce-mode" placeholder="Online" value={form.mode} onChange={set("mode")} required />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="ce-date">Preferred date</Label>
-              <Input id="ce-date" type="date" value={form.date} onChange={set("date")} />
+              <Label htmlFor="ce-date">Preferred date <span className="text-red-500" aria-hidden="true">*</span></Label>
+              <Input id="ce-date" type="date" value={form.date} onChange={set("date")} required />
             </div>
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="ce-message">Anything else?</Label>
+            <Label htmlFor="ce-message">Anything else? (optional)</Label>
             <Textarea id="ce-message" rows={3} value={form.message} onChange={set("message")} className="resize-none" />
           </div>
 

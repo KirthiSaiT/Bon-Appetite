@@ -176,6 +176,7 @@ export interface CartCustomer {
   phone: string;
   address: string;
   city: string;
+  state: string;
   zip: string;
   notes: string;
 }
@@ -188,15 +189,34 @@ export interface CartLine {
 }
 
 /** Ask the server to price the cart and create a Razorpay order. The server decides the amount. */
-export async function createCartOrder(customer: CartCustomer, items: CartLine[]): Promise<CreatedOrder> {
+export async function createCartOrder(customer: CartCustomer, items: CartLine[], deliveryFee: number): Promise<CreatedOrder> {
   const res = await fetch("/api/create-cart-order", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ customer, items }),
+    body: JSON.stringify({ customer, items, delivery_fee: deliveryFee }),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || "Could not start payment. Please try again.");
   return data as CreatedOrder;
+}
+
+export interface DeliveryQuote {
+  mode: "none" | "cafe" | "courier";
+  fee: number; // rupees
+  label: string;
+}
+
+/** The delivery charge to show before payment. The server works it out again when the order is created. */
+export async function fetchDeliveryQuote(customer: CartCustomer, items: CartLine[], signal?: AbortSignal): Promise<DeliveryQuote> {
+  const res = await fetch("/api/delivery-quote", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ customer, items }),
+    signal,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || typeof data.fee !== "number") throw new Error(data.error || "We couldn't calculate delivery. Please try again.");
+  return data as DeliveryQuote;
 }
 
 export interface CartVerifyResult {

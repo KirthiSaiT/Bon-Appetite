@@ -5,6 +5,7 @@
 //   → { order_id, amount, currency }
 import { razorpayClient, readBody, supabaseAdmin } from "./_lib/booking.js";
 import { cleanCustomer, customerError, loadPriceContext, priceCart } from "./_lib/catalog.js";
+import { quoteDelivery } from "./_lib/delivery.js";
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -33,12 +34,33 @@ export default async function handler(req, res) {
   }
   if (priced.error) return res.status(priced.status).json({ error: priced.error });
 
+  // The delivery charge is worked out again here, and must match what the customer was shown.
+  let delivery;
+  try {
+    delivery = await quoteDelivery(priced.lines, customer);
+  } catch (err) {
+    console.error("[create-cart-order] delivery", err?.message);
+    return res.status(502).json({ error: "We couldn't calculate delivery just now. Please try again, or order on WhatsApp." });
+  }
+  if (delivery.error) return res.status(delivery.status).json({ error: delivery.error });
+  if (Number(body.delivery_fee || 0) !== delivery.fee) {
+    return res.status(409).json({ error: `The delivery charge is now ₹${delivery.fee}. Please check the new total and pay again.`, delivery_fee: delivery.fee });
+  }
+
   try {
     const order = await razorpay.orders.create({
-      amount: priced.totalPaise,
+      amount: priced.totalPaise + delivery.fee * 100,
       currency: "INR",
       receipt: `shop_${Date.now()}`.slice(0, 40),
-      notes: { kind: "shop", cart: priced.hash, name: customer.name.slice(0, 60), phone: customer.phone },
+      notes: {
+        kind: "shop",
+        cart: priced.hash,
+        name: customer.name.slice(0, 60),
+        phone: customer.phone,
+        // Set by the server, so verify-cart-payment can trust them
+        delivery_mode: delivery.mode,
+        delivery_fee: String(delivery.fee),
+      },
     });
     return res.status(200).json({ order_id: order.id, amount: order.amount, currency: order.currency });
   } catch (err) {

@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import Products from "./pages/Products";
 import Cafe from "./pages/Cafe";
+import TrackOrder from "./pages/TrackOrder";
 import WhatsAppButton from "./components/WhatsAppButton";
 import Gallery from "./pages/Gallery";
 import FAQ from "./pages/FAQ";
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/recipes" element={<Recipes />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/checkout" element={<Checkout />} />
+            <Route path="/track-order" element={<TrackOrder />} />
             <Route path="/our-pasta-brand" element={<OurPastaBrand />} />
             <Route path="/pasta-workshops" element={<PastaWorkshops />} />
             <Route path="/careers" element={<Careers />} />

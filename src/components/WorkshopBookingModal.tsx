@@ -71,6 +71,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
     setError("");
     if (!chosen) return setError("Please pick a workshop date on the calendar.");
     if (!form.name.trim() || !form.phone.trim()) return setError("Please fill in your name and phone number.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) return setError("Please enter a valid email address.");
     const people = Number(form.people);
     if (!Number.isInteger(people) || people < 1 || people > 20) return setError("Number of people must be between 1 and 20.");
     if (!supabase || chosen.id.startsWith("fallback")) {
@@ -277,7 +278,7 @@ const WorkshopBookingModal = ({ open, onClose, workshopId }: Props) => {
               <input id="ws-phone" type="tel" className={inputCls} placeholder="Enter your phone number" value={form.phone} onChange={(e) => set("phone", e.target.value)} />
             </div>
             <div>
-              <label htmlFor="ws-email" className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+              <label htmlFor="ws-email" className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
               <input id="ws-email" type="email" className={inputCls} placeholder="you@example.com" value={form.email} onChange={(e) => set("email", e.target.value)} />
             </div>
             <div>

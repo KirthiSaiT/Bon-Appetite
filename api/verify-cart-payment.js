@@ -8,6 +8,7 @@
 import crypto from "node:crypto";
 import { emailAdmin, razorpayClient, readBody, supabaseAdmin } from "./_lib/booking.js";
 import { cleanCustomer, loadPriceContext, priceCart } from "./_lib/catalog.js";
+import { createShiprocketOrder, parcelFor, shiprocketConfigured } from "./_lib/delivery.js";
 
 const BUCKET = "orders";
 
@@ -60,7 +61,9 @@ export default async function handler(req, res) {
     console.error("[verify-cart-payment] price lookup", err?.message);
     return res.status(500).json({ ...ref, saved: false });
   }
-  if (priced.error || priced.hash !== order.notes.cart || priced.totalPaise !== Number(order.amount)) {
+  const deliveryMode = order.notes.delivery_mode || "none";
+  const deliveryFee = Number(order.notes.delivery_fee || 0);
+  if (priced.error || priced.hash !== order.notes.cart || priced.totalPaise + deliveryFee * 100 !== Number(order.amount)) {
     console.error("[verify-cart-payment] cart does not match the paid order", razorpay_order_id, priced.error || "hash/amount");
     // The customer HAS paid, so keep the reference and let a human sort it out.
     await emailAdmin({
@@ -74,18 +77,20 @@ export default async function handler(req, res) {
     paid_at: new Date().toISOString(),
     payment_id: razorpay_payment_id,
     order_id: razorpay_order_id,
-    amount_rupees: priced.totalPaise / 100,
+    amount_rupees: Number(order.amount) / 100,
+    delivery: { mode: deliveryMode, fee_rupees: deliveryFee },
     customer,
     items: priced.lines,
   };
 
+  let saved = false;
+  const path = `${razorpay_payment_id}.json`;
   try {
     const { error: bucketError } = await db.storage.createBucket(BUCKET, { public: false });
     if (bucketError && !/already exists|duplicate/i.test(bucketError.message)) throw bucketError;
-    const month = record.paid_at.slice(0, 7);
     const { error: uploadError } = await db.storage
       .from(BUCKET)
-      .upload(`${month}/${razorpay_payment_id}.json`, JSON.stringify(record, null, 2), { contentType: "application/json", upsert: false });
+      .upload(path, JSON.stringify(record, null, 2), { contentType: "application/json", upsert: false });
     if (uploadError) {
       // Already stored: this is a retried confirmation. Succeed without a second email.
       if (/already exists|duplicate/i.test(uploadError.message)) {
@@ -93,9 +98,35 @@ export default async function handler(req, res) {
       }
       throw uploadError;
     }
+    saved = true;
   } catch (err) {
     console.error("[verify-cart-payment] save", err?.message || err);
     // Not saved, but still email the admin below so the order is not lost.
+  }
+
+  // Couriered orders go to Shiprocket automatically. This runs only when the record was newly saved,
+  // so a retried confirmation can't create a second shipment.
+  let shipping = "";
+  if (deliveryMode === "courier") {
+    const parcel = parcelFor(priced.lines);
+    shipping = "ACTION NEEDED: please create this shipment in Shiprocket by hand.";
+    if (saved && parcel && shiprocketConfigured()) {
+      try {
+        const shipment = await createShiprocketOrder({
+          reference: razorpay_payment_id,
+          customer,
+          lines: priced.lines,
+          shippingRupees: deliveryFee,
+          parcel,
+        });
+        record.shipment = shipment;
+        shipping = `Shiprocket order created (shipment ${shipment.shipment_id}). Choose the courier in Shiprocket to book it.`;
+        await db.storage.from(BUCKET).upload(path, JSON.stringify(record, null, 2), { contentType: "application/json", upsert: true });
+      } catch (err) {
+        console.error("[verify-cart-payment] shiprocket", err?.message);
+        if (!record.shipment) shipping = "ACTION NEEDED: the Shiprocket order was NOT created. Please create it by hand.";
+      }
+    }
   }
 
   const itemLines = priced.lines
@@ -105,9 +136,9 @@ export default async function handler(req, res) {
     subject: `New PAID order · ₹${record.amount_rupees} · ${customer.name}`,
     replyTo: customer.email,
     text:
-      `New PAID order\n\n${itemLines}\n\nTotal paid: ₹${record.amount_rupees}\n\n` +
+      `New PAID order\n\n${itemLines}\n\nDelivery: ₹${deliveryFee} (${deliveryMode})\nTotal paid: ₹${record.amount_rupees}\n\n${shipping ? shipping + "\n\n" : ""}` +
       `Name: ${customer.name}\nPhone: ${customer.phone}\nEmail: ${customer.email}\n` +
-      `Address: ${customer.address}, ${customer.city}, ${customer.zip}\n` +
+      `Address: ${customer.address}, ${customer.city}, ${customer.state} ${customer.zip}\n` +
       (customer.notes ? `Notes: ${customer.notes}\n` : "") +
       `\nRazorpay payment id: ${razorpay_payment_id}\nRazorpay order id: ${razorpay_order_id}`,
   });

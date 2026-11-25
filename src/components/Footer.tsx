@@ -36,6 +36,7 @@ const columns: { title: string; links: { label: string; to: string }[] }[] = [
     links: [
       { label: "About Us", to: "/about" },
       { label: "FAQ", to: "/faq" },
+      { label: "Track order", to: "/track-order" },
       { label: "Careers", to: "/careers" },
       { label: "Contact", to: "/contact" },
     ],

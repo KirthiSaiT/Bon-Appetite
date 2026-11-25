@@ -121,6 +121,7 @@ export const cleanCustomer = (c = {}) => ({
   phone: clean(c.phone, 20),
   address: clean(c.address, 300),
   city: clean(c.city, 80),
+  state: clean(c.state, 80),
   zip: clean(c.zip, 12),
   notes: clean(c.notes, 400),
 });

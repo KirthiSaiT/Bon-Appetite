@@ -173,7 +173,7 @@ const Checkout = () => {
           </p>
           {paid.saved && (
             <p className="mt-2 text-sm">
-              Keep this reference to <a href="/track-order" className="font-semibold text-orange-700 underline">track your order</a>.
+              Keep this reference to <a href="/track-order" className="font-semibold text-orange-700 underline">track your order</a>. Once it arrives, you can <a href={`/rate?ref=${paid.paymentId}`} className="font-semibold text-orange-700 underline">rate it</a>.
             </p>
           )}
           <Button onClick={() => navigate("/")} className="mt-8 bg-orange-600 hover:bg-orange-700 text-white">

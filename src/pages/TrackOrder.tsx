@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { whatsappUrl } from "@/lib/whatsapp";
+import RateUsModal from "@/components/RateUsModal";
 
 interface Tracking {
   paid_at: string;
@@ -24,6 +25,7 @@ const TrackOrder = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [result, setResult] = useState<Tracking | null>(null);
+  const [rating, setRating] = useState(false);
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,9 +99,13 @@ const TrackOrder = () => {
                 Ask us on WhatsApp
               </a>
             )}
+            <Button onClick={() => setRating(true)} variant="outline" className="mt-5 w-full border-orange-600 text-orange-700 hover:bg-orange-50">
+              Got your order? Rate us
+            </Button>
           </section>
         )}
       </main>
+      <RateUsModal open={rating} onClose={() => setRating(false)} reference={reference.trim()} phone={phone.trim()} />
       <SimpleFooter />
     </div>
   );

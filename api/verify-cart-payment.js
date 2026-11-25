@@ -140,7 +140,8 @@ export default async function handler(req, res) {
       `Name: ${customer.name}\nPhone: ${customer.phone}\nEmail: ${customer.email}\n` +
       `Address: ${customer.address}, ${customer.city}, ${customer.state} ${customer.zip}\n` +
       (customer.notes ? `Notes: ${customer.notes}\n` : "") +
-      `\nRazorpay payment id: ${razorpay_payment_id}\nRazorpay order id: ${razorpay_order_id}`,
+      `\nRazorpay payment id: ${razorpay_payment_id}\nRazorpay order id: ${razorpay_order_id}` +
+      `\n\nAfter delivery, send the customer this rating link:\n${process.env.SITE_URL || "https://bon-appetit-hyd.vercel.app"}/rate?ref=${razorpay_payment_id}`,
   });
 
   return res.status(200).json({ ...ref, saved: true, emailed, amount: record.amount_rupees });

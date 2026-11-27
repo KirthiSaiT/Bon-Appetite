@@ -230,7 +230,7 @@ const Careers = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-white/50 text-white hover:bg-white/10 font-semibold px-8 text-base"
+              className="bg-transparent border-white/50 text-white hover:bg-white/10 hover:text-white font-semibold px-8 text-base"
               onClick={() => scrollToApply("")}
             >
               Apply Now

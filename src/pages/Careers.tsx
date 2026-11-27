@@ -30,29 +30,6 @@ import {
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
-const perks = [
-  {
-    emoji: "🍝",
-    title: "You'll always be fed",
-    desc: "Working in a pasta kitchen has one very obvious, very delicious perk.",
-  },
-  {
-    emoji: "🤝",
-    title: "Small team, real impact",
-    desc: "No bureaucracy. What you do today shows up on the plate tomorrow.",
-  },
-  {
-    emoji: "✨",
-    title: "Room to grow",
-    desc: "We're early-stage and moving fast. Your role will grow as we do.",
-  },
-  {
-    emoji: "❤️",
-    title: "Work you're proud of",
-    desc: "Every product is handmade. Every event is personal. This is the real thing.",
-  },
-];
-
 const openings = [
   {
     id: "social-media",
@@ -338,37 +315,6 @@ const Careers = () => {
             >
               Apply Now
             </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* ── "Why us" — warm cards, not a flat strip ───────────────────────── */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="max-w-xl mb-12">
-            <h2
-              className="text-3xl md:text-4xl font-bold text-gray-900 mb-3"
-              style={{ fontFamily: "var(--font-display)" }}
-            >
-              More than a job.
-            </h2>
-            <p className="text-gray-500 leading-relaxed">
-              We won't pretend we have the perks of a big company. What we do
-              have is work that actually matters, a team that has each other's
-              backs, and pasta on the house.
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {perks.map((p) => (
-              <div
-                key={p.title}
-                className="bg-orange-50 rounded-2xl p-6 border border-orange-100 hover:border-orange-300 transition-colors"
-              >
-                <span className="text-3xl mb-4 block">{p.emoji}</span>
-                <h3 className="font-bold text-gray-900 mb-2">{p.title}</h3>
-                <p className="text-gray-500 text-sm leading-relaxed">{p.desc}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>

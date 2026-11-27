@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import emailjs from "@emailjs/browser";
 import { supabase } from "@/lib/supabase";
+import { useSiteSettings } from "@/hooks/use-cafe-data";
+import { CAREERS_DEFAULTS, OPENINGS_KEY, parseOpenings } from "@/hooks/use-careers-data";
 import { EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, EMAILJS_PUBLIC_KEY } from "@/lib/emailjsConfig";
 import {
   MapPin,
@@ -29,93 +31,6 @@ import {
 } from "lucide-react";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
-
-const openings = [
-  {
-    id: "social-media",
-    title: "Social Media & Content Creator",
-    type: "Part-time",
-    location: "Hyderabad / Remote",
-    department: "Marketing",
-    blurb:
-      "Tell our story. You'll create the content that brings new pasta lovers into our community every day.",
-    responsibilities: [
-      "Shoot, edit and post daily content — Reels, Stories, carousels",
-      "Engage authentically with our online community",
-      "Collaborate on product launches and workshop promotions",
-      "Track what's working and keep pushing the creative",
-    ],
-    requirements: [
-      "You're fluent in Instagram and short-form video",
-      "Strong eye for food photography and visual storytelling",
-      "Genuine enthusiasm for food, Italian culture, and community",
-      "Video editing tools (CapCut, Premiere, or similar)",
-    ],
-  },
-  {
-    id: "kitchen-assistant",
-    title: "Kitchen Assistant",
-    type: "Full-time",
-    location: "Hyderabad (On-site)",
-    department: "Operations",
-    blurb:
-      "Get your hands in the dough. You'll be at the heart of what we make every single day.",
-    responsibilities: [
-      "Help with fresh and dry pasta production each morning",
-      "Uphold our kitchen hygiene and quality standards",
-      "Support packaging, labelling and order fulfilment",
-      "Keep track of ingredients and flag what needs restocking",
-    ],
-    requirements: [
-      "Basic cooking knowledge or a culinary background is a plus",
-      "Comfortable working in a busy, physical kitchen",
-      "Detail-oriented — you notice when something's off",
-      "Curious and willing to learn traditional Italian methods",
-    ],
-  },
-  {
-    id: "workshop-coordinator",
-    title: "Workshop Coordinator",
-    type: "Part-time",
-    location: "Hyderabad",
-    department: "Community",
-    blurb:
-      "Run the experience. You'll make sure every workshop attendee leaves inspired, full, and wanting to come back.",
-    responsibilities: [
-      "Manage registrations, payments and pre-workshop communications",
-      "Set up and facilitate monthly online and in-person sessions",
-      "Handle corporate and school event enquiries",
-      "Build genuine relationships with our pasta-loving regulars",
-    ],
-    requirements: [
-      "You're naturally good with people and at ease in front of a group",
-      "Organised — juggling 20 bookings doesn't stress you out",
-      "Warm, friendly energy that puts first-timers at ease",
-      "Excited about building a real community around food",
-    ],
-  },
-  {
-    id: "sales-executive",
-    title: "Sales & Distribution Executive",
-    type: "Full-time",
-    location: "Hyderabad",
-    department: "Sales",
-    blurb:
-      "Grow our shelf space. You'll be the face of Bon Appetit with retailers across the city.",
-    responsibilities: [
-      "Onboard new grocery, gourmet and specialty stores",
-      "Nurture relationships with our existing 30+ retail partners",
-      "Coordinate orders and make sure shelves stay stocked",
-      "Own your monthly sales numbers",
-    ],
-    requirements: [
-      "1–3 years in B2B sales, FMCG, or retail preferred",
-      "Confident communicator who builds trust quickly",
-      "Own vehicle and happy to travel within Hyderabad",
-      "Self-driven — you don't need to be chased for updates",
-    ],
-  },
-];
 
 const deptColors: Record<string, string> = {
   Marketing: "bg-purple-100 text-purple-700",
@@ -133,6 +48,14 @@ const ALLOWED_TYPES = [
 // ── Page ──────────────────────────────────────────────────────────────────────
 
 const Careers = () => {
+  // Text, photos and roles are editable in /admin → Careers.
+  const { data: settings, isLoading } = useSiteSettings();
+  const content = (key: string) => settings?.[key] || CAREERS_DEFAULTS[key];
+  const openings = parseOpenings(settings?.[OPENINGS_KEY]).filter((o) => o.is_active);
+  const openingsText =
+    content("careers.openings_text") ||
+    (openings.length === 1 ? "1 open role right now." : `${openings.length} open roles right now.`);
+
   const [expandedRole, setExpandedRole] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState("");
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -273,7 +196,7 @@ const Careers = () => {
       <section className="relative overflow-hidden">
         {/* Background image */}
         <img
-          src="/pastaworkshop.webp"
+          src={content("careers.hero_image")}
           alt="Bon Appetit Kitchen"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
@@ -282,20 +205,17 @@ const Careers = () => {
 
         <div className="relative z-10 max-w-7xl mx-auto px-8 py-32 md:py-40">
           <p className="text-orange-300 text-sm font-bold uppercase tracking-[0.2em] mb-5">
-            Careers at Bon Appetit
+            {content("careers.hero_label")}
           </p>
           <h1
             className="text-5xl md:text-6xl font-bold text-white leading-[1.08] max-w-2xl mb-6"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Come make something{" "}
-            <span className="text-orange-300">real.</span>
+            {content("careers.hero_title")}{" "}
+            <span className="text-orange-300">{content("careers.hero_highlight")}</span>
           </h1>
           <p className="text-white/75 text-lg max-w-lg leading-relaxed mb-10">
-            We're a small team of pasta obsessives in Hyderabad — handmaking
-            every product, running workshops, and building a community around
-            Italian food. If that sounds like your kind of place, we'd love to
-            meet you.
+            {content("careers.hero_text")}
           </p>
           <div className="flex flex-wrap gap-3">
             <Button
@@ -327,15 +247,19 @@ const Careers = () => {
               className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              We're hiring right now.
+              {isLoading ? "Open roles" : openings.length ? content("careers.openings_title") : "No open roles right now."}
             </h2>
             <p className="text-gray-500">
-              Four roles across kitchen, community, marketing and sales.
+              {isLoading
+                ? "Loading…"
+                : openings.length
+                  ? openingsText
+                  : "You can still send us a speculative application below."}
             </p>
           </div>
 
           <div className="space-y-3">
-            {openings.map((role) => {
+            {!isLoading && openings.map((role) => {
               const open = expandedRole === role.id;
               return (
                 <div
@@ -359,7 +283,7 @@ const Careers = () => {
                           </h3>
                           <span
                             className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${
-                              deptColors[role.department]
+                              deptColors[role.department] ?? "bg-stone-100 text-stone-700"
                             }`}
                           >
                             {role.department}
@@ -450,7 +374,7 @@ const Careers = () => {
       {/* ── Photo break ──────────────────────────────────────────────────── */}
       <div className="relative h-64 overflow-hidden">
         <img
-          src="/bts1.webp"
+          src={content("careers.photo_image")}
           alt="Behind the scenes at Bon Appetit"
           className="w-full h-full object-cover object-center"
         />
@@ -460,7 +384,7 @@ const Careers = () => {
             className="text-white text-2xl md:text-3xl font-bold text-center px-4"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            "Every pasta shape has a story. Come help us write more."
+            {content("careers.photo_quote")}
           </p>
         </div>
       </div>
@@ -475,11 +399,10 @@ const Careers = () => {
                 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3"
                 style={{ fontFamily: "var(--font-display)" }}
               >
-                We've got your application!
+                {content("careers.success_title")}
               </h2>
               <p className="text-gray-500 max-w-sm mx-auto leading-relaxed">
-                Thanks for taking the time. We read every application personally
-                and will be in touch within 5–7 working days.
+                {content("careers.success_text")}
               </p>
             </div>
           ) : (
@@ -489,10 +412,10 @@ const Careers = () => {
                   className="text-3xl md:text-4xl font-bold text-gray-900 mb-2"
                   style={{ fontFamily: "var(--font-display)" }}
                 >
-                  Apply now.
+                  {content("careers.apply_title")}
                 </h2>
                 <p className="text-gray-500">
-                  Takes less than 3 minutes. We read every single one.
+                  {content("careers.apply_text")}
                 </p>
               </div>
 

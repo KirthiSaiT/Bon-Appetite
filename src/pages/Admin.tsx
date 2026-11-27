@@ -8,11 +8,12 @@ import { format } from "date-fns";
 import { toast } from "sonner";
 import {
   CalendarDays, Plus, Pencil, Trash2, Loader2, ShieldAlert, ShieldCheck, Save, X, IndianRupee, Users, ImageUp, RotateCcw,
-  UtensilsCrossed,
+  UtensilsCrossed, Briefcase, ArrowUp, ArrowDown,
 } from "lucide-react";
 import {
   CAFE_PASTAS_KEY, SETTINGS_KEY, DEFAULT_SETTINGS, DELIVERY_APPS, CafePasta,
 } from "@/hooks/use-cafe-data";
+import { CAREERS_DEFAULTS, OPENINGS_KEY, Opening, parseOpenings } from "@/hooks/use-careers-data";
 import Navigation from "@/components/Navigation";
 import { SimpleFooter } from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -943,6 +944,325 @@ const CafeTab = () => (
   </div>
 );
 
+/* ── Careers: job openings + page text and photos ──────────── */
+
+const CAREERS_QUERY = ["admin", "careers-settings"];
+
+const explainCareers = (e: unknown) => {
+  const err = e as { code?: string; message?: string };
+  if (err?.code === "PGRST205" || /schema cache|site_settings/i.test(err?.message ?? ""))
+    return "The settings table doesn't exist yet. Run supabase/cafe.sql in the Supabase SQL Editor.";
+  return explain(e);
+};
+
+/** Reads and writes the "careers.*" rows of site_settings. */
+const useCareersSettings = () => {
+  const db = useSupabase();
+  const qc = useQueryClient();
+
+  const query = useQuery({
+    queryKey: CAREERS_QUERY,
+    enabled: !!db,
+    queryFn: async () => {
+      const { data, error } = await db!.from("site_settings").select("key, value").like("key", "careers.%");
+      if (error) throw error;
+      return Object.fromEntries((data ?? []).map((r) => [r.key, r.value ?? ""])) as Record<string, string>;
+    },
+  });
+
+  const write = async (values: Record<string, string>) => {
+    const updated_at = new Date().toISOString();
+    const rows = Object.entries(values).map(([key, value]) => ({ key, value, updated_at }));
+    const { data, error } = await db!.from("site_settings").upsert(rows).select();
+    if (error) throw error;
+    if ((data?.length ?? 0) < rows.length) throw new Error(rlsHint);
+  };
+
+  // Awaited by the mutations, so the next edit always starts from what was just saved.
+  const refresh = () =>
+    Promise.all([qc.invalidateQueries({ queryKey: CAREERS_QUERY }), qc.invalidateQueries({ queryKey: SETTINGS_KEY })]);
+
+  return { ...query, write, refresh };
+};
+
+type OpeningDraft = Omit<Opening, "id" | "responsibilities" | "requirements"> & {
+  id?: string;
+  responsibilities: string;
+  requirements: string;
+};
+
+const blankOpening = (): OpeningDraft => ({
+  title: "",
+  department: "Operations",
+  type: "Full-time",
+  location: "Hyderabad",
+  blurb: "",
+  responsibilities: "",
+  requirements: "",
+  is_active: true,
+});
+
+const toLines = (v: string) => v.split("\n").map((s) => s.trim()).filter(Boolean);
+
+const openingFields = [
+  { key: "title", label: "Job title" },
+  { key: "department", label: "Department" },
+  { key: "type", label: "Type (e.g. Full-time)" },
+  { key: "location", label: "Location" },
+] as const;
+
+const CareersOpeningsSection = () => {
+  const { data: saved, isLoading, error, write, refresh } = useCareersSettings();
+  const [draft, setDraft] = useState<OpeningDraft | null>(null);
+  const all = saved ? parseOpenings(saved[OPENINGS_KEY]) : [];
+
+  const store = useMutation({
+    mutationFn: async ({ list }: { list: Opening[]; message: string }) => {
+      await write({ [OPENINGS_KEY]: JSON.stringify(list) });
+      await refresh();
+    },
+    onSuccess: (_, { message }) => {
+      toast.success(message);
+      setDraft(null);
+    },
+    onError: (e: Error) => toast.error(explainCareers(e)),
+  });
+
+  const submit = () => {
+    if (!draft) return;
+    if (!draft.title.trim()) return toast.error("Give the role a job title.");
+    const opening: Opening = {
+      id: draft.id ?? crypto.randomUUID(),
+      title: draft.title.trim(),
+      department: draft.department.trim(),
+      type: draft.type.trim(),
+      location: draft.location.trim(),
+      blurb: draft.blurb.trim(),
+      responsibilities: toLines(draft.responsibilities),
+      requirements: toLines(draft.requirements),
+      is_active: draft.is_active,
+    };
+    store.mutate({
+      list: draft.id ? all.map((o) => (o.id === draft.id ? opening : o)) : [...all, opening],
+      message: draft.id ? "Role updated" : "Role added",
+    });
+  };
+
+  const move = (index: number, by: -1 | 1) => {
+    const list = [...all];
+    [list[index], list[index + by]] = [list[index + by], list[index]];
+    store.mutate({ list, message: "Order saved" });
+  };
+
+  const edit = (o: Opening) =>
+    setDraft({ ...o, responsibilities: o.responsibilities.join("\n"), requirements: o.requirements.join("\n") });
+
+  if (isLoading) return <p className="flex items-center gap-2 text-stone-500 text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Loading…</p>;
+  // No editing without the saved list: saving would overwrite it with the defaults.
+  if (error || !saved) return <p className="text-sm text-red-600">Couldn't load the job openings: {explainCareers(error)}</p>;
+
+  return (
+    <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] gap-8 items-start">
+      <div className="min-w-0">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h2 className="text-2xl font-bold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
+            Job openings
+          </h2>
+          <button type="button" className={primaryBtn} disabled={store.isPending} onClick={() => setDraft(blankOpening())}>
+            <Plus className="w-4 h-4" /> New role
+          </button>
+        </div>
+
+        {all.length === 0 && (
+          <p className="text-sm text-stone-600 bg-stone-50 rounded-lg p-4">
+            No roles. The Careers page says there are no open roles.
+          </p>
+        )}
+
+        <ul className="divide-y divide-stone-200 border-y border-stone-200">
+          {all.map((o, i) => (
+            <li key={o.id} className="py-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+              <div className="min-w-0 flex-1 basis-48">
+                <p className="font-semibold text-stone-900 [overflow-wrap:anywhere]">{o.title}</p>
+                <p className="text-sm text-stone-500">{[o.department, o.type, o.location].filter(Boolean).join(" · ")}</p>
+                {!o.is_active && <span className="mt-1.5 inline-block text-[0.7rem] px-2 py-0.5 rounded-full bg-stone-200 text-stone-700">Hidden</span>}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button type="button" aria-label={`Move ${o.title} up`} className={ghostBtn} disabled={i === 0 || store.isPending} onClick={() => move(i, -1)}>
+                  <ArrowUp className="w-3.5 h-3.5" />
+                </button>
+                <button type="button" aria-label={`Move ${o.title} down`} className={ghostBtn} disabled={i === all.length - 1 || store.isPending} onClick={() => move(i, 1)}>
+                  <ArrowDown className="w-3.5 h-3.5" />
+                </button>
+                <button type="button" className={ghostBtn} disabled={store.isPending} onClick={() => edit(o)}>
+                  <Pencil className="w-3.5 h-3.5" /> Edit
+                </button>
+                <button
+                  type="button"
+                  className={`${ghostBtn} hover:border-red-600 hover:text-red-600`}
+                  disabled={store.isPending}
+                  onClick={() =>
+                    window.confirm(`Delete "${o.title}" from the Careers page?`) &&
+                    store.mutate({ list: all.filter((x) => x.id !== o.id), message: "Role deleted" })
+                  }
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Delete
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <aside className="lg:sticky lg:top-24 border border-stone-200 rounded-xl p-5 md:p-6 bg-stone-50">
+        {!draft ? (
+          <div className="text-sm text-stone-600">
+            <Briefcase className="w-8 h-8 text-orange-600 mb-3" />
+            Pick <span className="font-semibold">New role</span> or <span className="font-semibold">Edit</span> to change a job.
+            Changes show on the Careers page straight away.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-bold text-stone-900">{draft.id ? "Edit role" : "New role"}</h3>
+              <button type="button" aria-label="Close editor" className="p-1.5 rounded-full hover:bg-stone-200" onClick={() => setDraft(null)}>
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {openingFields.map((f) => (
+              <div key={f.key}>
+                <label htmlFor={`job-${f.key}`} className={labelCls}>{f.label}</label>
+                <input id={`job-${f.key}`} className={inputCls} value={draft[f.key]} onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })} />
+              </div>
+            ))}
+
+            <div>
+              <label htmlFor="job-blurb" className={labelCls}>About the role</label>
+              <textarea id="job-blurb" rows={3} className={`${inputCls} resize-y`} value={draft.blurb} onChange={(e) => setDraft({ ...draft, blurb: e.target.value })} />
+            </div>
+            <div>
+              <label htmlFor="job-day" className={labelCls}>Your day looks like · one per line</label>
+              <textarea id="job-day" rows={5} className={`${inputCls} resize-y`} value={draft.responsibilities} onChange={(e) => setDraft({ ...draft, responsibilities: e.target.value })} />
+            </div>
+            <div>
+              <label htmlFor="job-fit" className={labelCls}>You're our kind of person if · one per line</label>
+              <textarea id="job-fit" rows={5} className={`${inputCls} resize-y`} value={draft.requirements} onChange={(e) => setDraft({ ...draft, requirements: e.target.value })} />
+            </div>
+
+            <label className="flex items-center justify-between gap-3 text-sm text-stone-700">
+              Show on the website
+              <Switch checked={draft.is_active} onCheckedChange={(v) => setDraft({ ...draft, is_active: v })} />
+            </label>
+
+            <button type="button" className={`${primaryBtn} w-full`} disabled={store.isPending} onClick={submit}>
+              {store.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+              {draft.id ? "Save changes" : "Add role"}
+            </button>
+          </div>
+        )}
+      </aside>
+    </div>
+  );
+};
+
+const careersTextGroups: { title: string; fields: { key: string; label: string; long?: boolean; hint?: string }[] }[] = [
+  {
+    title: "Top banner",
+    fields: [
+      { key: "careers.hero_label", label: "Small label" },
+      { key: "careers.hero_title", label: "Headline" },
+      { key: "careers.hero_highlight", label: "Highlighted word" },
+      { key: "careers.hero_text", label: "Intro text", long: true },
+    ],
+  },
+  {
+    title: "Job list",
+    fields: [
+      { key: "careers.openings_title", label: "Heading" },
+      { key: "careers.openings_text", label: "Line under the heading", hint: "Empty shows the number of open roles." },
+    ],
+  },
+  {
+    title: "Photo strip and application form",
+    fields: [
+      { key: "careers.photo_quote", label: "Quote on the photo" },
+      { key: "careers.apply_title", label: "Form heading" },
+      { key: "careers.apply_text", label: "Line under the form heading" },
+      { key: "careers.success_title", label: "Thank-you heading" },
+      { key: "careers.success_text", label: "Thank-you message", long: true },
+    ],
+  },
+];
+
+const CareersTextSection = () => {
+  const { data: saved, isLoading, error, write, refresh } = useCareersSettings();
+  const [edits, setEdits] = useState<Record<string, string>>({});
+
+  const original = (k: string) => saved?.[k] || CAREERS_DEFAULTS[k];
+  const value = (k: string) => edits[k] ?? original(k);
+  const set = (k: string, v: string) => setEdits((e) => ({ ...e, [k]: v }));
+  const changed = Object.keys(edits).filter((k) => edits[k] !== original(k));
+
+  const save = useMutation({
+    mutationFn: async () => {
+      await write(Object.fromEntries(changed.map((k) => [k, edits[k].trim()])));
+      await refresh();
+    },
+    onSuccess: () => {
+      toast.success("Careers page saved");
+      setEdits({});
+    },
+    onError: (e: Error) => toast.error(explainCareers(e)),
+  });
+
+  if (isLoading || error || !saved) return null; // the openings section above shows loading and errors
+
+  return (
+    <div className="max-w-4xl">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+        <h2 className="text-2xl font-bold text-stone-900" style={{ fontFamily: "var(--font-display)" }}>
+          Page text and photos
+        </h2>
+        <button type="button" className={primaryBtn} disabled={!changed.length || save.isPending} onClick={() => save.mutate()}>
+          {save.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          Save {changed.length ? `(${changed.length})` : ""}
+        </button>
+      </div>
+      <p className="text-sm text-stone-600 mb-6">Clearing a box and saving brings back the original text.</p>
+
+      <div className="grid sm:grid-cols-2 gap-5 mb-8">
+        <ImageUploader label="Top banner photo" value={value("careers.hero_image")} fallback={CAREERS_DEFAULTS["careers.hero_image"]} onChange={(url) => set("careers.hero_image", url)} />
+        <ImageUploader label="Photo strip" value={value("careers.photo_image")} fallback={CAREERS_DEFAULTS["careers.photo_image"]} onChange={(url) => set("careers.photo_image", url)} />
+      </div>
+
+      {careersTextGroups.map((group) => (
+        <fieldset key={group.title} className="mb-8 space-y-4">
+          <legend className="text-lg font-bold text-stone-900 mb-3">{group.title}</legend>
+          {group.fields.map((f) => (
+            <div key={f.key}>
+              <label htmlFor={f.key} className={labelCls}>{f.label}</label>
+              {f.long ? (
+                <textarea id={f.key} rows={3} className={`${inputCls} resize-y`} value={value(f.key)} onChange={(e) => set(f.key, e.target.value)} />
+              ) : (
+                <input id={f.key} className={inputCls} value={value(f.key)} onChange={(e) => set(f.key, e.target.value)} />
+              )}
+              {f.hint && <p className="mt-1 text-xs text-stone-500">{f.hint}</p>}
+            </div>
+          ))}
+        </fieldset>
+      ))}
+    </div>
+  );
+};
+
+const CareersTab = () => (
+  <div className="space-y-16">
+    <CareersOpeningsSection />
+    <CareersTextSection />
+  </div>
+);
+
 /* ── Page ──────────────────────────────────────────────────── */
 
 const Admin = () => {
@@ -979,14 +1299,16 @@ const Admin = () => {
   } else {
     body = (
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="mb-8">
+        <TabsList className="mb-8 h-auto flex-wrap justify-start">
           <TabsTrigger value="workshops">Workshops</TabsTrigger>
           <TabsTrigger value="cafe">Cafe</TabsTrigger>
+          <TabsTrigger value="careers">Careers</TabsTrigger>
           <TabsTrigger value="prices">Prices</TabsTrigger>
           <TabsTrigger value="bookings">Bookings</TabsTrigger>
         </TabsList>
         <TabsContent value="workshops"><WorkshopsTab /></TabsContent>
         <TabsContent value="cafe"><CafeTab /></TabsContent>
+        <TabsContent value="careers"><CareersTab /></TabsContent>
         <TabsContent value="prices"><PricesTab /></TabsContent>
         <TabsContent value="bookings"><BookingsTab /></TabsContent>
       </Tabs>

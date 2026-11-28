@@ -136,11 +136,11 @@ export const MomentsSlot = () =>
     </section>
   ) : null;
 
-/* ── Photo collage: three real photos, tilted and overlapping. Swap the files for making / drying shots when they exist. ── */
+/* ── Photo collage: three photos from the client's shoot, tilted and overlapping. ── */
 export const collagePhotos = [
-  { src: "/bts1.webp", alt: "The team at work in our first home kitchen", pos: "50% 40%" },
-  { src: "/aboutus.webp", alt: "Our handmade pasta in kraft boxes: artisanal, paprika, spinach and beetroot", pos: "50% 50%" },
-  { src: "/cmpic21.webp", alt: "Our founder at a food-startup expo with our pasta boxes", pos: "50% 62%" },
+  { src: "/about/fresh-pasta-plate.jpg", alt: "Two nests of fresh tagliatelle on a blue plate beside pasta dough and vegetables", pos: "50% 68%" },
+  { src: "/about/farfalle.jpg", alt: "Handmade farfalle laid out on a board", pos: "50% 62%" },
+  { src: "/about/tagliatelle.jpg", alt: "Fresh tagliatelle dusted with flour", pos: "50% 50%" },
 ];
 
 export const PhotoCollage = () => (
